@@ -181,7 +181,7 @@ module IntSetIntervals =
 
     let rec print s = 
       match s with
-      | [] -> Format.printf "\n"
+      | [] -> Format.printf " [INTERVALS]\n"
       | (a, b)::s' -> begin print_between a b; print s' end
 
     let rec add_aux v s =
@@ -195,10 +195,10 @@ module IntSetIntervals =
         else if v >= a && v <= b
         then raise AlreadyInSet
         else if v > b + 1
-        then add_aux v s'
+        then (a, b)::(add_aux v s')
         else (* v = b + 1 *)
           match s' with
-            | [] -> (a, v)::s'
+            | [] -> [(a, v)]
             | (a', b')::s'' ->
               if v = a'
               then (a, b')::s''

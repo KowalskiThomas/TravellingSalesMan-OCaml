@@ -151,22 +151,24 @@ let random_tests () =
 
 let _ = main () *)
 
-open IntSetIntervals
+open IntSetAbr
 let _ = 
   let s = 
-  (* add 3 (
+  add 3 (
+    remove 3 ( remove 2 (
     add 2 (
-      add 5 ( *)
+      add 5 (
         add 3 (
-            add 1 (
-              add 10 (
+            add 5555 (
+              add 1234 (
                 empty
               )
           )
-        )
-      (* )
+        ) )
+      )
+      )
     )
-  )  *)
+  ) 
   in
   print s
 
