@@ -1,0 +1,12 @@
+{
+    "files.exclude" : 
+    {
+        "**/*.cmo": true,
+        "**/*.cmx": true,
+        "**/*.cmi": true,
+        "**/*.out": true,
+        "**/*.o": true,
+        "**/*.ml#": true,
+        "**/*.ml~": true
+    }
+}

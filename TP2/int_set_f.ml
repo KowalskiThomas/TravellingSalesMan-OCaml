@@ -17,6 +17,7 @@ module type IntSet =
     val is_empty : int_set -> bool
     (** [is_empty s] teste si  [s] est vide *)
 
+    val print : int_set -> unit
 
     val empty : int_set
     (** L'ensemble vide.
@@ -24,6 +25,7 @@ module type IntSet =
         Rq:
         is_empty empty = true
     *)
+
 
     val mem : int -> int_set -> bool
     (**
@@ -85,10 +87,20 @@ module IntSetList =
 
     let is_empty s = s = []
 
+    let rec print s = 
+      match s with
+      | [] -> Format.printf "\n"
+      | h::t -> Format.printf " %d " h; print t
+
     let rec mem e s =
       match s with
         | [] -> false
-        | h::t -> s = t || if e < h then false else mem e t
+        | h::t -> 
+          if h = e
+          then true
+          else if e < h 
+          then false 
+          else mem e t
 
     let rec equal s t =
       match s, t with
@@ -130,11 +142,13 @@ module IntSetList =
     let rec remove e s =
         match s with
           | [] -> []
-          | h::t ->
-            if e > h
+          | h::s' ->
+            if e = h 
+            then s'
+            else if e > h
               then s
             else
-              e::(remove e t)
+              e::(remove e s')
 
     let fold f s a =
       let rec helper f s acc =
@@ -160,6 +174,15 @@ module IntSetIntervals =
     let equal s s' = s = s'
 
     let is_empty s = equal s empty
+
+    let rec print_between a b = 
+      if a > b then () 
+      else begin Format.printf " %d " a; print_between (a + 1) b end
+
+    let rec print s = 
+      match s with
+      | [] -> Format.printf "\n"
+      | (a, b)::s' -> begin print_between a b; print s' end
 
     let rec add_aux v s =
       match s with
@@ -213,15 +236,20 @@ module IntSetIntervals =
       | (a, _)::_ -> a
 
 
-    let remove v s =
+    let rec remove_aux v s =
       match s with
-      | [] -> []
+      | [] -> raise NotInSet
       | (a, b)::s' ->
-      if v < a then raise NotInSet
-      else if v = a then (v, b)::s'
-      else if v < b then (a, v - 1)::(v + 1, b)::s'
-      else if v = b then (a, b - 1)::s'
-      else failwith "Imprévu"
+        if v < a then raise NotInSet
+        else if v = a then (a + 1, b)::s'
+        else if v < b then (a, v - 1)::(v + 1, b)::s'
+        else if v = b then (a, b - 1)::s'
+        else (* v > b *) remove_aux v s'
+
+    let remove v s = 
+      try
+        remove_aux v s
+      with NotInSet -> s
 
   end
 
@@ -233,10 +261,6 @@ module IntSetAbr =
 
     let empty = Nil
 
-    let equal s s' = s = s'
-
-    let is_empty s = equal s empty
-
     let rec mem v s =
       match s with
       | Nil -> false
@@ -246,14 +270,27 @@ module IntSetAbr =
       else if v > x then mem v right
       else (* v < x *)   mem v left
 
+    let rec contains s s' = 
+      match s with
+      | Nil -> true
+      | ABR(left, x, right) -> mem x s' && contains s left && contains s right
+
+    let equal s s' = 
+      match s, s' with
+      | Nil, Nil -> true
+      | Nil, _ -> false
+      | _, Nil -> false
+      | s, s' -> contains s s' && contains s' s
+
+    let is_empty s = equal s empty
+
     let rec add_aux v s =
       match s with
       | Nil -> ABR(Nil, v, Nil)
       | ABR(left, x, right) ->
       if v = x then raise AlreadyInSet
       else if v > x then ABR(left, x, add_aux v right)
-      else if v < x then ABR(add_aux v left, x, right)
-      else failwith "Imprévu"
+      else (* v < x *) ABR(add_aux v left, x, right)
 
     let add v s =
       try
@@ -305,5 +342,10 @@ module IntSetAbr =
       try
         remove_aux v s
       with NotInSet -> s
+
+    let rec print s = 
+      match s with 
+      | Nil -> ()
+      | ABR(left, x, right) -> print left; Format.printf " %d " x; print right;
 
   end

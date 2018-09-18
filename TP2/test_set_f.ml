@@ -7,7 +7,6 @@ let test_with msg f e =
   (t1-.t0,res)
 
 
-
 module Test(M:IntSet) =
   struct
     open M
@@ -137,6 +136,39 @@ let random_tests () =
   in
   test_add_remove 1000000 1000
 
+(* let main () = 
+  let module TInt = Test(IntSetIntervals) in
+  let random = random_tests () in
+  let ordered = List.sort (fun (fn1,e1) (fn2,e2) ->
+                    if fn1=fn2
+                    then compare e1 e2
+                    else if fn1 = "add" then 1 else -1
+                  ) random in
+  let ordered = List.rev_map (fun (f,e) -> if f = "remove" then ("remove_min",e) else (f,e)) ordered in
+  let ((interval_time_random,interval_random), (interval_time_ordered,interval_ordered)) = TInt.replay_tests random ordered in
+  let _ = Format.printf "Thomas!@"
+  ()
+
+let _ = main () *)
+
+open IntSetIntervals
+let _ = 
+  let s = 
+  (* add 3 (
+    add 2 (
+      add 5 ( *)
+        add 3 (
+            add 1 (
+              add 10 (
+                empty
+              )
+          )
+        )
+      (* )
+    )
+  )  *)
+  in
+  print s
 
 let main () =
   let module TList = Test(IntSetList) in

@@ -16,6 +16,7 @@ module type IntSet =
     val is_empty : int_set -> bool
     (** [is_empty s] teste si  [s] est vide *)
 
+    val print : int_set -> unit
 
     val empty : int_set
     (** L'ensemble vide.
