@@ -57,6 +57,28 @@ module MakeEnsembleAVL(X:Ordered) =
 
     let equilibrer a = match a with
       | Empty -> Empty
+      | Node(g, x, d, h) ->
+        let hg = height g in
+        let hd = height d in
+        if hg > hd + 1 then
+          match g with
+            | Empty -> assert false
+            | Node(gg, xg, gd, _) ->
+              let hgg = height gg in
+              let hgd = height gd in
+              if hgg > hgd
+              then (node gg xg (node gd x d))
+              else
+                match gd with
+                  | Empty -> assert false (* hgd > 0 *)
+                  | Node (gdg, xgd, gdd, _) ->
+                    node (node gg xg gdg) xgd (node gdd x d)
+        else if hd > hg + 1
+        then failwith "todo"
+        else node g x d
+
+    (* let equilibrer a = match a with
+      | Empty -> Empty
       | Node(l, v, r, _) ->
         (
           match l, r with
@@ -83,7 +105,7 @@ module MakeEnsembleAVL(X:Ordered) =
                           else failwith "Unexpected Else"
                     )
             )
-        )
+        ) *)
 
     let rec desequilibre left right = match left, right with
       | Empty, Empty -> false
@@ -100,13 +122,20 @@ module MakeEnsembleAVL(X:Ordered) =
           if c = 0 then raise InSet
           else if c < 0 then
             begin
-              let resultat = add_aux x right in
-                if desequilibre resultat left then
-                  equilibrer (node left middle resultat)
+              let resultat = add_aux x left in
+                if desequilibre resultat right then
+                  equilibrer (node right middle resultat)
                 else
-                  node left middle resultat
+                  node right middle resultat
             end
-          else (* c > 0 *) add_aux x right
+          else (* c > 0 *)
+            begin
+              let resultat = add_aux x right in
+              if desequilibre resultat left then
+                equilibrer (node left middle resultat)
+              else
+                node left middle resultat
+            end
         end
 
     let add x s =
