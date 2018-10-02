@@ -10,10 +10,11 @@ moduleopt:
 
 testsc: modulec
 	ocamlc -g set.cmo tests.ml
-	./a.out
 
 testsopt: moduleopt
 	ocamlopt -g set.cmx tests.ml
+
+exec: testsc
 	./a.out
 
-tests: testsopt
+tests: exec

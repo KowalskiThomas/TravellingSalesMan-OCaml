@@ -57,7 +57,6 @@ module MakeEnsembleAVL(X:Ordered) =
 
     let equilibrer a = match a with
       | Empty -> Empty
-      | Node(_, x, _, _) -> a
       | Node(l, v, r, _) ->
         (
           match l, r with
@@ -110,7 +109,7 @@ module MakeEnsembleAVL(X:Ordered) =
           else (* c > 0 *) add_aux x right
         end
 
-    let rec add x s =
+    let add x s =
       try
         add_aux x s
       with InSet -> s
