@@ -2,7 +2,7 @@ default: tests
 
 module:
 	ocamlc set.mli
-	ocamlc S.mli
+	ocamlc Map.mli
 	ocamlc graph.mli
 	# ocamlc AVLMap.mli
 	ocamlc -c -g set.ml

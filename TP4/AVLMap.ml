@@ -1,10 +1,9 @@
 open Map
 open Set
 
-module AVLMap(X : Ordered, Y) : Map with type key = X.t with type elt = Y =
+module AVLMap(X : Ordered) : Map with type key = X.t =
   struct
     type key
-    type 'a pmap
 
     type 'a pmap =
         Empty
@@ -20,14 +19,14 @@ module AVLMap(X : Ordered, Y) : Map with type key = X.t with type elt = Y =
       | Empty -> 0
       | Node(_, _, _, h) -> h
 
-    let node l k v r = Node(l, (k, v), r, (max (height l) (height r))
+    let node l k v r = Node(l, (k, v), r, (max (height l) (height r)))
 
     exception AlreadyInSet
 
     let add_aux a k v = match a with
-      | Empty -> node empty x empty
-      | Node(l, (x1, x2), r) ->
-        let c = X.compare x m in
+      | Empty -> node empty v empty
+      | Node (l, (x1, x2), r, h) ->
+        let c = X.compare v x1 in
         if c = 0 then
           raise AlreadyInSet
         else if c < 0 then
@@ -38,8 +37,8 @@ module AVLMap(X : Ordered, Y) : Map with type key = X.t with type elt = Y =
 
       let rec find a k = match a with
         | Empty -> raise NotInSet
-        | Node(l, (x, v), r) =
-          let c = X.compare x k
+        | Node(l, (x, v), r) ->
+          let c = X.compare x k in
           if c = 0
           then v
           else if c < 0
