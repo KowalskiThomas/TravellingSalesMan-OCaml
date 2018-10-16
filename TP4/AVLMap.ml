@@ -122,3 +122,5 @@ module AVLMap(X : Ordered) : Map with type key = X.t =
         fold f r (f v d (fold f l x))
 
   end
+(*
+module MakeAVLMap(X:Ordered) : AVLMap with type key = X.t *)
