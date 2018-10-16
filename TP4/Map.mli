@@ -6,7 +6,7 @@ module type Map =
     val empty : 'a pmap
     val is_empty : 'a pmap -> bool
     val add : key -> 'a -> 'a pmap -> 'a pmap
-    val find : key -> 'a pmap -> 'a
-    val remove : key -> 'a pmap -> 'a
-    val fold : (key -> 'a -> 'b) -> 'a pmap -> 'b -> 'b
+    val find : 'a pmap -> key -> 'a
+    val remove : key -> 'a pmap -> 'a pmap
+    val fold : (key -> 'a -> 'b -> 'b) -> 'a pmap -> 'b -> 'b
   end

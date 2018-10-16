@@ -1,4 +1,4 @@
-open Set
+open Ensemble
 
 module type Graph =
   sig

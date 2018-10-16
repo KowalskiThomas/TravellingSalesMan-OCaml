@@ -1,17 +1,18 @@
 default: tests
 
 module:
-	ocamlc set.mli
+	ocamlc Ensemble.mli
+	ocamlc -c -g Ensemble.ml
 	ocamlc Map.mli
-	ocamlc graph.mli
-	# ocamlc AVLMap.mli
-	ocamlc -c -g set.ml
-	# ocamlc -c -g S.ml
-	ocamlc -c -g graph.ml
 	ocamlc -c -g AVLMap.ml
+	ocamlc Graph.mli
+	ocamlc -c -g Graph.ml
 
 tests: module
-	ocamlc -g S.cmo set.cmo graph.cmo tests.ml
+	ocamlc -g *.cmo tests.ml
+
+clean:
+	rm *.cmi *.cmo *.cmx
 
 exec: tests
 	./a.out
