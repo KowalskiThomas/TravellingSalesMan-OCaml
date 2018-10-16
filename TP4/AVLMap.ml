@@ -24,15 +24,15 @@ module AVLMap(X : Ordered) : Map with type key = X.t =
 
     exception AlreadyInSet
 
-    let rec find a k = match a with
+    let rec find a x = match a with
       | Empty -> raise NotInSet
-      | Node(l, (x, v), r, h) ->
-        let c = X.compare x k in
+      | Node(l, (v, d), r, h) ->
+        let c = X.compare x v in
         if c = 0
-        then v
+        then d
         else if c < 0
-        then find l k
-        else find r k
+        then find l x
+        else find r x
 
     let balance l x d r =
       let hl = match l with

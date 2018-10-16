@@ -12,7 +12,7 @@ tests: module
 	ocamlc -g *.cmo tests.ml
 
 clean:
-	rm *.cmi *.cmo *.cmx
+	rm *.cmi *.cmo *.cmx -f
 
 exec: tests
 	./a.out
