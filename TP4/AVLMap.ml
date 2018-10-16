@@ -11,6 +11,7 @@ module AVLMap(X : Ordered) : Map with type key = X.t =
 
     exception EmptyAVL
     exception NotInSet
+    exception AlreadyInSet
 
     let empty = Empty
 
@@ -22,7 +23,6 @@ module AVLMap(X : Ordered) : Map with type key = X.t =
 
     let node l k v r = Node(l, (k, v), r, (max (height l) (height r)))
 
-    exception AlreadyInSet
 
     let rec find a x = match a with
       | Empty -> raise NotInSet
@@ -85,12 +85,12 @@ module AVLMap(X : Ordered) : Map with type key = X.t =
             if r == rr then m else balance l v d rr
 
       let rec min_key m = match m with
-        | Empty -> failwith "no min in empty"
+        | Empty -> raise EmptyAVL
         | Node(Empty, x, _, _) -> x
         | Node(l, _, _, _) -> min_key l
 
       let rec remove_min_key m = match m with
-        | Empty -> failwith "remove min from empty"
+        | Empty -> raise EmptyAVL
         | Node(Empty, _, r, _) -> r
         | Node(l, (v, d), r, _) -> balance (remove_min_key l) v d r
 

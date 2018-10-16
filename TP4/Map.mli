@@ -10,6 +10,8 @@ module type Map =
     type key
     type 'a pmap
 
+    exception NotInSet
+
     val empty : 'a pmap
     val is_empty : 'a pmap -> bool
     val add : key -> 'a -> 'a pmap -> 'a pmap
