@@ -1,4 +1,6 @@
-module type Ordered =
+open Ensemble
+
+(* module type Ordered =
   sig
     type t
 
@@ -15,14 +17,14 @@ module type Ensemble =
     val add : elt -> set -> set
     val mem : elt -> set -> bool
     val get_min : set -> elt
-  end
+  end *)
 
-module MakeEnsembleAVL(X: Ordered) = struct
+module MakeEnsembleAVL(X: Ordered) : Ensemble with type elt = X.t = struct
   type key = X.t
 
-  type avl =
+  type set =
       Empty
-    | Node of (avl * X.t * avl * int)
+    | Node of (set * X.t * set * int)
 
   exception EmptyAVL
   exception NotInSet
