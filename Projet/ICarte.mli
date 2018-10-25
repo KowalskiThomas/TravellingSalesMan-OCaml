@@ -9,11 +9,8 @@
 end *)
 
 module CompleteCarte : sig
-    (* module Node *)
     type node
     type pair
-
-    (* module IntMap *)
     type graph 
 
     val distance : int -> int -> graph -> float

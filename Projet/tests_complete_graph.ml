@@ -7,9 +7,10 @@ let cities = [
     (3, "Helsinki", 3.0, 4.0)
 ]
 
-let rec add_cities villes carte = match villes with
-| [] -> carte
-| (i, n, x, y)::t -> Carte.add_node i n x y (add_cities t carte)
+let rec add_cities villes carte = 
+    match villes with
+    | [] -> carte
+    | (i, n, x, y)::t -> Carte.add_node i n x y (add_cities t carte)
 
 let _ = 
     let test = add_cities cities Carte.empty
@@ -61,3 +62,14 @@ let test_distance_3 =
     else
         Printf.printf "XX Test Distance 3 [Expected = %f, Returned = %f] \n" expected d
     
+(* Ajout de beaucoup de noeuds à la carte pour tester les performances de la structure de données. *)
+(* TODO: Measure time *)
+let test_add_many_nodes = 
+    let rec aux n g = 
+        if n = 1 then
+            Carte.add_node n (string_of_int n) (float_of_int n) (float_of_int n) g
+        else
+            Carte.add_node n (string_of_int n) (float_of_int n) (float_of_int n) (aux (n - 1) g)
+    in
+    let _ = aux 150000 Carte.empty in
+    Printf.printf "OK Test rapidité\n"
