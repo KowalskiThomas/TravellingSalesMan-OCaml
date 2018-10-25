@@ -23,13 +23,14 @@ module CompleteCarte = struct
         let data_u = IntMap.find u g in
         let data_v = IntMap.find v g in 
         match data_u, data_v with
-        | (_, (xu, yu)), (_, (xv, yv)) -> ((xu -. xv) *. (xu -. xv) +. (yu -. yv) *. (yu -. yv)) 
+        | (_, (xu, yu)), (_, (xv, yv)) -> (((xu -. xv) *. (xu -. xv) +. (yu -. yv) *. (yu -. yv))) ** (1. /. 2.)
 
     let rec distance_path path g = match path with
     | [] -> 0.
-    | h::t -> let data = IntMap.find h g in
-        match data with
-        | _, (x, y) -> x +. y +. (distance_path t g)
+    | [_] -> 0. (* A path with only one point has no length *)
+    | a::(b::t) -> 
+        (distance a b g) +. 
+        (distance_path (b::t) g) (* TODO: Possible optimization here *)
 
     let empty = IntMap.empty
 
