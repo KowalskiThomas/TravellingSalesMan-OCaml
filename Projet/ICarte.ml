@@ -1,4 +1,4 @@
-module Graph = sig
+module type Carte = sig
     type node
     (* module S : Map.S with type key = node *)
     type graph 
@@ -8,7 +8,7 @@ module Graph = sig
     val empty : graph
 end
 
-module MakeCompleteGraph : Graph = struct
+module CompleteCarte = struct
     module Node = struct
         type t = int
         let compare x y = x - y
