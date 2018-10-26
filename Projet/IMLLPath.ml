@@ -72,22 +72,36 @@ module MLLPath = struct
     exception NotInPath
     (* Insert a new node in the path *)
     (* Example: insert u [after] last [in] p *)
+    
+    let insert_in_unary u last p = 
+        IntMap.add u (last, last) (IntMap.add last (u, u) IntMap.empty)
+
+    let insert_in_binary u last p = 
+        let (v, _) = IntMap.find last p in 
+        IntMap.add last (v, u) 
+        (IntMap.add u (last, v) 
+        (IntMap.add v (u, last) IntMap.empty))
+
     let insert u last p =
         if mem u p
         then raise AlreadyInPath
         else
             let (last_last, last_next) = IntMap.find last p in
-            let (_, last_next_next) = IntMap.find last_next p in
-            IntMap.add
-                last (last_last, u)
-                (IntMap.add u (last, last_next)
-                (IntMap.add last_next (u, last_next_next) p))
+            if last_last = last then
+                insert_in_unary u last p
+            else if last_last = last_next then
+                insert_in_binary u last p 
+            else 
+                let (_, last_next_next) = IntMap.find last_next p in
+                IntMap.add
+                    last (last_last, u)
+                    (IntMap.add u (last, last_next)
+                    (IntMap.add last_next (u, last_next_next) p))
 
     let remove_standard u p =
         let (last, next) = IntMap.find u p in
         let (last_last, _) = IntMap.find last p in
         let (_, next_next) = IntMap.find next p in
-        let _ = Printf.printf "%d %d\n" last next in
         IntMap.add last (last_last, next)
         (IntMap.add next (last, next_next)
         (IntMap.remove u p))
@@ -103,6 +117,7 @@ module MLLPath = struct
          * On renvoie 2
          *)
         let (last, next) = IntMap.find u p in
+            (* let _ = Printf.printf "last : %d next : %d u : %d\n" last next u in  *)
             make last
 
     let remove u p =
@@ -110,7 +125,8 @@ module MLLPath = struct
         then raise NotInPath
         else
             let (last, next) = IntMap.find u p in
-            if last = u then
+            (* let _ = Printf.printf "u = %d last = %d next = %d\n" u last next in  *)
+            if last = u && next = u then
                 empty
             else if last = next then
                 remove_two u p
