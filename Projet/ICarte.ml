@@ -13,6 +13,7 @@ module CompleteCarte = struct
         type t = int
         let compare x y = x - y
     end 
+    
     type node = Node.t
     type pair = string * (float * float)
 
