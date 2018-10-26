@@ -1,7 +1,7 @@
 (* module type Carte = sig
     type node
     (* module S : Map.S with type key = node *)
-    type graph 
+    type graph
 
     val distance : node -> node -> graph -> float
     val distance_path : node list -> graph -> float
@@ -9,13 +9,18 @@
 end *)
 
 module CompleteCarte : sig
-    type node
+    module Node : sig
+        type t
+        val compare : int -> int -> int
+    end
+    type node = int
     type pair
-    type graph 
+    type graph
 
-    val distance : int -> int -> graph -> float
+    val distance_squared : node -> node -> graph -> float
+    val distance : node -> node -> graph -> float
 
-    val distance_path : int list -> graph -> float
+    val distance_path : node list -> graph -> float
 
     val empty : graph
 
