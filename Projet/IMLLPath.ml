@@ -32,6 +32,23 @@ module MLLPath = struct
         let data_next = IntMap.find next path in
         let IntMap.update u  path *)
 
+    let swap u v p =
+        if u = v
+        then p
+        else
+            (* TODO: Possible optimization (if u -> v or v -> u *)
+            let (last_u, next_u) = IntMap.find u p in
+            let (last_v, next_v) = IntMap.find v p in
+            let (last_last_u, _) = IntMap.find last_u p in
+            let (_, next_next_u) = IntMap.find next_u p in
+            let (last_last_v, _) = IntMap.find last_v p in
+            let (_, next_next_v) = IntMap.find next_v p in
+            IntMap.add v (last_u, next_u)
+            (IntMap.add last_u (last_last_u, v)
+            (IntMap.add next_u (v, next_next_u)
+            (IntMap.add u (last_v, next_v)
+            (IntMap.add last_v (last_last_v, u)
+            (IntMap.add next_v (u, next_next_v) p)))))
 
     (* val set_last : key -> key -> path -> path *)
 
@@ -52,15 +69,51 @@ module MLLPath = struct
     let mem u p = IntMap.mem u p
 
     exception AlreadyInPath
+    exception NotInPath
     (* Insert a new node in the path *)
     (* Example: insert u [after] last [in] p *)
     let insert u last p =
-        if mem u p then raise AlreadyInPath else
-        let (last_last, last_next) = IntMap.find last p in
-        IntMap.add
-            last (last_last, u)
-            (IntMap.add u (last, last_next) p)
+        if mem u p
+        then raise AlreadyInPath
+        else
+            let (last_last, last_next) = IntMap.find last p in
+            let (_, last_next_next) = IntMap.find last_next p in
+            IntMap.add
+                last (last_last, u)
+                (IntMap.add u (last, last_next)
+                (IntMap.add last_next (u, last_next_next) p))
+
+    let remove_standard u p =
+        let (last, next) = IntMap.find u p in
+        let (last_last, _) = IntMap.find last p in
+        let (_, next_next) = IntMap.find next p in
+        let _ = Printf.printf "%d %d\n" last next in
+        IntMap.add last (last_last, next)
+        (IntMap.add next (last, next_next)
+        (IntMap.remove u p))
 
     let make u =
         IntMap.add u (u, u) empty
+
+    let remove_two u p =
+        (*
+         * Seulement deux éléments dans le chemin
+         * On veut enlever 1
+         * Si on part de 1 -> 2 -> 1
+         * On renvoie 2
+         *)
+        let (last, next) = IntMap.find u p in
+            make last
+
+    let remove u p =
+        if not (mem u p)
+        then raise NotInPath
+        else
+            let (last, next) = IntMap.find u p in
+            if last = u then
+                empty
+            else if last = next then
+                remove_two u p
+            else
+                remove_standard u p
 end
