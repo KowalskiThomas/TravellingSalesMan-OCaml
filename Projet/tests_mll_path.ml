@@ -148,18 +148,138 @@ let test_remove_absent =
         Printf.printf "XX Test Remove Absent\n"
 
 
-(*
+let test_swap_not_in_path = 
+    let initial = MLLPath.insert 3 1 (MLLPath.make 1) in
+    let success = 
+        try
+            let _ = MLLPath.swap 1 2 initial in false
+        with MLLPath.NotInPath -> true
+    in 
+    if success then
+        Printf.printf "OK Test Swap Not In Path\n"
+    else
+        Printf.printf "XX Test Swap Not In Path\n"
+
+let test_swap_touching = 
+    (* Go from 1 2 3 4 5 6 7 *)
+    (* TO      1 2 4 3 5 6 7 *)
+    let initial = MLLPath.insert 7 6 (MLLPath.insert 6 5 (MLLPath.insert 5 4 (MLLPath.insert 4 3 (MLLPath.insert 3 2 (MLLPath.insert 2 1 (MLLPath.make 1)))))) in
+    let swapped = MLLPath.swap 3 4 initial in 
+    let next_2 = MLLPath.get_next 2 swapped in 
+    let next_3 = MLLPath.get_next 3 swapped in 
+    let next_4 = MLLPath.get_next 4 swapped in 
+    let last_5 = MLLPath.get_last 5 swapped in 
+    let last_3 = MLLPath.get_last 3 swapped in 
+    let last_4 = MLLPath.get_last 4 swapped in 
+    let test_1 = next_2 = 4 in
+    let test_2 = next_3 = 5 in 
+    let test_3 = next_4 = 3 in 
+    let _ =
+        if test_1 && test_2 && test_3 then
+            Printf.printf "OK touching next\n"
+        else
+            let _ = MLLPath.print 1 swapped in 
+            Printf.printf "XX touching next\n" 
+    in  
+    let test_1 = last_4 = 2 in 
+    let test_2 = last_3 = 4 in 
+    let test_3 = last_5 = 3 in
+    let _ =
+        if test_1 && test_2 && test_3 then
+            Printf.printf "OK touching last\n"
+        else
+            let _ = MLLPath.print 1 swapped in 
+            Printf.printf "XX touching last\n" in ()
+
+let test_swap_touching_3 = 
+    let _ = Printf.printf "Testing swap touching 3\n" in 
+    (* From 1 2 3 *)
+    (* To   1 3 2 *)
+    let initial = MLLPath.insert 3 2 (MLLPath.insert 2 1 (MLLPath.make 1)) in 
+    let swapped = MLLPath.swap 2 3 initial in 
+    let next_1 = MLLPath.get_next 1 swapped in 
+    let next_2 = MLLPath.get_next 2 swapped in
+    let next_3 = MLLPath.get_next 3 swapped in
+    let last_1 = MLLPath.get_last 1 swapped in 
+    let last_2 = MLLPath.get_last 2 swapped in
+    let last_3 = MLLPath.get_last 3 swapped in
+    let test_1 = next_1 = 3 in
+    let test_2 = next_3 = 2 in 
+    let test_3 = next_2 = 1 in 
+    let _ = 
+        if test_1 && test_2 && test_3 then
+            Printf.printf "OK Touching 3 Next\n"
+        else 
+            let _ = MLLPath.print 1 swapped in 
+            Printf.printf "XX Touching 3 Next\n"
+    in 
+    let test_1 = last_1 = 2 in 
+    let test_2 = last_2 = 3 in
+    let test_3 = last_3 = 1 in 
+    let _ = 
+        if test_1 && test_2 && test_3 then
+            Printf.printf "OK Touching 3 Last\n"
+        else 
+            let _ = MLLPath.print 1 swapped in 
+            Printf.printf "XX Touching 3 Last\n" in ()
+
+
+
+let test_swap_unary = 
+    let initial = MLLPath.make 1 in 
+    let swapped = MLLPath.swap 1 1 initial in 
+    if swapped = initial then
+        Printf.printf "OK Test Swap Unary\n"
+    else
+        Printf.printf "XX Test Swap Unary\n"
+
+let test_swap_binary = 
+    let initial = MLLPath.insert 2 1 (MLLPath.make 1) in 
+    let swapped = MLLPath.swap 1 2 initial in 
+    if swapped = initial then
+        Printf.printf "OK Test Swap Binary\n"
+    else
+        Printf.printf "XX Test Swap Binary\n"
+
+let test_swap_binary_permutation = 
+    let initial = MLLPath.insert 2 1 (MLLPath.make 1) in 
+    let swapped_1 = MLLPath.swap 1 2 initial in 
+    let swapped_2 = MLLPath.swap 2 1 initial in
+    if swapped_1 = swapped_2 then
+        Printf.printf "OK Test Swap Binary Permutation\n"
+    else
+        Printf.printf "XX Test Swap Binary Permutation\n"
+
 let test_swap =
     (* Initial : 1 2 3 4 5 6 7*)
     let initial = MLLPath.insert 7 6 (MLLPath.insert 6 5 (MLLPath.insert 5 4 (MLLPath.insert 4 3 (MLLPath.insert 3 2 (MLLPath.insert 2 1 (MLLPath.make 1)))))) in
-    let swapped
-    let test = next_2 = 4 && next_3 = 2 in
-    if test then
+    (* Swapped : 1 2 3 6 5 4 7 *)
+    let swapped = MLLPath.swap 6 4 initial in
+    let next_1 = MLLPath.get_next 1 swapped in 
+    let next_2 = MLLPath.get_next 2 swapped in 
+    let next_3 = MLLPath.get_next 3 swapped in 
+    let next_4 = MLLPath.get_next 4 swapped in 
+    let next_5 = MLLPath.get_next 5 swapped in 
+    let next_6 = MLLPath.get_next 6 swapped in 
+    let next_7 = MLLPath.get_next 7 swapped in 
+    let last_1 = MLLPath.get_last 1 swapped in 
+    let last_2 = MLLPath.get_last 2 swapped in 
+    let last_3 = MLLPath.get_last 3 swapped in 
+    let last_4 = MLLPath.get_last 4 swapped in 
+    let last_5 = MLLPath.get_last 5 swapped in 
+    let last_6 = MLLPath.get_last 6 swapped in 
+    let last_7 = MLLPath.get_last 7 swapped in 
+    let test_1 = next_1 = 2 && last_1 = 7 in 
+    let test_2 = next_2 = 3 && last_2 = 1 in 
+    let test_3 = next_3 = 6 && last_3 = 2 in 
+    let test_4 = next_4 = 5 && last_4 = 5 in 
+    let test_5 = next_5 = 4 && last_5 = 6 in 
+    let test_6 = next_6 = 7 && last_6 = 3 in 
+    let test_7 = next_7 = 1 && last_7 = 4 in 
+    if test_1 && test_2 && test_3 && test_4 && test_5 && test_6 && test_7 then
         Printf.printf "OK Test Swap\n"
     else
-        Printf.printf "XX Test Swap\n\tNext of 2 = %d\n\tNext of 3 = %d\n" next_2 next_3
-*)
-
+        Printf.printf "XX Test Swap\n"
 
 (*
     (* Swapped : 1 3 2 4 *)

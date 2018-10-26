@@ -19,6 +19,9 @@ module MLLPath = struct
     type node = Node.t
     type value = int * int
 
+    exception AlreadyInPath
+    exception NotInPath
+
     module IntMap = Map.Make(Node)
 
     type path = value IntMap.t
@@ -27,30 +30,12 @@ module MLLPath = struct
 
     let is_empty p = IntMap.is_empty p
 
+    let mem u p = IntMap.mem u p
+
     (* exception NotInPath
     let set_next u next p =
         let data_next = IntMap.find next path in
         let IntMap.update u  path *)
-
-    let swap u v p =
-        if u = v
-        then p
-        else
-            (* TODO: Possible optimization (if u -> v or v -> u *)
-            let (last_u, next_u) = IntMap.find u p in
-            let (last_v, next_v) = IntMap.find v p in
-            let (last_last_u, _) = IntMap.find last_u p in
-            let (_, next_next_u) = IntMap.find next_u p in
-            let (last_last_v, _) = IntMap.find last_v p in
-            let (_, next_next_v) = IntMap.find next_v p in
-            IntMap.add v (last_u, next_u)
-            (IntMap.add last_u (last_last_u, v)
-            (IntMap.add next_u (v, next_next_u)
-            (IntMap.add u (last_v, next_v)
-            (IntMap.add last_v (last_last_v, u)
-            (IntMap.add next_v (u, next_next_v) p)))))
-
-    (* val set_last : key -> key -> path -> path *)
 
     let get_next u p =
         let (_, next) = IntMap.find u p in
@@ -60,16 +45,74 @@ module MLLPath = struct
         let (last, _) = IntMap.find u p in
         last
 
+    let print u p = 
+        let rec aux initial u p = 
+            let next = get_next u p in 
+            let _ = Printf.printf "%d " u in
+            if initial = next then () else aux initial next p
+        in 
+            let _ = aux u u p in
+            let _ = Printf.printf "\n" in ()
+
+    let swap_touching_3 llu u v p = 
+        (* We have lu u v *)
+        (* We want lu v u *)
+        IntMap.add llu (u, v)
+        (IntMap.add v (llu, u) 
+        (IntMap.add u (v, llu) IntMap.empty))
+
+    let swap_touching u v p = 
+        (* We have something like 1 2 u v 5 6 7 8 *)
+        (* We want                1 2 v u 5 6 7 8 *)
+        let last_u = get_last u p in
+        let next_v = get_next v p in 
+        let last_last_u = get_last last_u p in 
+        let next_next_v = get_next next_v p in 
+        if last_last_u = v then
+            swap_touching_3 last_u u v p        
+        else
+            let result = 
+                IntMap.add last_u (last_last_u, v)
+                (IntMap.add next_v (u, next_next_v)
+                (IntMap.add v (last_u, u) 
+                (IntMap.add u (v, next_v) p))) in 
+            result
+
+    let swap u v p =
+        let _ = print u p in
+        if not(mem u p) || not(mem v p) 
+        then raise NotInPath 
+        else if u = v
+        then p
+        else
+            (* TODO: Possible optimization (if u -> v or v -> u *)
+            let (last_u, next_u) = IntMap.find u p in
+            if last_u = next_u 
+            then p
+            else
+                let (last_v, next_v) = IntMap.find v p in
+                if last_v = u || last_u = v then
+                    swap_touching u v p 
+                else
+                    let (last_last_u, _) = IntMap.find last_u p in
+                    let (_, next_next_u) = IntMap.find next_u p in
+                    let (last_last_v, _) = IntMap.find last_v p in
+                    let (_, next_next_v) = IntMap.find next_v p in
+                    IntMap.add v (last_u, next_u)
+                    (IntMap.add last_u (last_last_u, v)
+                    (IntMap.add next_u (v, next_next_u)
+                    (IntMap.add u (last_v, next_v)
+                    (IntMap.add last_v (last_last_v, u)
+                    (IntMap.add next_v (u, next_next_v) p)))))
+
+    (* val set_last : key -> key -> path -> path *)
+
     (* let mem u p =
         let result = IntMap.find_opt u p in
         match result with
         | None -> false
         | Some _ -> true *)
 
-    let mem u p = IntMap.mem u p
-
-    exception AlreadyInPath
-    exception NotInPath
     (* Insert a new node in the path *)
     (* Example: insert u [after] last [in] p *)
     

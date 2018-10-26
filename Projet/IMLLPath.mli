@@ -23,6 +23,8 @@ module MLLPath : sig
     val get_next : node -> path -> node
     val get_last : node -> path -> node
 
+    val print : node -> path -> unit
+
     val mem : node -> path -> bool
 
     (* Insert a new node in the path *)
