@@ -23,6 +23,7 @@ let cities_distance_1 = [
 let test_distance_1 =
     let carte = add_cities cities_distance_1 Carte.empty in
     let d = Carte.distance 0 1 carte in
+    (* Expected: (2 - 1)² = 1 *)
     let test = d = 1.0 in
     if test then
         Printf.printf "OK Test Distance 1\n"
@@ -36,7 +37,7 @@ let cities_distance_2 = [
 let test_distance_2 =
     let carte = add_cities cities_distance_2 Carte.empty in
     let d = Carte.distance 0 1 carte in
-    let expected = 2.0 ** (1. /. 2.) in
+    let expected = 2.0 in
     let test = d = expected in
     if test then
         Printf.printf "OK Test Distance 2\n"

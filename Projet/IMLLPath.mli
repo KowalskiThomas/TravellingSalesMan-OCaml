@@ -38,4 +38,5 @@ module MLLPath : sig
 
     val length : int -> path -> Carte.graph -> float
     val insert_minimize_length : int -> int -> path -> Carte.graph -> path
+    val insert_random_minimize : int -> path -> Carte.graph -> path
 end

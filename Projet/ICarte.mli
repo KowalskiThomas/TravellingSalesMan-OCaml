@@ -14,15 +14,24 @@ module CompleteCarte : sig
         val compare : int -> int -> int
     end
     type node = int
-    type pair
+    type pair = string * (float * float)
     type graph
 
-    val distance_squared : node -> node -> graph -> float
+    val find : node -> graph -> pair
+
+    val distance_from_coordinates : float -> float -> float -> float -> float
     val distance : node -> node -> graph -> float
+    val distance_rooted : node -> node -> graph -> float
 
     val distance_path : node list -> graph -> float
 
     val empty : graph
 
     val add_node : int -> string -> float -> float -> graph -> graph
+
+    val fold : (node -> pair -> 'a -> 'a) -> graph -> 'a -> 'a
+    val bindings : graph -> (node * pair) list
+    val get_random : graph -> (node * pair)
+
+    val print : graph -> unit
 end

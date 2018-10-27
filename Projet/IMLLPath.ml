@@ -178,28 +178,112 @@ module MLLPath = struct
 
     module Carte = ICarte.CompleteCarte
 
-    let length u p c =
+    (*
+    Calcule la longueur d'un chemin
+    u : Ville de départ de la tournée (quelconque)
+    p : Chemin dont on veut la longueur
+    c : Carte
+    *)
+    let length u p c =  
+        (*
+        rec calcule la longueur de la fin de la tournée
+        initial : Ville de départ de la tournée
+        u : Ville en cours d'évaluation
+        *)
         let rec aux initial u =
+            (* On détermine la ville après u *)
             let next = get_next u p in
+            (* On détermine la distance entre u et la ville suivante *)
             let distance = Carte.distance u next c in 
+            (* Si la ville suivante est la ville de départ, on a fini de calculer *)
             if next = initial
             then distance
+            (* Sinon, on renvoie la distance entre u et la suivante + la distance sur la fin de la tournée *)
             else distance +. aux initial next
+        (* Appel à aux (de u à u) *)
         in aux u u
 
+    (* 
+    Insère une ville au bon endroit pour minimiser la longueur totale 
+    start : Ville de départ de la tournée (quelconque)
+    to_insert : Indice dans la carte de la ville à insérer    
+    p : Chemin dans lequel insérer la ville
+    c : Carte
+    Revoie: p avec to_insert dedans
+    *)
     let insert_minimize_length start to_insert p c =
+        (*
+        rec trouve où insérer la ville
+        initial : Ville de départ de la tournée
+        u : Ville en cours d'évaluation
+        *)
         let rec aux initial u =
+            (* Calcul du successeur de u dans p *)
             let next = get_next u p in 
-            let delta = Carte.distance u to_insert c +. Carte.distance to_insert next c in 
+            (* Calcul de la différence de distance en cas d'insertion après u *)
+            let distance_u_next = Carte.distance u next c in 
+            let somme_distances = Carte.distance u to_insert c +. Carte.distance to_insert next c in 
+            let delta =  somme_distances -. distance_u_next in
+            (* let _ = Printf.printf "Distance de %d à %d : %f\n" u next distance_u_next in 
+            let _ = Printf.printf "Delta avec %d après %d : %f\n" to_insert u delta in 
+            let _ = Printf.printf "Distance %d à %d : %f, %d à %d : %f\n" u to_insert (Carte.distance u to_insert c) to_insert next (Carte.distance next to_insert c) in 
+            let _ = Printf.printf "\n" in *)
+            (* Si on a fait le tour, on n'a plus d'appel récursif à faire *)
             if next = initial
             then (delta, u)
             else 
+                (* On appelle récursivement pour obtenir le meilleur endroit où insérer la ville dans la fin de la tournée *)
                 let delta_next, after_next = aux initial next in 
+                (* Si insérer dans la fin de la tournée offre un meilleur delta *)
                 if delta_next < delta 
                 then (delta_next, after_next) 
                 else (delta, u)
         in 
+        (* On détermine après quelle ville insérer la nouvelle ville *)
         let _, after = aux start start in 
-        let _ = Printf.printf "u = %d should be inserted after %d\n" to_insert after in
+        (* Débogage *)
+        (* let _ = Printf.printf "u = %d should be inserted after %d\n" to_insert after in *)
+        (* On renvoie p avec to_insert insérée au bon endroit *)
         insert to_insert after p 
+
+    let rec find_nearest_from_city u cities = 
+        let (_, (xu, yu)) = Carte.find u cities in
+        let rec aux u l = match l with
+            | [] -> failwith "empty list for find_nearest_city"
+            | [index, (name, (x, y))] -> index, (Carte.distance_from_coordinates xu yu x y)
+            | (index, (name, (x, y)))::t -> 
+                let dist = Carte.distance_from_coordinates xu yu x y in
+                let (index_next, dist_next) = aux u t in 
+                if dist < dist_next 
+                then index, dist
+                else index_next, dist_next
+        in aux u (Carte.bindings cities)
+
+(* let (nearest_distance, nearest) = 
+    Carte.fold 
+    (fun index (name, (x, y)) (best_distance, best_city) -> 
+        let test = x *. y in 
+        let dist = Carte.distance u index in
+        if dist < best_distance 
+        then dist, elt
+        else best_distance, best_city)
+    c (9999999, "") in *)
+    let find_nearest start p c = 
+        let rec aux initial u = 
+            let next = get_next u p in 
+            let nearest, nearest_distance = find_nearest_from_city u c in
+            if next = initial 
+            then u, nearest, nearest_distance
+            else 
+                let best_next, nearest_next, nearest_distance_next = aux initial next in 
+                if nearest_distance <= nearest_distance_next 
+                then u, nearest, nearest_distance
+                else best_next, nearest_next, nearest_distance_next
+        in 
+        aux start start
+
+    let insert_random_minimize start p c = 
+        let (random_city_index, _) = Carte.get_random c in 
+        insert_minimize_length start random_city_index p c 
+
 end
