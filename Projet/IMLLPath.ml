@@ -246,7 +246,7 @@ module MLLPath = struct
         (* On renvoie p avec to_insert insérée au bon endroit *)
         insert to_insert after p 
 
-    let rec find_nearest_from_city u cities = 
+    (* let rec find_nearest_from_city u cities = 
         let (_, (xu, yu)) = Carte.find u cities in
         let rec aux u l = match l with
             | [] -> failwith "empty list for find_nearest_city"
@@ -257,7 +257,9 @@ module MLLPath = struct
                 if dist < dist_next 
                 then index, dist
                 else index_next, dist_next
-        in aux u (Carte.bindings cities)
+        in aux u (Carte.bindings cities) *)
+
+    let find_nearest_from_city u cities = let b = Carte.bindings cities in  u + 1, 0.0
 
 (* let (nearest_distance, nearest) = 
     Carte.fold 
@@ -271,7 +273,7 @@ module MLLPath = struct
     let find_nearest start p c = 
         let rec aux initial u = 
             let next = get_next u p in 
-            let nearest, nearest_distance = find_nearest_from_city u c in
+            let (nearest, nearest_distance) = 1, 0.0 in (* find_nearest_from_city u c in *)
             if next = initial 
             then u, nearest, nearest_distance
             else 

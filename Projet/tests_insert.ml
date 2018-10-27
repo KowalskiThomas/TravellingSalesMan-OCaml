@@ -43,3 +43,19 @@ let _ = MLLPath.print 0 chemin_avec_3
 let _ =
     let length = MLLPath.length 0 chemin_avec_3 carte in 
         Printf.printf "Longueur chemin modifié : %f\n" length
+
+let _ = Printf.printf "\n\n\nTests find_nearest"
+
+let cities = [
+    ("Paris", 1.0, 0.0);
+    ("Londres", 2.0, 0.0);
+    ("Nearest", 1.0, 2.0);
+    ("Farthest", 1.0, 3.0)
+]
+
+let cities = make_carte_from_cities cities
+let chemin = MLLPath.insert 0 1 (MLLPath.make 1)
+
+let _ =
+    let nearest = MLLPath.find_nearest 0 chemin cities in 
+    Printf.printf "fini\n"
