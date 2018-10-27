@@ -279,17 +279,5 @@ let test_swap =
     if test_1 && test_2 && test_3 && test_4 && test_5 && test_6 && test_7 then
         Printf.printf "OK Test Swap\n"
     else
+        let _ = MLLPath.print 1 swapped in 
         Printf.printf "XX Test Swap\n"
-
-(*
-    (* Swapped : 1 3 2 4 *)
-    let swapped = MLLPath.swap 2 3 initial in
-    (* Next of 2 should be 4 *)
-    let next_2 = MLLPath.get_next 2 swapped in
-    (* Next of 3 should be 2 *)
-    let next_3 = MLLPath.get_next 3 swapped in
-    (* Last of 4 should be 2 *)
-    let last_4 = MLLPath.get_last 4 swapped in
-    (* Next of 1 should be 3 *)
-    let next_1 = MLLPath.get_next 1 swapped in
-*)

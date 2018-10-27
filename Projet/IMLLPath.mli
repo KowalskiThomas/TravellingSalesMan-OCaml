@@ -5,6 +5,7 @@
 *)
 
 module MLLPath : sig
+    module Carte = ICarte.CompleteCarte
     type node = int
     type value
     type path
@@ -34,4 +35,7 @@ module MLLPath : sig
     val remove : node -> path -> path
 
     val make : int -> path
+
+    val length : int -> path -> Carte.graph -> float
+    val insert_minimize_length : int -> int -> path -> Carte.graph -> path
 end

@@ -175,4 +175,31 @@ module MLLPath = struct
                 remove_two u p
             else
                 remove_standard u p
+
+    module Carte = ICarte.CompleteCarte
+
+    let length u p c =
+        let rec aux initial u =
+            let next = get_next u p in
+            let distance = Carte.distance u next c in 
+            if next = initial
+            then distance
+            else distance +. aux initial next
+        in aux u u
+
+    let insert_minimize_length start to_insert p c =
+        let rec aux initial u =
+            let next = get_next u p in 
+            let delta = Carte.distance u to_insert c +. Carte.distance to_insert next c in 
+            if next = initial
+            then (delta, u)
+            else 
+                let delta_next, after_next = aux initial next in 
+                if delta_next < delta 
+                then (delta_next, after_next) 
+                else (delta, u)
+        in 
+        let _, after = aux start start in 
+        let _ = Printf.printf "u = %d should be inserted after %d\n" to_insert after in
+        insert to_insert after p 
 end
