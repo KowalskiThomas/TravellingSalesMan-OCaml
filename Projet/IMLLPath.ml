@@ -317,4 +317,12 @@ module MLLPath = struct
         let (random_city_index, _) = Carte.get_random c in 
         insert_minimize_length random_city_index p c 
 
+    let get_next_by_name name p c = 
+        let index = Carte.get_index name c in 
+        get_next index p
+
+    let get_last_by_name name p c = 
+        let index = Carte.get_index name c in 
+        get_last index p 
+
 end

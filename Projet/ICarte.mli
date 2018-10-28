@@ -73,4 +73,9 @@ module CompleteCarte : sig
 
     (* Comme find_nearest, mais avec la ville la plus éloignée. *)
     val find_farthest : node -> node_set -> carte -> (node * float) 
+
+    (* A FINS DE TESTS *)
+    val get_index : string -> carte -> node
+    val get_name : node -> carte -> string
+    val get_coordinates : node -> carte -> (float * float)
 end

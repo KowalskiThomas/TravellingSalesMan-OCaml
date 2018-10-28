@@ -94,4 +94,20 @@ module CompleteCarte = struct
     let make_carte_from_cities cities = 
         add_cities cities empty
 
+    let get_index target c = 
+        let rec find_from_bindings l = match l with
+            | [] -> failwith (target ^ " non trouvé dans la Carte")
+            | (idx, (name, (_, _)))::t -> 
+                if name = target 
+                then idx
+                else find_from_bindings t
+            in 
+            let b = bindings c in
+            find_from_bindings b
+        
+    let get_name idx c = 
+        let (name, (_, _)) = IntMap.find idx c in name
+
+    let get_coordinates idx c = 
+        let (_, coord) = IntMap.find idx c in coord
 end

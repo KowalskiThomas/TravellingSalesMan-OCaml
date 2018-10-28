@@ -51,13 +51,13 @@ let test_nearest_farthest =
 
 let test_insert_nearest = 
     let cities = [
-            ("Paris", 1., 1.);
-            ("Londres", 5., 2.);
-            ("Berlin", 10., 3.);
-            ("Nearest", 7., 2.);
-            ("Mid", 2., 4.);
-            ("Budapest", 9., 6.);
-            ("Farthest", 4., -2.);
+        ("Paris", 1., 1.);
+        ("Londres", 5., 2.);
+        ("Berlin", 10., 3.);
+        ("Nearest", 7., 2.);
+        ("Mid", 2., 4.);
+        ("Budapest", 9., 6.);
+        ("Farthest", 4., -2.);
     ] in
     let carte = Carte.make_carte_from_cities cities in 
     (* On créé un chemin Paris -> Londres -> Berlin *)
@@ -65,4 +65,44 @@ let test_insert_nearest =
     (* On ajoute au chemin le point le plus proche en minimisant la distance totale *)
     let chemin_avec_plus_proche = MLLPath.insert_nearest_minimize_length chemin carte in
     (* On affiche le chemin. Normalement, ça donne Paris -> Londres -> Nearest -> Berlin -> Budapest *)
-    MLLPath.print_with_names chemin_avec_plus_proche carte
+    (* MLLPath.print_with_names chemin_avec_plus_proche carte *)
+    let next_londres = MLLPath.get_next_by_name "Londres" chemin_avec_plus_proche carte in
+    let next_nearest = MLLPath.get_next_by_name "Nearest" chemin_avec_plus_proche carte in 
+    let name_next_londres = Carte.get_name next_londres carte in 
+    let name_next_nearest = Carte.get_name next_nearest carte in 
+    (* On ne vérifie pas que l'insertion a bien mis à jour les last, puisqu'on a déjà testé insert dans un autre test *)
+    let test_1 = name_next_londres = "Nearest" in
+    let test_2 = name_next_nearest = "Berlin" in 
+    if test_1 && test_2 then
+        Printf.printf "OK Tests Nearest\n" 
+    else
+        Printf.printf "XX Tests Nearest\n\tNext Londres = %s\n\tNext Nearest = %s\n" name_next_londres name_next_nearest
+
+let test_insert_farthest =
+    let cities = [
+        ("Paris", 1., 1.);
+        ("Londres", 5., 2.);
+        ("Berlin", 10., 3.);
+        ("Nearest", 7., 2.);
+        ("Mid", 2., 4.);
+        ("Budapest", 9., 6.);
+        ("Farthest", 4., -2.);
+    ] in
+    let carte = Carte.make_carte_from_cities cities in 
+    (* On créé un chemin Paris -> Londres -> Berlin *)
+    let chemin = MLLPath.insert 5 2 (MLLPath.insert 2 1 (MLLPath.insert 1 0 (MLLPath.make 0))) in
+    (* On ajoute au chemin le point le plus proche en minimisant la distance totale *)
+    let chemin_avec_plus_proche = MLLPath.insert_nearest_minimize_length chemin carte in
+    (* On affiche le chemin. Normalement, ça donne Paris -> Londres -> Nearest -> Berlin -> Budapest *)
+    (* MLLPath.print_with_names chemin_avec_plus_proche carte *)
+    let next_londres = MLLPath.get_next_by_name "Londres" chemin_avec_plus_proche carte in
+    let next_nearest = MLLPath.get_next_by_name "Nearest" chemin_avec_plus_proche carte in 
+    let name_next_londres = Carte.get_name next_londres carte in 
+    let name_next_nearest = Carte.get_name next_nearest carte in 
+    (* On ne vérifie pas que l'insertion a bien mis à jour les last, puisqu'on a déjà testé insert dans un autre test *)
+    let test_1 = name_next_londres = "Nearest" in
+    let test_2 = name_next_nearest = "Berlin" in 
+    if test_1 && test_2 then
+        Printf.printf "OK Tests Insert Farthest\n" 
+    else
+        Printf.printf "XX Tests Nearest\n\tNext Londres = %s\n\tNext Nearest = %s\n" name_next_londres name_next_nearest
