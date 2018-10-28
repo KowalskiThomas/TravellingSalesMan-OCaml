@@ -35,7 +35,7 @@ module MLLPath = struct
         let data_next = IntMap.find next path in
         let IntMap.update u  path *)
 
-    let get_next u p =
+    let get_next (u : node) (p : path) =
         let (_, next) = IntMap.find u p in
         next
 
@@ -206,14 +206,15 @@ module MLLPath = struct
         (* Appel à aux (de u à u) *)
         in aux start
 
-    (* let to_set path = 
+    let to_set (path : path) = 
         let start = get_first path in
         let rec to_set_from u = 
+            let _ = get_first path in 
             let next = get_next u path in 
             if next = start
             then Carte.NodeSet.add u (Carte.NodeSet.empty)
             else Carte.NodeSet.add u (to_set_from next)
-        in to_set_from start *)
+        in to_set_from start
 
     (* 
     Insère une ville au bon endroit pour minimiser la longueur totale 

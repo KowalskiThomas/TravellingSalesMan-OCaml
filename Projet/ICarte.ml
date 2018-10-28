@@ -55,16 +55,20 @@ module CompleteCarte = struct
         distance u v g ** (1. /. 2.)
 
     let find_nearest from exclude cities = 
+        let (name_from, (x_from, y_from)) = IntMap.find from cities in 
         let rec aux bindings = match bindings with
-            | [] -> None
+            | [] -> failwith "No city found"
+            | [index, (name, (x, y))] -> index, distance_from_coordinates x_from y_from x y 
             | (index, (name, (x, y)))::t -> 
+                (* Si la ville en cours est à exlure *)
                 if NodeSet.mem index exclude
                 then aux t
-                else Some (0, 1.0)
-                    (* let best_next, nearest_next, nearest_distance_next = aux initial next in 
-                    if nearest_distance <= nearest_distance_next 
-                    then u, nearest, nearest_distance
-                    else best_next, nearest_next, nearest_distance_next *)
+                else 
+                    let dist = distance_from_coordinates x_from y_from x y in
+                    let (best_next, dist_next) = aux t in
+                    if dist_next > dist
+                    then index, dist
+                    else best_next, dist_next
         in 
         aux (bindings cities)
 

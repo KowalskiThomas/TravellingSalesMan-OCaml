@@ -38,7 +38,7 @@ module MLLPath : sig
 
     (* Determines the length of a path *)
     val length : path -> Carte.graph -> float
-    (* val to_set : path -> Carte.node_set *)
+    val to_set : path -> Carte.node_set
     val get_first : path -> node
     val insert_minimize_length : node -> path -> Carte.graph -> path
     val insert_random_minimize : path -> Carte.graph -> path
