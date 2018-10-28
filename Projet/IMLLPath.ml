@@ -30,15 +30,12 @@ module MLLPath = struct
 
     let mem u p = IntMap.mem u p
 
-    (* exception NotInPath
-    let set_next u next p =
-        let data_next = IntMap.find next path in
-        let IntMap.update u  path *)
-
+    (* TODO: Add exception EmptyPath *)
     let get_next (u : node) (p : path) =
         let (_, next) = IntMap.find u p in
         next
 
+    (* TODO: Add exception EmptyPath *)
     let get_last u p =
         let (last, _) = IntMap.find u p in
         last

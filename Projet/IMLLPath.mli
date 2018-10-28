@@ -5,43 +5,70 @@
 *)
 
 module MLLPath : sig
+    (* Le module Carte utilisé pour calculer les distances *)
     module Carte = ICarte.CompleteCarte
+    (* Un ensemble de villes d'une carte (<=> noeuds sur un graphe) *)
     module NodeSet : Set.S
+    (* Une ville. Dans un chemin, elle est représentée par un entier qui est son "indice" dans la carte *)
     type node = int
+    (* Le type des données contenues dans la Map. En pratique, c'est un couple (précédent, suivant) d'indices *)
     type value
+    (* Le type des chemins *)
     type path
 
+    (* Exception levée si on essaie d'insérer une ville déjà dans le chemin *)
     exception AlreadyInPath
+    (* Exception levée si on essaie d'obtenir des informations ou d'insérer après une ville absente du chemin *)
     exception NotInPath
 
+    (* Renvoie un chemin vide *)
     val empty : path
+
+    (* Vérifie si un chemin est vide *)
     val is_empty : path -> bool
 
+    (* Echange deux villes sur un chemin *)
     val swap : node -> node -> path -> path
 
+    (* Trouve la ville suivante dans un chemin *)
     val get_next : node -> path -> node
+
+    (* Trouve la ville précédente dans un chemin *)
     val get_last : node -> path -> node
 
+    (* Affiche un chemin (comme suite d'indices) *)
     val print : path -> unit
 
+    (* Vérifie si un indice appartient au chemin *)
     val mem : node -> path -> bool
 
-    (* Insert a new node in the path *)
-    (* Example: insert u [after] last [in] g *)
+    (* Ajoute un indice à un chemin
+    Utilisant: insert [noeud] après [after] dans [chemin] *)
     val insert : node -> node -> path -> path
 
-    (* Remove a node from the path *)
+    (* Supprime un indice d'un chemin
+    Lève NotInPath si l'indice n'y est pas. *)
     val remove : node -> path -> path
 
-    (* Constructs a path with only one city *)
+    (* Construit un chemin de base avec un seul indice. 
+    Le chemin est alors de la forme indice -> (indice, indice) *)
     val make : node -> path
 
-    (* Determines the length of a path *)
+    (* Détermine la longueur totale d'un chemin *)
     val length : path -> Carte.carte -> float
+
+    (* Renvoie un ensemble contenant tous les indices d'un chemin *)
     val to_set : path -> Carte.node_set
+
+    (* Renvoie le premier indice du chemin (dans N) *)
     val get_first : path -> node
+
+    (* Insère un indice dans un chemin en minimsant sa longueur *)
     val insert_minimize_length : node -> path -> Carte.carte -> path
+
+    (* Insère un indice aléatoire de la Carte en minimisant la longueur du chemin *)
     val insert_random_minimize : path -> Carte.carte -> path
 
+    (* Insère la ville la plus proche du chemin dans la Carte non-déjà présente en minimsant sa longueur *)
     val insert_nearest_minimize_length : path -> Carte.carte -> path
 end

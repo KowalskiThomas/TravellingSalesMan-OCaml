@@ -52,9 +52,6 @@ module CompleteCarte = struct
         match data_u, data_v with
         | (_, (xu, yu)), (_, (xv, yv)) -> distance_from_coordinates xu yu xv yv
 
-    let distance_rooted u v g =
-        distance u v g ** (1. /. 2.)
-
     let find_optimal f from exclude cities = 
         let (name_from, (x_from, y_from)) = IntMap.find from cities in 
         let rec aux bindings = match bindings with
