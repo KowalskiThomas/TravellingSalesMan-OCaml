@@ -12,7 +12,7 @@ module CompleteCarte = struct
     type pair = string * (float * float)
 
     module IntMap = Map.Make(Node)
-    type graph = pair IntMap.t
+    type carte = pair IntMap.t
 
     let find u g = IntMap.find u g 
     
