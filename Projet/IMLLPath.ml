@@ -293,24 +293,11 @@ module MLLPath = struct
         let insert_after, nearest, dist = find_nearest_not_in_path cities_list in
         insert nearest insert_after p
 
-    let insert_farthest_minimize_length p cities = 
-        let cities_list = to_list p in
-        let cities_set = to_set p in  
-        let rec find_farthest_not_in_path l = match l with
-            | [] -> failwith "insert_farthest_minimize_length: Nothing left to add to the path."
-            | [u] -> 
-                let farthest, dist = Carte.find_farthest u cities_set cities in 
-                u, farthest, dist
-            | u::t ->
-                let farthest_u, dist_u = Carte.find_farthest u cities_set cities in 
-                let insert_after_next, farthest_next, dist_next = find_farthest_not_in_path t in 
-                if dist_u > dist_next
-                then u, farthest_u, dist_u
-                else insert_after_next, farthest_next, dist_next
-        in 
-        let insert_after, farthest, dist = find_farthest_not_in_path cities_list in 
-        insert farthest insert_after p 
-
+    (* let insert_farthest_minimize_length p c =
+        let path_list = to_list p in
+        let path_set = to_set p in 
+        let maximize_min_distance l = 
+         *)
 
 
     let insert_random_minimize p c = 

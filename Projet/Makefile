@@ -15,7 +15,11 @@ tests_insert:
 	ocamlbuild tests_insert.native
 	./tests_insert.native
 
-all_tests: tests_carte tests_mll_path tests_insert
+tests_optimizer:
+	ocamlbuild tests_optimizer.native
+	./tests_optimizer.native
+
+all_tests: tests_carte tests_mll_path tests_insert tests_optimizer
 
 projet:
 	ocamlbuild projet.native
