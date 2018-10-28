@@ -49,8 +49,8 @@ let _ = Printf.printf "\n\nTests find_nearest\n"
 let cities = [
     ("Paris", 1.0, 0.0);
     ("Londres", 2.0, 0.0);
-    ("Nearest", 1.0, 2.0);
-    ("Farthest", 1.0, 3.0)
+    ("NearestFromParis", 1.0, 2.0);
+    ("FarthestFromParis", 1.0, 3.0)
 ]
 
 let cities = make_carte_from_cities cities
@@ -58,7 +58,10 @@ let chemin = MLLPath.insert 0 1 (MLLPath.make 1)
 
 let _ =
     let idx = 0 in 
-    let nearest, distance = Carte.find_nearest idx (MLLPath.to_set chemin) cities in 
+    let nearest, distance_n = Carte.find_nearest idx (MLLPath.to_set chemin) cities in 
+    let farthest, distance_f = Carte.find_farthest idx (MLLPath.to_set chemin) cities in 
     let name_idx, (_, _) = Carte.find idx cities in 
     let name_nearest, (_, _) = Carte.find nearest cities in 
-    Printf.printf "Nearest from %s : %s (dist = %f)\n" name_idx name_nearest distance
+    let name_farthest, (_, _) = Carte.find farthest cities in 
+    let _ = Printf.printf "Nearest from %s : %s (dist = %f)\n" name_idx name_nearest distance_n in 
+    let _ = Printf.printf "Farthest from %s : %s (dist = %f)\n" name_idx name_farthest distance_f in ()

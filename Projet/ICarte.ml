@@ -54,7 +54,7 @@ module CompleteCarte = struct
     let distance_rooted u v g =
         distance u v g ** (1. /. 2.)
 
-    let find_nearest from exclude cities = 
+    let find_optimal f from exclude cities = 
         let (name_from, (x_from, y_from)) = IntMap.find from cities in 
         let rec aux bindings = match bindings with
             | [] -> failwith "No city found"
@@ -66,11 +66,18 @@ module CompleteCarte = struct
                 else 
                     let dist = distance_from_coordinates x_from y_from x y in
                     let (best_next, dist_next) = aux t in
-                    if dist_next > dist
+                    if f dist_next dist
                     then index, dist
                     else best_next, dist_next
-        in 
-        aux (bindings cities)
+        in aux (bindings cities)
+
+    let find_nearest from exclude cities = 
+        let operator = (fun x y -> y < x) in 
+        find_optimal operator from exclude cities
+
+    let find_farthest from exclude cities = 
+        let operator = (fun x y -> x < y) in 
+        find_optimal operator from exclude cities
 
     let rec distance_path path g = match path with
     | [] -> 0.

@@ -29,6 +29,7 @@ module CompleteCarte : sig
     val distance_path : node list -> graph -> float
 
     val find_nearest : node -> node_set -> graph -> (node * float) 
+    val find_farthest : node -> node_set -> graph -> (node * float) 
 
     val empty : graph
 
