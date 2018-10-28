@@ -3,11 +3,12 @@ module CompleteCarte = struct
         type t = int
         let compare x y = x - y
     end
+    
+    type node = Node.t
 
     module NodeSet = Set.Make(Node)
-
     type node_set = NodeSet.t
-    type node = Node.t
+
     type pair = string * (float * float)
 
     module IntMap = Map.Make(Node)

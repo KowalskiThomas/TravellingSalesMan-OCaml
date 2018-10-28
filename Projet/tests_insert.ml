@@ -65,3 +65,9 @@ let _ =
     let name_farthest, (_, _) = Carte.find farthest cities in 
     let _ = Printf.printf "Nearest from %s : %s (dist = %f)\n" name_idx name_nearest distance_n in 
     let _ = Printf.printf "Farthest from %s : %s (dist = %f)\n" name_idx name_farthest distance_f in ()
+
+let _ = 
+    let _ = Printf.printf "Inserting nearest in following path: " in 
+    let _ = MLLPath.print chemin in 
+    let chemin_avec_plus_proche = MLLPath.insert_nearest_minimize_length chemin cities in 
+    let _ = MLLPath.print chemin_avec_plus_proche in ()

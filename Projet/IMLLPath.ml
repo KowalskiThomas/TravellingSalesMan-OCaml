@@ -67,7 +67,7 @@ module MLLPath = struct
         (IntMap.add v (llu, u) 
         (IntMap.add u (v, llu) IntMap.empty))
 
-    let swap_touching u v p = 
+    let swap_touching (u : node) (v : node) (p : path) = 
         (* We have something like 1 2 u v 5 6 7 8 *)
         (* We want                1 2 v u 5 6 7 8 *)
         let last_u = get_last u p in
@@ -209,12 +209,20 @@ module MLLPath = struct
     let to_set (path : path) = 
         let start = get_first path in
         let rec to_set_from u = 
-            let _ = get_first path in 
             let next = get_next u path in 
             if next = start
             then Carte.NodeSet.add u (Carte.NodeSet.empty)
             else Carte.NodeSet.add u (to_set_from next)
         in to_set_from start
+
+    let to_list (path : path) = 
+        let start = get_first path in 
+        let rec to_list_from u = 
+            let next = get_next u path in 
+            if next = start 
+            then [u]
+            else u::(to_list_from next)
+        in to_list_from start
 
     (* 
     Insère une ville au bon endroit pour minimiser la longueur totale 
@@ -258,30 +266,25 @@ module MLLPath = struct
         (* On renvoie p avec to_insert insérée au bon endroit *)
         insert to_insert after p 
 
-    (* let rec find_nearest_from_city u cities = 
-        let (_, (xu, yu)) = Carte.find u cities in
-        let rec aux u l = match l with
-            | [] -> failwith "empty list for find_nearest_city"
-            | [index, (name, (x, y))] -> index, (Carte.distance_from_coordinates xu yu x y)
-            | (index, (name, (x, y)))::t -> 
-                let dist = Carte.distance_from_coordinates xu yu x y in
-                let (index_next, dist_next) = aux u t in 
-                if dist < dist_next 
-                then index, dist
-                else index_next, dist_next
-        in aux u (Carte.bindings cities) *)
+    let insert_nearest_minimize_length p cities = 
+        let cities_list = to_list p in
+        let cities_set = to_set p in  
+        let rec find_nearest_not_in_path l = match l with
+            | [] -> failwith "insert_nearest_minimize_length: Nothing left to add."
+            | [u] -> 
+                let nearest, dist = Carte.find_nearest u cities_set cities in 
+                u, nearest, dist
+            | u::t -> 
+                let nearest_u, dist_u = Carte.find_nearest u cities_set cities in 
+                let insert_after_next, nearest_next, dist_next = find_nearest_not_in_path t in 
+                if dist_u < dist_next 
+                then u, nearest_u, dist_u
+                else insert_after_next, nearest_next, dist_next
+        in 
+        let insert_after, nearest, dist = find_nearest_not_in_path cities_list in
+        insert nearest insert_after p
 
-    let find_nearest_from_city u cities = let b = Carte.bindings cities in  u + 1, 0.0
 
-(* let (nearest_distance, nearest) = 
-    Carte.fold 
-    (fun index (name, (x, y)) (best_distance, best_city) -> 
-        let test = x *. y in 
-        let dist = Carte.distance u index in
-        if dist < best_distance 
-        then dist, elt
-        else best_distance, best_city)
-    c (9999999, "") in *)
 
     let insert_random_minimize p c = 
         let (random_city_index, _) = Carte.get_random c in 

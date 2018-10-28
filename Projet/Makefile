@@ -1,3 +1,6 @@
+merlin:
+	ocamlbuild merlin.ml
+
 tests_complete_graph:
 	ocamlbuild tests_complete_graph.native
 	./tests_complete_graph.native
