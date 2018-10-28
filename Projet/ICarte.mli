@@ -52,6 +52,12 @@ module CompleteCarte : sig
     val print : carte -> unit
 
 
+    (* Ajoute toutes les villes d'une liste de triplets (nom, x, y) à une carte *)
+    val add_cities : (string * float * float) list -> carte -> carte
+
+    (* Génère une carte à partir d'une liste de triplets (nom, x, y) *)
+    val make_carte_from_cities : (string * float * float) list -> carte
+
     (* Calcule la distance entre deux couples de coordonnées *)
     val distance_from_coordinates : float -> float -> float -> float -> float
 

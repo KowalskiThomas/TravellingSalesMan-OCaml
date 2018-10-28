@@ -84,4 +84,14 @@ module CompleteCarte = struct
         (distance a b g) +.
         (distance_path (b::t) g) (* TODO: Possible optimization here *)
 
+    let add_cities villes carte =
+        let rec aux i villes carte = 
+            match villes with
+            | [] -> carte
+            | (n, x, y)::t -> add_node i n x y (aux (i + 1) t carte)
+        in aux 0 villes carte
+
+    let make_carte_from_cities cities = 
+        add_cities cities empty
+
 end

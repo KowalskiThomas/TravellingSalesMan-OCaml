@@ -11,17 +11,7 @@ let cities = [
     ("Berlin", 1.0, 0.0)
 ]
 
-let add_cities villes carte =
-    let rec aux i villes carte = 
-        match villes with
-        | [] -> carte
-        | (n, x, y)::t -> Carte.add_node i n x y (aux (i + 1) t carte)
-    in aux 0 villes carte
-
-let make_carte_from_cities cities = 
-    add_cities cities Carte.empty
-
-let carte = make_carte_from_cities cities
+let carte = Carte.make_carte_from_cities cities
 
 let _ =
     Carte.print carte
@@ -53,7 +43,7 @@ let cities = [
     ("FarthestFromParis", 1.0, 3.0)
 ]
 
-let cities = make_carte_from_cities cities
+let cities = Carte.make_carte_from_cities cities
 let chemin = MLLPath.insert 0 1 (MLLPath.make 1)
 
 let _ =

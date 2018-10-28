@@ -1,27 +1,22 @@
 module Carte = ICarte.CompleteCarte
 
 let cities = [
-    (0, "Paris", 1.0, 0.0);
-    (1, "Londres", 2.0, 1.0);
-    (2, "Berlin", 2.0, 0.0);
-    (3, "Helsinki", 3.0, 4.0)
+    ("Paris", 1.0, 0.0);
+    ("Londres", 2.0, 1.0);
+    ("Berlin", 2.0, 0.0);
+    ("Helsinki", 3.0, 4.0)
 ]
 
-let rec add_cities villes carte =
-    match villes with
-    | [] -> carte
-    | (i, n, x, y)::t -> Carte.add_node i n x y (add_cities t carte)
-
 let _ =
-    let test = add_cities cities Carte.empty
+    let test = Carte.make_carte_from_cities cities
     in test
 
 let cities_distance_1 = [
-    (0, "Paris", 0.0, 1.0);
-    (1, "Londres", 0.0, 2.0)
+    ("Paris", 0.0, 1.0);
+    ("Londres", 0.0, 2.0)
 ]
 let test_distance_1 =
-    let carte = add_cities cities_distance_1 Carte.empty in
+    let carte = Carte.make_carte_from_cities cities_distance_1 in
     let d = Carte.distance 0 1 carte in
     (* Expected: (2 - 1)² = 1 *)
     let test = d = 1.0 in
@@ -31,11 +26,11 @@ let test_distance_1 =
         Printf.printf "XX Test Distance 1\n"
 
 let cities_distance_2 = [
-    (0, "Paris", 0.0, 1.0);
-    (1, "Londres", 1.0, 0.0)
+    ("Paris", 0.0, 1.0);
+    ("Londres", 1.0, 0.0)
 ]
 let test_distance_2 =
-    let carte = add_cities cities_distance_2 Carte.empty in
+    let carte = Carte.make_carte_from_cities cities_distance_2 in
     let d = Carte.distance 0 1 carte in
     let expected = 2.0 in
     let test = d = expected in
@@ -45,13 +40,13 @@ let test_distance_2 =
         Printf.printf "XX Test Distance 2 [Expected = %f, Returned = %f] \n" expected d
 
 let cities_distance_3 = [
-    (0, "Paris", 2.0, 0.0);
-    (1, "Londres", 1.0, 1.0);
-    (2, "Berlin", 0.0, 1.0);
-    (3, "Madrid", 0.0, 2.0)
+    ( "Paris", 2.0, 0.0);
+    ("Londres", 1.0, 1.0);
+    ("Berlin", 0.0, 1.0);
+    ("Madrid", 0.0, 2.0)
 ]
 let test_distance_3 =
-    let carte = add_cities cities_distance_3 Carte.empty in
+    let carte = Carte.make_carte_from_cities cities_distance_3 in
     let distance_1 = Carte.distance 0 1 carte in
     let distance_2 = Carte.distance 1 2 carte in
     let distance_3 = Carte.distance 2 3 carte in
