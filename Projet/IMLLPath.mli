@@ -6,6 +6,7 @@
 
 module MLLPath : sig
     module Carte = ICarte.CompleteCarte
+    module NodeSet : Set.S
     type node = int
     type value
     type path
@@ -18,13 +19,10 @@ module MLLPath : sig
 
     val swap : node -> node -> path -> path
 
-    (* val set_next : node -> node -> path -> path
-    val set_last : node -> node -> path -> path *)
-
     val get_next : node -> path -> node
     val get_last : node -> path -> node
 
-    val print : node -> path -> unit
+    val print : path -> unit
 
     val mem : node -> path -> bool
 
@@ -32,13 +30,16 @@ module MLLPath : sig
     (* Example: insert u [after] last [in] g *)
     val insert : node -> node -> path -> path
 
+    (* Remove a node from the path *)
     val remove : node -> path -> path
 
+    (* Constructs a path with only one city *)
     val make : int -> path
 
-    val length : int -> path -> Carte.graph -> float
-    val insert_minimize_length : int -> int -> path -> Carte.graph -> path
-    val insert_random_minimize : int -> path -> Carte.graph -> path
-
-    val find_nearest : Carte.node -> path -> Carte.graph -> int
+    (* Determines the length of a path *)
+    val length : path -> Carte.graph -> float
+    (* val to_set : path -> Carte.node_set *)
+    val get_first : path -> node
+    val insert_minimize_length : node -> path -> Carte.graph -> path
+    val insert_random_minimize : path -> Carte.graph -> path
 end

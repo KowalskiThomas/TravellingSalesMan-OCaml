@@ -178,7 +178,7 @@ let test_swap_touching =
         if test_1 && test_2 && test_3 then
             Printf.printf "OK touching next\n"
         else
-            let _ = MLLPath.print 1 swapped in 
+            let _ = MLLPath.print swapped in 
             Printf.printf "XX touching next\n" 
     in  
     let test_1 = last_4 = 2 in 
@@ -188,7 +188,7 @@ let test_swap_touching =
         if test_1 && test_2 && test_3 then
             Printf.printf "OK touching last\n"
         else
-            let _ = MLLPath.print 1 swapped in 
+            let _ = MLLPath.print swapped in 
             Printf.printf "XX touching last\n" in ()
 
 let test_swap_touching_3 = 
@@ -210,7 +210,7 @@ let test_swap_touching_3 =
         if test_1 && test_2 && test_3 then
             Printf.printf "OK Touching 3 Next\n"
         else 
-            let _ = MLLPath.print 1 swapped in 
+            let _ = MLLPath.print swapped in 
             Printf.printf "XX Touching 3 Next\n"
     in 
     let test_1 = last_1 = 2 in 
@@ -220,7 +220,7 @@ let test_swap_touching_3 =
         if test_1 && test_2 && test_3 then
             Printf.printf "OK Touching 3 Last\n"
         else 
-            let _ = MLLPath.print 1 swapped in 
+            let _ = MLLPath.print swapped in 
             Printf.printf "XX Touching 3 Last\n" in ()
 
 
@@ -279,5 +279,5 @@ let test_swap =
     if test_1 && test_2 && test_3 && test_4 && test_5 && test_6 && test_7 then
         Printf.printf "OK Test Swap\n"
     else
-        let _ = MLLPath.print 1 swapped in 
+        let _ = MLLPath.print swapped in 
         Printf.printf "XX Test Swap\n"

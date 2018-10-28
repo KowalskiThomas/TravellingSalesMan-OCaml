@@ -10,10 +10,14 @@ end *)
 
 module CompleteCarte : sig
     module Node : sig
-        type t
+        type t = int
         val compare : int -> int -> int
     end
+
     type node = int
+    module NodeSet : Set.S with type elt = node
+    type node_set
+
     type pair = string * (float * float)
     type graph
 
@@ -22,8 +26,9 @@ module CompleteCarte : sig
     val distance_from_coordinates : float -> float -> float -> float -> float
     val distance : node -> node -> graph -> float
     val distance_rooted : node -> node -> graph -> float
-
     val distance_path : node list -> graph -> float
+
+    val find_nearest : node -> node_set -> graph -> (node * float) option
 
     val empty : graph
 

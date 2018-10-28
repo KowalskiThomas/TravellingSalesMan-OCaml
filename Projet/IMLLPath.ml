@@ -11,18 +11,16 @@
 *)
 
 module MLLPath = struct
-    module Node = struct
-        type t = int
-        let compare x y = x - y
-    end
+    module Carte = ICarte.CompleteCarte 
+    module Node = Carte.Node
+    module NodeSet = Carte.NodeSet
+    module IntMap = Map.Make(Node)
 
     type node = Node.t
     type value = int * int
 
     exception AlreadyInPath
     exception NotInPath
-
-    module IntMap = Map.Make(Node)
 
     type path = value IntMap.t
 
@@ -45,7 +43,15 @@ module MLLPath = struct
         let (last, _) = IntMap.find u p in
         last
 
-    let print u p = 
+    let get_random path = 
+        let (key, _) = IntMap.choose path in key
+    
+    let get_first path = 
+        let (key, _) = IntMap.min_binding path in key
+
+
+    let print p = 
+        let u = get_first p in 
         let rec aux initial u p = 
             let next = get_next u p in 
             let _ = Printf.printf "%d " u in
@@ -79,7 +85,7 @@ module MLLPath = struct
             result
 
     let swap u v p =
-        let _ = print u p in
+        let _ = print p in
         if not(mem u p) || not(mem v p) 
         then raise NotInPath 
         else if u = v
@@ -176,48 +182,53 @@ module MLLPath = struct
             else
                 remove_standard u p
 
-    module Carte = ICarte.CompleteCarte
-
     (*
     Calcule la longueur d'un chemin
-    u : Ville de départ de la tournée (quelconque)
     p : Chemin dont on veut la longueur
     c : Carte
     *)
-    let length u p c =  
+    let length p c =  
+        let start = get_first p in 
         (*
         rec calcule la longueur de la fin de la tournée
-        initial : Ville de départ de la tournée
         u : Ville en cours d'évaluation
         *)
-        let rec aux initial u =
+        let rec aux u =
             (* On détermine la ville après u *)
             let next = get_next u p in
             (* On détermine la distance entre u et la ville suivante *)
             let distance = Carte.distance u next c in 
             (* Si la ville suivante est la ville de départ, on a fini de calculer *)
-            if next = initial
+            if next = start
             then distance
             (* Sinon, on renvoie la distance entre u et la suivante + la distance sur la fin de la tournée *)
-            else distance +. aux initial next
+            else distance +. aux next
         (* Appel à aux (de u à u) *)
-        in aux u u
+        in aux start
+
+    (* let to_set path = 
+        let start = get_first path in
+        let rec to_set_from u = 
+            let next = get_next u path in 
+            if next = start
+            then Carte.NodeSet.add u (Carte.NodeSet.empty)
+            else Carte.NodeSet.add u (to_set_from next)
+        in to_set_from start *)
 
     (* 
     Insère une ville au bon endroit pour minimiser la longueur totale 
-    start : Ville de départ de la tournée (quelconque)
     to_insert : Indice dans la carte de la ville à insérer    
     p : Chemin dans lequel insérer la ville
     c : Carte
     Revoie: p avec to_insert dedans
     *)
-    let insert_minimize_length start to_insert p c =
+    let insert_minimize_length to_insert p c =
         (*
         rec trouve où insérer la ville
-        initial : Ville de départ de la tournée
         u : Ville en cours d'évaluation
         *)
-        let rec aux initial u =
+        let start = get_first p in
+        let rec aux u =
             (* Calcul du successeur de u dans p *)
             let next = get_next u p in 
             (* Calcul de la différence de distance en cas d'insertion après u *)
@@ -229,18 +240,18 @@ module MLLPath = struct
             let _ = Printf.printf "Distance %d à %d : %f, %d à %d : %f\n" u to_insert (Carte.distance u to_insert c) to_insert next (Carte.distance next to_insert c) in 
             let _ = Printf.printf "\n" in *)
             (* Si on a fait le tour, on n'a plus d'appel récursif à faire *)
-            if next = initial
+            if next = start
             then (delta, u)
             else 
                 (* On appelle récursivement pour obtenir le meilleur endroit où insérer la ville dans la fin de la tournée *)
-                let delta_next, after_next = aux initial next in 
+                let delta_next, after_next = aux next in 
                 (* Si insérer dans la fin de la tournée offre un meilleur delta *)
                 if delta_next < delta 
                 then (delta_next, after_next) 
                 else (delta, u)
         in 
         (* On détermine après quelle ville insérer la nouvelle ville *)
-        let _, after = aux start start in 
+        let _, after = aux start in 
         (* Débogage *)
         (* let _ = Printf.printf "u = %d should be inserted after %d\n" to_insert after in *)
         (* On renvoie p avec to_insert insérée au bon endroit *)
@@ -270,22 +281,9 @@ module MLLPath = struct
         then dist, elt
         else best_distance, best_city)
     c (9999999, "") in *)
-    let find_nearest start p c = 
-        let rec aux initial u = 
-            let next = get_next u p in 
-            let (nearest, nearest_distance) = 1, 0.0 in (* find_nearest_from_city u c in *)
-            if next = initial 
-            then u, nearest, nearest_distance
-            else 
-                let best_next, nearest_next, nearest_distance_next = aux initial next in 
-                if nearest_distance <= nearest_distance_next 
-                then u, nearest, nearest_distance
-                else best_next, nearest_next, nearest_distance_next
-        in 
-        aux start start
 
-    let insert_random_minimize start p c = 
+    let insert_random_minimize p c = 
         let (random_city_index, _) = Carte.get_random c in 
-        insert_minimize_length start random_city_index p c 
+        insert_minimize_length random_city_index p c 
 
 end
