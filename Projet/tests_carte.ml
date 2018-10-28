@@ -61,11 +61,23 @@ let test_distance_3 =
 (* Ajout de beaucoup de noeuds à la carte pour tester les performances de la structure de données. *)
 (* TODO: Measure time *)
 let test_add_many_nodes =
+    let _ = Random.self_init in 
     let rec aux n g =
         if n = 1 then
-            Carte.add_node n (string_of_int n) (float_of_int n) (float_of_int n) g
+            Carte.add_node n (string_of_int n) (Random.float 100.) (Random.float 100.) g
         else
-            Carte.add_node n (string_of_int n) (float_of_int n) (float_of_int n) (aux (n - 1) g)
+            Carte.add_node n (string_of_int n) (Random.float 100.) (Random.float 100.) (aux (n - 1) g)
     in
     let _ = aux 150000 Carte.empty in
     Printf.printf "OK Test rapidité\n"
+
+let test_add_many_many_nodes = 
+    let rec aux n = 
+        if n = 0 then () 
+        else let _ = test_add_many_nodes in aux (n - 1)
+    in 
+    let it = 100000000 in
+    let b = Sys.time() in 
+    let _ = aux it in 
+    let e = Sys.time() in 
+    Printf.printf "\tTemps pour %d fois 150000 insertions: %fs\n" it (e -. b)
