@@ -48,14 +48,25 @@ module MLLPath = struct
 
 
     let print p = 
-        let u = get_first p in 
-        let rec aux initial u p = 
+        let start = get_first p in 
+        let rec aux u = 
             let next = get_next u p in 
             let _ = Printf.printf "%d " u in
-            if initial = next then () else aux initial next p
+            if next = start then () else aux next
         in 
-            let _ = aux u u p in
+            let _ = aux start in
             let _ = Printf.printf "\n" in ()
+
+    let print_with_names p c = 
+        let start = get_first p in 
+        let rec aux u = 
+            let next = get_next u p in 
+            let name, (_, _) = Carte.find u c in
+            let _ = Printf.printf "%s " name in 
+            if next = start then () else aux next
+        in 
+        let _ = aux start in 
+        let _ = Printf.printf "\n" in ()
 
     let swap_touching_3 llu u v p = 
         (* We have lu u v *)
@@ -281,6 +292,24 @@ module MLLPath = struct
         in 
         let insert_after, nearest, dist = find_nearest_not_in_path cities_list in
         insert nearest insert_after p
+
+    let insert_farthest_minimize_length p cities = 
+        let cities_list = to_list p in
+        let cities_set = to_set p in  
+        let rec find_farthest_not_in_path l = match l with
+            | [] -> failwith "insert_farthest_minimize_length: Nothing left to add to the path."
+            | [u] -> 
+                let farthest, dist = Carte.find_farthest u cities_set cities in 
+                u, farthest, dist
+            | u::t ->
+                let farthest_u, dist_u = Carte.find_farthest u cities_set cities in 
+                let insert_after_next, farthest_next, dist_next = find_farthest_not_in_path t in 
+                if dist_u > dist_next
+                then u, farthest_u, dist_u
+                else insert_after_next, farthest_next, dist_next
+        in 
+        let insert_after, farthest, dist = find_farthest_not_in_path cities_list in 
+        insert farthest insert_after p 
 
 
 

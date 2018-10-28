@@ -59,7 +59,6 @@ let test_distance_3 =
         Printf.printf "XX Test Distance 3 [Expected = %f, Returned = %f] \n" expected d
 
 (* Ajout de beaucoup de noeuds à la carte pour tester les performances de la structure de données. *)
-(* TODO: Measure time *)
 let test_add_many_nodes =
     let _ = Random.self_init in 
     let rec aux n g =

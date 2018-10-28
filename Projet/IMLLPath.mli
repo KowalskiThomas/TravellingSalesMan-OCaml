@@ -39,6 +39,9 @@ module MLLPath : sig
     (* Affiche un chemin (comme suite d'indices) *)
     val print : path -> unit
 
+    (* Affiche un chemin (comme suite de noms de villes) *)
+    val print_with_names : path -> Carte.carte -> unit
+
     (* Vérifie si un indice appartient au chemin *)
     val mem : node -> path -> bool
 
