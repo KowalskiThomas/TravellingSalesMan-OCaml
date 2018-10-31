@@ -28,7 +28,7 @@ let test_insert_after_non_existent =
     let test =
         try
             let _ = MLLPath.insert 2 1 (MLLPath.make 3) in false
-        with Not_found -> true
+        with MLLPath.NotInPath -> true
     in
     if test then
         Printf.printf "OK Test Insertion Après Absent\n"
@@ -250,11 +250,29 @@ let test_swap_binary_permutation =
     else
         Printf.printf "XX Test Swap Binary Permutation\n"
 
+let test_swap_3 = 
+    (* Before: 1 2 3 *)
+    (* After:  2 1 3 *)
+    let initial = MLLPath.insert 3 2 (MLLPath.insert 2 1 (MLLPath.make 1)) in
+    let swapped = MLLPath.swap 2 1 initial in
+    let next_2 = MLLPath.get_next 2 swapped in
+    let next_1 = MLLPath.get_next 1 swapped in
+    let next_3 = MLLPath.get_next 3 swapped in
+    let test_1 = next_2 = 1 in 
+    let test_2 = next_1 = 3 in 
+    let test_3 = next_3 = 2 in 
+    if test_1 && test_2 && test_3 then
+        Printf.printf "OK Test Swap 3\n"
+    else
+        let _ = MLLPath.print swapped  in
+        Printf.printf "XX Test Swap 3\n\tNext 1 = %d\n\tNext 2 = %d\n\tNext 3 = %d" next_1 next_2 next_3
+
 let test_swap =
-    (* Initial : 1 2 3 4 5 6 7*)
+    (* Initial : 1 2 3 4 5 6 7 *)
     let initial = MLLPath.insert 7 6 (MLLPath.insert 6 5 (MLLPath.insert 5 4 (MLLPath.insert 4 3 (MLLPath.insert 3 2 (MLLPath.insert 2 1 (MLLPath.make 1)))))) in
     (* Swapped : 1 2 3 6 5 4 7 *)
     let swapped = MLLPath.swap 6 4 initial in
+    let swapped_2 = MLLPath.swap 4 6 initial in
     let next_1 = MLLPath.get_next 1 swapped in 
     let next_2 = MLLPath.get_next 2 swapped in 
     let next_3 = MLLPath.get_next 3 swapped in 
@@ -272,12 +290,17 @@ let test_swap =
     let test_1 = next_1 = 2 && last_1 = 7 in 
     let test_2 = next_2 = 3 && last_2 = 1 in 
     let test_3 = next_3 = 6 && last_3 = 2 in 
-    let test_4 = next_4 = 5 && last_4 = 5 in 
+    let test_4 = next_4 = 7 && last_4 = 5 in 
     let test_5 = next_5 = 4 && last_5 = 6 in 
-    let test_6 = next_6 = 7 && last_6 = 3 in 
+    let test_6 = next_6 = 5 && last_6 = 3 in 
     let test_7 = next_7 = 1 && last_7 = 4 in 
     if test_1 && test_2 && test_3 && test_4 && test_5 && test_6 && test_7 then
-        Printf.printf "OK Test Swap\n"
-    else
         let _ = MLLPath.print swapped in 
-        Printf.printf "XX Test Swap\n"
+        let _ = MLLPath.print swapped_2 in 
+        Printf.printf "OK Test Swap One Between\n"
+    else
+        let _ = Printf.printf "Initial\n\t" in
+        let _ = MLLPath.print initial in 
+        let _ = Printf.printf "Swapped\n\t" in
+        let _ = MLLPath.print swapped in 
+        Printf.printf "XX Test Swap One Between\n"

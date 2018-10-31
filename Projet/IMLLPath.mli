@@ -20,12 +20,17 @@ module MLLPath : sig
     exception AlreadyInPath
     (* Exception levée si on essaie d'obtenir des informations ou d'insérer après une ville absente du chemin *)
     exception NotInPath
+    (* Exception levée lors de l'appel d'une fonction demandant un chemin non vide sur un chemin vide *)
+    exception EmptyPath
 
     (* Renvoie un chemin vide *)
     val empty : path
 
     (* Vérifie si un chemin est vide *)
     val is_empty : path -> bool
+
+    (* Renvoie le nombre d'éléments dans le chemin *)
+    val cardinal : path -> int
 
     (* Echange deux villes sur un chemin *)
     val swap : node -> node -> path -> path

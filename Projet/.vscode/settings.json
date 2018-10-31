@@ -6,6 +6,7 @@
         "**/CVS": true,
         "**/.DS_Store": true,
         "_build/**": true,
-        "*.native": true
+        "*.native": true,
+        ".merlin": true
     }
 }

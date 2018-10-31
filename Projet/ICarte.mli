@@ -24,9 +24,14 @@ module CompleteCarte : sig
     (* Le type final de la carte *)
     type carte
 
+    (* Exception levée si un élément supposé présent est absent *)
+    exception NotInCarte
 
     (* Renvoie la Carte vide *)
     val empty : carte
+
+    (* Vérifie si une carte est vide *)
+    val is_empty : carte -> bool
 
     (* Trouve les données d'une ville à partir de son indice *)
     val find : node -> carte -> pair
@@ -41,7 +46,7 @@ module CompleteCarte : sig
     val bindings : carte -> (node * pair) list
 
     (* Renvoie un indice aléatoire de la carte *)
-    val get_random : carte -> (node * pair)
+    val get_random : carte -> node_set -> (node * pair)
 
     (* Affiche la carte sous la forme 
         Villes:
