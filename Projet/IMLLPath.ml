@@ -126,7 +126,6 @@ module MLLPath = struct
         (IntMap.add u (next_u, next_v)
         (IntMap.add next_v (u, next_next_v) p))))      
 
-    (* TODO: Fix this *)
     let swap u v p =
         let _ = print p in
         if not(mem u p) || not(mem v p) 
@@ -324,6 +323,7 @@ module MLLPath = struct
                 else insert_after_next, nearest_next, dist_next
         in 
         let insert_after, nearest, dist = find_nearest_not_in_path cities_list in
+        (* let _ = Printf.printf "after %d nearest %d dist %f\n" insert_after nearest dist in *)
         insert nearest insert_after p
 
     (* let insert_farthest_minimize_length p c =

@@ -42,11 +42,17 @@ module CompleteCarte : sig
     (* Applique fold à la Carte *)
     val fold : (node -> pair -> 'a -> 'a) -> carte -> 'a -> 'a
 
+    (* Renvoie le nombre de villes d'une carte *)
+    val card : carte -> int
+
     (* Renvoie les données de la carte sous la forme d'une liste de couples (indice, données) *)
     val bindings : carte -> (node * pair) list
 
-    (* Renvoie un indice aléatoire de la carte *)
+    (* Renvoie un élément aléatoire de la carte qui n'appartienne pas à un ensemble donné *)
     val get_random : carte -> node_set -> (node * pair)
+
+    (* Renvoie un élément aléatoire de la carte *)
+    val get_random_any : carte -> (node * pair)
 
     (* Affiche la carte sous la forme 
         Villes:

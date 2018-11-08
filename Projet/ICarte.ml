@@ -27,6 +27,8 @@ module CompleteCarte = struct
 
     let fold f c acc = IntMap.fold f c acc
 
+    let card g = IntMap.cardinal g
+
     let bindings g = IntMap.bindings g
 
     (* TODO: Optimize this *)
@@ -35,6 +37,8 @@ module CompleteCarte = struct
         if NodeSet.mem node exclude 
         then get_random g exclude
         else node, data
+
+    let get_random_any g = IntMap.choose g
 
     let print c = 
         if is_empty c then 
@@ -66,19 +70,23 @@ module CompleteCarte = struct
             | (_, (xu, yu)), (_, (xv, yv)) -> distance_from_coordinates xu yu xv yv
         with Not_found -> raise NotInCarte
 
-    let find_optimal f from exclude cities = 
+    (* let rec print_list l = match l with
+        | [] -> Printf.printf "\n"
+        | t::q -> let _ = Printf.printf "%d " t in print_list q *)
+
+    let find_optimal f from exclude cities =
         let (name_from, (x_from, y_from)) = IntMap.find from cities in 
         let rec aux bindings = match bindings with
             | [] -> failwith "No city found"
             | [index, (name, (x, y))] -> index, distance_from_coordinates x_from y_from x y 
             | (index, (name, (x, y)))::t -> 
                 (* Si la ville en cours est à exlure *)
-                if NodeSet.mem index exclude
+                if NodeSet.mem index exclude || index = from
                 then aux t
                 else 
                     let dist = distance_from_coordinates x_from y_from x y in
                     let (best_next, dist_next) = aux t in
-                    if f dist_next dist
+                    if f dist_next dist || NodeSet.mem best_next exclude
                     then index, dist
                     else best_next, dist_next
         in aux (bindings cities)
