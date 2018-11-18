@@ -1,5 +1,7 @@
 module Carte = ICarte.CompleteCarte
 
+let _ = Random.self_init()
+
 let cities = [
     ("Paris", 1.0, 0.0);
     ("Londres", 2.0, 1.0);
@@ -60,7 +62,6 @@ let test_distance_3 =
 
 (* Ajout de beaucoup de noeuds à la carte pour tester les performances de la structure de données. *)
 let test_add_many_nodes =
-    let _ = Random.self_init in 
     let rec aux n g =
         if n = 1 then
             Carte.add_node n (string_of_int n) (Random.float 100.) (Random.float 100.) g

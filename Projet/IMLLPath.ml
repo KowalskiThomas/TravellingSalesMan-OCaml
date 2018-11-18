@@ -44,9 +44,6 @@ module MLLPath = struct
             let (last, _) = IntMap.find u p in
             last
         with Not_found -> raise NotInPath
-
-    let get_random path = 
-        let (key, _) = IntMap.choose path in key
     
     let get_first path = 
         try
@@ -127,7 +124,7 @@ module MLLPath = struct
         (IntMap.add next_v (u, next_next_v) p))))      
 
     let swap u v p =
-        let _ = print p in
+        (* let _ = print p in *)
         if not(mem u p) || not(mem v p) 
         then raise NotInPath 
         else if u = v

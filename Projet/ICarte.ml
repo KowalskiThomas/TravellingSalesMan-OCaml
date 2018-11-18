@@ -31,14 +31,26 @@ module CompleteCarte = struct
 
     let bindings g = IntMap.bindings g
 
-    (* TODO: Optimize this *)
-    let rec get_random g exclude = 
-        let node, data = IntMap.choose g in
-        if NodeSet.mem node exclude 
-        then get_random g exclude
-        else node, data
+    let keys g = IntMap.fold (fun key _ acc -> NodeSet.add key acc) g NodeSet.empty
 
-    let get_random_any g = IntMap.choose g
+    exception Found of int
+    exception IndexError
+    let get_ith i s = 
+        try
+            let _ = NodeSet.fold (fun x acc -> if acc = i then raise (Found(x)) else acc + 1) s 0 in
+            raise IndexError
+        with Found(x) -> x
+
+    let rec get_random g exclude = 
+        let all_cities_indices = keys g in
+        let available = NodeSet.diff all_cities_indices exclude in 
+        let c = NodeSet.cardinal available in 
+        let i = Random.int c in 
+        let idx = get_ith i available in 
+        (* let _ = Printf.printf "%d %d\n" i idx in  *)
+        (idx, IntMap.find idx g)
+
+    let get_random_any g = get_random g NodeSet.empty
 
     let print c = 
         if is_empty c then 
