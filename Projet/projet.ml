@@ -38,16 +38,10 @@ let monde = Carte.make_carte_from_cities monde
 let e = Sys.time()
 let _ = Printf.printf "Construction carte: %f\n" (e -. s)
 
-let rec test_n_fois n = 
+let rec test_n_fois f n = 
     if n = 0 then () else
-        
-        let solution_nearest = Optimizer.find_solution_nearest monde in
-        (* let _ = MLLPath.print_with_names solution_nearest monde in *)
-
-        let solution_random = Optimizer.find_solution_random monde in
-        (* let _ = MLLPath.print_with_names solution_random monde in *)
-
-        test_n_fois (n-1)
+        let _ = f n monde in
+        test_n_fois f (n-1)
 
 let _ = 
   let s = Sys.time() in 
