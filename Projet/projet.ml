@@ -24,16 +24,39 @@ let monde = [
     ("Reunion", 4., -16.);
 ]
 
+let rec monde_aleatoire n = 
+  if n = 0 
+  then [] 
+  else ("City", 1.0, 2.0)::(monde_aleatoire (n - 1))
+
+let s = Sys.time()
+let monde = monde_aleatoire 1000
+let e = Sys.time()
+let _ = Printf.printf "Génération monde: %f\n" (e -. s)
+let s = Sys.time()
+let monde = Carte.make_carte_from_cities monde
+let e = Sys.time()
+let _ = Printf.printf "Construction carte: %f\n" (e -. s)
+
 let rec test_n_fois n = 
     if n = 0 then () else
-        let monde = Carte.make_carte_from_cities monde in
         
         let solution_nearest = Optimizer.find_solution_nearest monde in
-        let _ = MLLPath.print_with_names solution_nearest monde in
+        (* let _ = MLLPath.print_with_names solution_nearest monde in *)
 
         let solution_random = Optimizer.find_solution_random monde in
-        let _ = MLLPath.print_with_names solution_random monde 
+        (* let _ = MLLPath.print_with_names solution_random monde in *)
 
-        in test_n_fois (n-1)
+        test_n_fois (n-1)
 
-let _ = test_n_fois 100000
+let _ = 
+  let s = Sys.time() in 
+  let _ = Optimizer.find_solution_nearest monde in 
+  let e = Sys.time() in 
+  Printf.printf "Optimization nearest: %f\n" (e -. s)
+
+let _ = 
+  let s = Sys.time() in 
+  let _ = Optimizer.find_solution_random monde in 
+  let e = Sys.time() in 
+  Printf.printf "Optimization random: %f\n" (e -. s)

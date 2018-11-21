@@ -58,11 +58,11 @@ module Optimizer = struct
         let max_cities = Carte.card carte in 
 
         let solution = builder chemin 1 max_cities carte in
-        let _ = Printf.printf "Before: " in
-        let _ = MLLPath.print_with_names solution carte in 
+        (* let _ = Printf.printf "Before: " in *)
+        (* let _ = MLLPath.print_with_names solution carte in  *)
         let solution = inversion_n_fois solution 200 carte in 
-        let _ = Printf.printf "After: " in 
-        let _ = MLLPath.print_with_names solution carte in 
+        (* let _ = Printf.printf "After: " in  *)
+        (* let _ = MLLPath.print_with_names solution carte in  *)
         solution
 
     let find_solution_nearest = find_solution build_solution_nearest
