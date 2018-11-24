@@ -33,6 +33,7 @@ let s = Sys.time()
 let monde = monde_aleatoire 1000
 let e = Sys.time()
 let _ = Printf.printf "Génération monde: %f\n" (e -. s)
+
 let s = Sys.time()
 let monde = Carte.make_carte_from_cities monde
 let e = Sys.time()
