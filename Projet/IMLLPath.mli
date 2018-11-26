@@ -58,12 +58,15 @@ module MLLPath : sig
     Lève NotInPath si l'indice n'y est pas. *)
     val remove : node -> path -> path
 
-    (* Construit un chemin de base avec un seul indice. 
+    (* Construit un chemin de base avec un seul indice.
     Le chemin est alors de la forme indice -> (indice, indice) *)
     val make : node -> path
 
     (* Détermine la longueur totale d'un chemin *)
     val length : path -> Carte.carte -> float
+
+    (* Renvoie une liste contenant tous les indices d'un chemin *)
+    val to_list : path -> Carte.node list
 
     (* Renvoie un ensemble contenant tous les indices d'un chemin *)
     val to_set : path -> Carte.node_set
@@ -80,8 +83,8 @@ module MLLPath : sig
     (* Insère la ville la plus proche du chemin dans la Carte non-déjà présente en minimsant sa longueur *)
     val insert_nearest_minimize_length : path -> Carte.carte -> node list -> Carte.node_set -> node * path
 
-    (* Insère la ville qui est la plus lointaine de toutes les villes à la fois. 
-        C'est à dire que si 
+    (* Insère la ville qui est la plus lointaine de toutes les villes à la fois.
+        C'est à dire que si
         - A -> X = 100km
         - A -> Y = 5km
         - B -> X = 20km

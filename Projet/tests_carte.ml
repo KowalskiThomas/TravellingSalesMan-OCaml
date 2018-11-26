@@ -71,13 +71,13 @@ let test_add_many_nodes =
     let _ = aux 150000 Carte.empty in
     Printf.printf "OK Test rapidité\n"
 
-let test_add_many_many_nodes = 
-    let rec aux n = 
-        if n = 0 then () 
+let test_add_many_many_nodes =
+    let rec aux n =
+        if n = 0 then ()
         else let _ = test_add_many_nodes in aux (n - 1)
-    in 
+    in
     let it = 100000000 in
-    let b = Sys.time() in 
-    let _ = aux it in 
-    let e = Sys.time() in 
+    let b = Sys.time() in
+    let _ = aux it in
+    let e = Sys.time() in
     Printf.printf "\tTemps pour %d fois 150000 insertions: %fs\n" it (e -. b)

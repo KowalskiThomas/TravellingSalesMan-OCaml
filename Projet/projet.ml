@@ -4,7 +4,7 @@ module Optimizer = IOptimizer.Optimizer
 
 let _ = Random.self_init()
 
-let _ = Printf.printf "Détermination d'une tournée\n" 
+let _ = Printf.printf "Détermination d'une tournée\n"
 
 let monde = [
     ("Paris", 0., 0.);
@@ -24,9 +24,9 @@ let monde = [
     ("Reunion", 4., -16.);
 ]
 
-let rec monde_aleatoire n = 
-  if n = 0 
-  then [] 
+let rec monde_aleatoire n =
+  if n = 0
+  then []
   else ("City", 1.0, 2.0)::(monde_aleatoire (n - 1))
 
 let s = Sys.time()
@@ -39,19 +39,19 @@ let monde = Carte.make_carte_from_cities monde
 let e = Sys.time()
 let _ = Printf.printf "Construction carte: %f\n" (e -. s)
 
-let rec test_n_fois f n = 
+let rec test_n_fois f n =
     if n = 0 then () else
         let _ = f n monde in
         test_n_fois f (n-1)
 
-let _ = 
-  let s = Sys.time() in 
-  let _ = Optimizer.find_solution_nearest monde in 
-  let e = Sys.time() in 
+let _ =
+  let s = Sys.time() in
+  let _ = Optimizer.find_solution_nearest monde in
+  let e = Sys.time() in
   Printf.printf "Optimization nearest: %f\n" (e -. s)
 
-let _ = 
-  let s = Sys.time() in 
-  let _ = Optimizer.find_solution_random monde in 
-  let e = Sys.time() in 
+let _ =
+  let s = Sys.time() in
+  let _ = Optimizer.find_solution_random monde in
+  let e = Sys.time() in
   Printf.printf "Optimization random: %f\n" (e -. s)

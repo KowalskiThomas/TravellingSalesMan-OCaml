@@ -54,7 +54,7 @@ module CompleteCarte : sig
     (* Renvoie un élément aléatoire de la carte *)
     val get_random_any : carte -> (node * pair)
 
-    (* Affiche la carte sous la forme 
+    (* Affiche la carte sous la forme
         Villes:
         - [1] Ville 1 (x1, y1)
         - [2] Ville 2 (x2, y2)
@@ -75,15 +75,15 @@ module CompleteCarte : sig
     (* Calcule la distance entre deux villes repérées par leurs indices *)
     val distance : node -> node -> carte -> float
 
-    (* Calcule la longueur d'un chemin donné sous la forme d'une liste de noeuds *)    
+    (* Calcule la longueur d'un chemin donné sous la forme d'une liste de noeuds *)
     val distance_path : node list -> carte -> float
 
-    (* Détermine l'indice et la distance de la ville la plus proche d'un noeud et absente d'un ensemble de noeuds donnés. 
+    (* Détermine l'indice et la distance de la ville la plus proche d'un noeud et absente d'un ensemble de noeuds donnés.
     Utilisation: find_nearest noeud noeuds_a_exclude carte *)
-    val find_nearest : node -> node_set -> carte -> (node * float) 
+    val find_nearest : node -> node_set -> carte -> (node * float)
 
     (* Comme find_nearest, mais avec la ville la plus éloignée. *)
-    val find_farthest : node -> node_set -> carte -> (node * float) 
+    val find_farthest : node -> node_set -> carte -> (node * float)
 
     (* A FINS DE TESTS *)
     val get_index : string -> carte -> node
