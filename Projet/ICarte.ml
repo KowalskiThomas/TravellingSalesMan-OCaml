@@ -111,6 +111,34 @@ module CompleteCarte = struct
         let operator = (fun x y -> x < y) in
         find_optimal operator from exclude cities
 
+    let rec find_nearest_not_in_path cities_list cities_set carte =
+        let rec aux cities = match cities with
+        | [] -> failwith "insert_nearest_minimize_length: Nothing left to add."
+            | [u] ->
+                let nearest, dist = find_nearest u cities_set carte in
+                u, nearest, dist
+            | u::t ->
+                let nearest_u, dist_u = find_nearest u cities_set carte in
+                let insert_after_next, nearest_next, dist_next = find_nearest_not_in_path t cities_set carte in
+                if dist_u < dist_next
+                then u, nearest_u, dist_u
+                else insert_after_next, nearest_next, dist_next
+        in aux cities_list
+
+    let rec find_farthest_not_in_path cities_list cities_set carte = 
+        let rec aux cities = match cities with
+        | [] -> failwith "find_farthest_minimize_length: No city to add" 
+        | [u] -> 
+            let farthest, dist = find_farthest u cities_set carte in 
+            u, farthest, dist 
+        | u::t -> 
+            let farthest_u, dist_u = find_farthest u cities_set carte in 
+            let insert_after_next, farthest_next, dist_next = aux t in 
+            if dist_u > dist_next
+            then u, farthest_u, dist_u 
+            else insert_after_next, farthest_next, dist_next 
+        in aux cities_list
+    
     let rec distance_path path g = match path with
     | [] -> 0.
     | [_] -> 0. (* A path with only one point has no length *)

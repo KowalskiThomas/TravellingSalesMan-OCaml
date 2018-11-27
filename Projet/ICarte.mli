@@ -82,6 +82,11 @@ module CompleteCarte : sig
     Utilisation: find_nearest noeud noeuds_a_exclude carte *)
     val find_nearest : node -> node_set -> carte -> (node * float)
 
+    (* Trouve l'indice de la ville la plus proche du chemin mais pas dans le chemin *)
+    val find_nearest_not_in_path : node list -> node_set -> carte -> node * node * float
+
+    val find_farthest_not_in_path : node list -> node_set -> carte -> node * node * float
+
     (* Comme find_nearest, mais avec la ville la plus éloignée. *)
     val find_farthest : node -> node_set -> carte -> (node * float)
 

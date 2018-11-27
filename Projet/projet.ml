@@ -39,7 +39,7 @@ let monde = Carte.make_carte_from_cities monde
 let e = Sys.time()
 let _ = Printf.printf "Construction carte: %f\n" (e -. s)
 
-let rec test_n_fois f n =
+let rec test_n_fois f n = 
     if n = 0 then () else
         let _ = f n monde in
         test_n_fois f (n-1)

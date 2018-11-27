@@ -91,7 +91,7 @@ module MLLPath : sig
         - B -> Y = 25km
         Alors c'est B qu'on insère.
     *)
-    (* val insert_farthest_minimize_length : path -> Carte.carte -> path *)
+    val insert_farthest_minimize_length : path -> Carte.carte -> node list -> Carte.node_set -> node * path
 
     (* A FINS DE TESTS
     Trouve la ville suivant une autre ville par son nom
