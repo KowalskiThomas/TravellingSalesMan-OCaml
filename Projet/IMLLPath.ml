@@ -185,6 +185,8 @@ module MLLPath = struct
                         (IntMap.add last_next (u, last_next_next) p))
             with Not_found -> raise NotInPath
 
+    let insert_before_or_after u other p _ = insert u other p
+
     let remove_standard u p =
         let (last, next) = IntMap.find u p in
         let (last_last, _) = IntMap.find last p in

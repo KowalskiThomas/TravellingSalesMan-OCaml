@@ -54,6 +54,9 @@ module MLLPath : sig
     Utilisant: insert [noeud] après [after] dans [chemin] *)
     val insert : node -> node -> path -> path
 
+    (* Ajoute un indice dans un chemin afin d'optimiser la longueur totale *)
+    val insert_before_or_after : node -> node -> path -> Carte.carte -> path
+
     (* Supprime un indice d'un chemin
     Lève NotInPath si l'indice n'y est pas. *)
     val remove : node -> path -> path
