@@ -126,18 +126,21 @@ module CompleteCarte = struct
         in aux cities_list
 
     let rec find_farthest_not_in_path cities_list cities_set carte = 
-        let rec aux cities = match cities with
+        1, 1, 1.
+        (* let rec aux cities = match cities with
         | [] -> failwith "find_farthest_minimize_length: No city to add" 
         | [u] -> 
-            let farthest, dist = find_farthest u cities_set carte in 
-            u, farthest, dist 
+            let farthest_u, dist_u = find_farthest u cities_set carte in
+            let nearest_farthest, dist_nearest_farthest = find_nearest farthest_u cities_set carte in
+            u, farthest_u, dist_u, dist_nearest_farthest 
         | u::t -> 
             let farthest_u, dist_u = find_farthest u cities_set carte in 
+            let nearest_farthest, dist_nearest_farthest = find_nearest farthest_u cities_set carte in
             let insert_after_next, farthest_next, dist_next = aux t in 
             if dist_u > dist_next
             then u, farthest_u, dist_u 
             else insert_after_next, farthest_next, dist_next 
-        in aux cities_list
+        in aux cities_list *)
     
     let rec distance_path path g = match path with
     | [] -> 0.
