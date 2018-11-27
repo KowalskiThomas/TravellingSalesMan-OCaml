@@ -30,7 +30,7 @@ let rec monde_aleatoire n =
   else ("City", (Random.float 100.), (Random.float 100.))::(monde_aleatoire (n - 1))
 
 let s = Sys.time()
-let monde = monde_aleatoire 1000
+let monde = monde_aleatoire 5000
 let e = Sys.time()
 let _ = Printf.printf "Génération monde: %f\n" (e -. s)
 
@@ -50,8 +50,8 @@ let _ =
   let e = Sys.time() in
   Printf.printf "Optimization nearest: %f\n" (e -. s)
 
-(* let _ =
+let _ =
   let s = Sys.time() in
   let _ = Optimizer.find_solution_random monde in
   let e = Sys.time() in
-  Printf.printf "Optimization random: %f\n" (e -. s) *)
+  Printf.printf "Optimization random: %f\n" (e -. s)

@@ -64,3 +64,16 @@ let test_repositionnement =
 
     in ()
 
+let test_monde_simple = 
+    let monde_simple = Carte.make_carte_from_cities [
+        ("A", 0., 0.);
+        ("B", 2., 0.);
+        ("C", 3., 0.);
+        ("D", 1.3, 2.)
+    ] in 
+    let _ =
+        let s = Sys.time() in
+        let _ = Optimizer.find_solution_nearest monde_simple in
+        let e = Sys.time() in
+        Printf.printf "Optimization nearest: %f\n" (e -. s)
+    in ()
