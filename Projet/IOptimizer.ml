@@ -64,8 +64,8 @@ module Optimizer = struct
 
 
     let rec build_solution_nearest = build_solution MLLPath.insert_nearest_minimize_length
+    let rec build_solution_farthest = build_solution MLLPath.insert_farthest_minimize_length
     let rec build_solution_random = build_solution MLLPath.insert_random_minimize
-    (* let rec build_solution_farthest = build_solution MLLPath.insert_nearest_minimize_length *)
 
     let find_solution builder carte =
         let idx_start, _ = Carte.get_random_any carte in
@@ -81,6 +81,9 @@ module Optimizer = struct
         let solution = inversion_n_fois solution 200 carte in
         let e = Sys.time() in
         let _ = Printf.printf "Temps repos: %f\n" (e -. s) in
+        let l = MLLPath.to_list solution in 
+        let dist = Carte.distance_path l carte in 
+        let _ = Printf.printf "Distance: %f\n" dist in 
         (* let _ = Printf.printf "After: " in  *)
         (* let _ = MLLPath.print_with_names solution carte in  *)
         solution

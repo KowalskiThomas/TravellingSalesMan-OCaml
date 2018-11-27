@@ -27,7 +27,7 @@ let monde = [
 let rec monde_aleatoire n =
   if n = 0
   then []
-  else ("City", 1.0, 2.0)::(monde_aleatoire (n - 1))
+  else ("City", (Random.float 100.), (Random.float 100.))::(monde_aleatoire (n - 1))
 
 let s = Sys.time()
 let monde = monde_aleatoire 1000
