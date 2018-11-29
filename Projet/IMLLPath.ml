@@ -39,29 +39,53 @@ module MLLPath = struct
     exception NotInPath
     exception EmptyPath
 
-    type path = value PathMap.t
+    type path = {
+        map : value PathMap.t;
+        last_index : int;
+        cardinal : int;
+    }
 
-    let empty = PathMap.empty
+    let empty = { 
+        map = PathMap.empty;
+        last_index = -1;
+        cardinal = 0;
+    }
 
-    let is_empty p = PathMap.is_empty p
+    let is_empty p = p = empty
 
-    let cardinal p = PathMap.cardinal p
+    let cardinal { cardinal = n } = n
+
+    let find u { map = m } = PathMap.find u m 
+
+    let min_binding { map = m } = PathMap.min_binding m
+
+    let add entry value { map = m; cardinal = n; last_index = k } = {
+        map = PathMap.add entry value m;
+        cardinal = n + 1;
+        last_index = k;
+    }
+
+    let remove entry { map = m; cardinal = n; last_index = k } = {
+        map = PathMap.remove entry m;
+        cardinal = n - 1;
+        last_index = k;
+    }
 
     let get_next (u : path_entry) (p : path) =
         try
-            let (_, next) = PathMap.find u p in
+            let (_, next) = find u p in
             next
         with Not_found -> raise NotInPath
 
     let get_last u p =
         try
-            let (last, _) = PathMap.find u p in
+            let (last, _) = find u p in
             last
         with Not_found -> raise NotInPath
 
     let get_first path =
         try
-            let (key, _) = PathMap.min_binding path in key
+            let (key, _) = min_binding path in key
         with Not_found -> raise EmptyPath
 
         let rec find_first_occurrence city path = 
@@ -113,17 +137,17 @@ module MLLPath = struct
     let swap_touching_3 lu u v p =
         (* We have lu u v *)
         (* We want lu v u *)
-        PathMap.add lu (u, v)
-        (PathMap.add v (lu, u)
-        (PathMap.add u (v, lu) empty))
+        add lu (u, v)
+        (add v (lu, u)
+        (add u (v, lu) empty))
 
     let swap_touching_4 lu u v nv p =
         (* We have lu u v nv *)
         (* We want lu v u nv *)
-        PathMap.add lu (nv, u)
-        (PathMap.add v (lu, u)
-        (PathMap.add u (v, nv)
-        (PathMap.add nv (u, lu) empty)))
+        add lu (nv, u)
+        (add v (lu, u)
+        (add u (v, nv)
+        (add nv (u, lu) empty)))
 
     let swap_touching (u : path_entry) (v : path_entry) (p : path) =
         (* We have something like 1 2 u v 5 6 7 8 *)
@@ -140,21 +164,21 @@ module MLLPath = struct
         then swap_touching_3 last_v v u p
         else
             let result =
-            PathMap.add last_u (last_last_u, v)
-            (PathMap.add next_v (u, next_next_v)
-            (PathMap.add v (last_u, u)
-            (PathMap.add u (v, next_v) p))) in
+            add last_u (last_last_u, v)
+            (add next_v (u, next_next_v)
+            (add v (last_u, u)
+            (add u (v, next_v) p))) in
             result
 
     let swap_one_between last_last_u last_u u next_u last_v v next_v next_next_v p =
         (* Au milieu, on a next_u = last_v *)
         (* Avant: llu lu u nu v nv nnv *)
         (* Après: llu lu v nu u nv nnv *)
-        PathMap.add last_u (last_last_u, v)
-        (PathMap.add v (last_u, next_u)
-        (PathMap.add next_u (v, u)
-        (PathMap.add u (next_u, next_v)
-        (PathMap.add next_v (u, next_next_v) p))))
+        add last_u (last_last_u, v)
+        (add v (last_u, next_u)
+        (add next_u (v, u)
+        (add u (next_u, next_v)
+        (add next_v (u, next_next_v) p))))
 
     let swap u v p =
         (* let _ = print p in *)
@@ -166,41 +190,41 @@ module MLLPath = struct
         (* Cas où on souhaite échanger u et u, pas très intéressant *)
         then p
         else
-            let (last_u, next_u) = PathMap.find u p in
+            let (last_u, next_u) = find u p in
             if last_u = next_u
             (* Cas où le suivant et le précédent de u sont les mêmes (et sont v, d'ailleurs), échanger ne ferait rien *)
             then p
             else
-                let (last_v, next_v) = PathMap.find v p in
+                let (last_v, next_v) = find v p in
                 if last_v = u || last_u = v
                 (* Cas où on a ... -> u -> v -> ... *)
                 then swap_touching u v p
                 else
                     (* Before: llu lu u nu nnu ... llv lv v nv nnv*)
-                    let (last_last_u, _) = PathMap.find last_u p in
-                    let (_, next_next_u) = PathMap.find next_u p in
-                    let (last_last_v, _) = PathMap.find last_v p in
-                    let (_, next_next_v) = PathMap.find next_v p in
+                    let (last_last_u, _) = find last_u p in
+                    let (_, next_next_u) = find next_u p in
+                    let (last_last_v, _) = find last_v p in
+                    let (_, next_next_v) = find next_v p in
                     if next_next_u = v then
                         swap_one_between last_last_u last_u u next_u last_v v next_v next_next_v p
                     else if next_next_v = u then
                         swap_one_between last_last_v last_v v next_v last_u u next_u next_next_u p
                     else
-                        PathMap.add v (last_u, next_u)
-                        (PathMap.add last_u (last_last_u, v)
-                        (PathMap.add next_u (v, next_next_u)
-                        (PathMap.add u (last_v, next_v)
-                        (PathMap.add last_v (last_last_v, u)
-                        (PathMap.add next_v (u, next_next_v) p)))))
+                        add v (last_u, next_u)
+                        (add last_u (last_last_u, v)
+                        (add next_u (v, next_next_u)
+                        (add u (last_v, next_v)
+                        (add last_v (last_last_v, u)
+                        (add next_v (u, next_next_v) p)))))
 
     let insert_in_unary u last p =
-        PathMap.add u (last, last) (PathMap.add last (u, u) empty)
+        add u (last, last) (add last (u, u) empty)
 
     let insert_in_binary u last p =
-        let (v, _) = PathMap.find last p in
-        PathMap.add last (v, u)
-        (PathMap.add u (last, v)
-        (PathMap.add v (u, last) empty))
+        let (v, _) = find last p in
+        add last (v, u)
+        (add u (last, v)
+        (add v (u, last) empty))
 
     let insert u last p =
         let city_u, idx_u = u in 
@@ -208,31 +232,31 @@ module MLLPath = struct
         then raise AlreadyInPath
         else
             try
-                let (last_last, last_next) = PathMap.find last p in
+                let (last_last, last_next) = find last p in
                 if last_last = last then
                     insert_in_unary u last p
                 else if last_last = last_next then
                     insert_in_binary u last p
                 else
-                    let (_, last_next_next) = PathMap.find last_next p in
-                    PathMap.add
-                        last (last_last, u)
-                        (PathMap.add u (last, last_next)
-                        (PathMap.add last_next (u, last_next_next) p))
+                    let (_, last_next_next) = find last_next p in
+                    add
+                    last (last_last, u)
+                    (add u (last, last_next)
+                    (add last_next (u, last_next_next) p))
             with Not_found -> raise NotInPath
 
     let insert_before_or_after u other p _ = insert u other p
 
     let remove_standard u p =
-        let (last, next) = PathMap.find u p in
-        let (last_last, _) = PathMap.find last p in
-        let (_, next_next) = PathMap.find next p in
-        PathMap.add last (last_last, next)
-        (PathMap.add next (last, next_next)
-        (PathMap.remove u p))
+        let (last, next) = find u p in
+        let (last_last, _) = find last p in
+        let (_, next_next) = find next p in
+        add last (last_last, next)
+        (add next (last, next_next)
+        (remove u p))
 
     let make u =
-        PathMap.add (u, 0) ((u, 0), (u, 0)) empty
+        add (u, 0) ((u, 0), (u, 0)) empty
 
     let remove_two u p =
         (*
@@ -241,7 +265,7 @@ module MLLPath = struct
          * Si on part de 1 -> 2 -> 1
          * On renvoie 2
          *)
-        let (last, next) = PathMap.find u p in
+        let (last, next) = find u p in
             (* let _ = Printf.printf "last : %d next : %d u : %d\n" last next u in  *)
             let city_last, _ = last in 
             make city_last
@@ -251,7 +275,7 @@ module MLLPath = struct
         if not (mem_city city_u p)
         then raise NotInPath
         else
-            let (last, next) = PathMap.find u p in
+            let (last, next) = find u p in
             (* let _ = Printf.printf "u = %d last = %d next = %d\n" u last next in  *)
             if last = u && next = u then
                 empty

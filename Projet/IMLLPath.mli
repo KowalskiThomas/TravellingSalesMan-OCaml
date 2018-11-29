@@ -13,7 +13,7 @@ module MLLPath : sig
     module Node = Carte.Node
     type node 
 
-    module PathEntry : Map.OrderedType with type t = Node.t
+    module PathEntry : Map.OrderedType with type t = Node.t * int
     (* Le type des éléments des chemins *)
     type path_entry
 
