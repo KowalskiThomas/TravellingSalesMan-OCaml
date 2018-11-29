@@ -15,8 +15,8 @@ let test_insert_minimize =
         let carte = Carte.make_carte_from_cities cities in
         let u0, chemin = MLLPath.make 0 in
         let u1, chemin = MLLPath.insert 1 u0 chemin in 
-        let u2, chemin = MLLPath.insert 2 u0 chemin in 
-        let u3, chemin = MLLPath.insert 3 u0 chemin in 
+        let u2, chemin = MLLPath.insert 2 u1 chemin in 
+        let u3, chemin = MLLPath.insert 3 u2 chemin in 
         
         let _ = Printf.printf "Chemin initial: " in
         let _ = MLLPath.print chemin in

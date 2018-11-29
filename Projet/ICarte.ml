@@ -1,3 +1,13 @@
+(* 
+Quelle stratégie utilise t-on pour stocker les routes inexistantes ?
+Première possibilité : quand on ajoute (x, y), on ajoute à l'ensemble (x, y) et (y, x)
+Deuxième possibilité : on ajoute (x, y) et sur le mem, on cherche (x, y) et (y, x)
+La première possibilité réduit la complexité globalement, mais est plus demandeuse sur l'insertion et la suppression.
+La deuxième possibilité est plus gourmande en recherche :
+    2log(n) >= log(2n) vrai dès n = 1.
+*)
+let strategy_insert_both_couples = true
+
 module CompleteCarte = struct
     module Node = struct
         type t = int
@@ -85,16 +95,24 @@ module CompleteCarte = struct
             in let _ = Printf.printf "Cities in map:\n"
             in print_from_bindings (bindings c)
 
-    let add_broken_road elt { broken_roads = s; cities = g } = {
-        broken_roads = BrokenRoadSet.add elt s;
+    let add_broken_road (x, y) { broken_roads = s; cities = g } = {
+        broken_roads = 
+            if strategy_insert_both_couples 
+            then BrokenRoadSet.add (y, x) (BrokenRoadSet.add (x, y) s)
+            else BrokenRoadSet.add (x, y) s;
         cities = g
     }
 
-    let mem_broken_road elt { broken_roads = s } = 
-        BrokenRoadSet.mem elt s
+    let mem_broken_road (x, y) { broken_roads = s } = 
+        if strategy_insert_both_couples
+        then BrokenRoadSet.mem (x, y) s
+        else BrokenRoadSet.mem (x, y) s || BrokenRoadSet.mem (y, x) s
 
-    let remove_broken_road elt { broken_roads = s; cities = g } = {
-        broken_roads = BrokenRoadSet.remove elt s;
+    let remove_broken_road (x, y) { broken_roads = s; cities = g } = {
+        broken_roads = 
+            if strategy_insert_both_couples 
+            then BrokenRoadSet.remove (y, x) (BrokenRoadSet.remove (x, y) s)
+            else BrokenRoadSet.remove (x, y) s;
         cities = g
     }
 

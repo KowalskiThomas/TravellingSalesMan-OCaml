@@ -98,14 +98,18 @@ let test_broken_road_1 =
     else
         Printf.printf "XX Tests Distance Route Inexistante\n"
     
+let inverse (x, y) = (y, x)
+
 let test_broken_road_2 = 
     let carte = Carte.empty in 
     let br = (0, 1) in
     let carte = Carte.add_broken_road br carte in 
     let test_1 = Carte.mem_broken_road br carte in 
+    let test_2 = Carte.mem_broken_road (inverse br) carte in 
     let carte = Carte.remove_broken_road br carte in 
-    let test_2 = not(Carte.mem_broken_road br carte) in 
-    if test_1 && test_2 then
+    let test_3 = not(Carte.mem_broken_road br carte) in 
+    let test_4 = not(Carte.mem_broken_road (inverse br) carte) in 
+    if test_1 && test_2 && test_3 && test_4 then
         Printf.printf "OK Tests Ajout / Remove Broken Road\n"
     else
         Printf.printf "XX Tests Ajout / Remove Broken Road\n"
@@ -117,11 +121,12 @@ let test_broken_road_3 =
     let carte = Carte.add_broken_road br1 carte in
     let carte = Carte.add_broken_road br2 carte in 
     let test_1 = Carte.mem_broken_road br1 carte in 
-    let test_2 = Carte.mem_broken_road br2 carte in 
-    let test_3 = not(Carte.mem_broken_road (9, 3) carte) in 
-    if test_1 && test_2 && test_3 then
+    let test_2 = Carte.mem_broken_road (inverse br1) carte in 
+    let test_3 = Carte.mem_broken_road br2 carte in 
+    let test_4 = Carte.mem_broken_road (inverse br2) carte in 
+    let test_5 = not(Carte.mem_broken_road (9, 3) carte) in 
+    if test_1 && test_2 && test_3 && test_4 && test_5 then
         Printf.printf "OK Tests Ajout / Remove Broken Road 2\n"
     else
         Printf.printf "XX Tests Ajout / Remove Broken Road 2\n"
 
-        
