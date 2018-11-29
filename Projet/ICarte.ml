@@ -91,7 +91,7 @@ module CompleteCarte = struct
     }
 
     let mem_broken_road elt { broken_roads = s } = 
-        BrokenRoadSet.mem elt
+        BrokenRoadSet.mem elt s
 
     let remove_broken_road elt { broken_roads = s; cities = g } = {
         broken_roads = BrokenRoadSet.remove elt s;
@@ -106,16 +106,15 @@ module CompleteCarte = struct
             distance_from_coordinates xcity ycity x y
 
     let distance u v c =
+        if mem_broken_road (u, v) c 
+        then infinity 
+        else 
         try
             let data_u = find u c in
             let data_v = find v c in
             match data_u, data_v with
             | (_, (xu, yu)), (_, (xv, yv)) -> distance_from_coordinates xu yu xv yv
         with Not_found -> raise NotInCarte
-
-    (* let rec print_list l = match l with
-        | [] -> Printf.printf "\n"
-        | t::q -> let _ = Printf.printf "%d " t in print_list q *)
 
     let rec distance_path path g = match path with
     | [] -> 0.

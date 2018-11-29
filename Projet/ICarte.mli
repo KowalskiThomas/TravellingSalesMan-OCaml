@@ -35,6 +35,10 @@ module CompleteCarte : sig
     (* Exception levée si un élément supposé présent est absent *)
     exception NotInCarte
 
+    val add_broken_road : broken_road -> carte -> carte
+    val mem_broken_road : broken_road -> carte -> bool
+    val remove_broken_road : broken_road -> carte -> carte
+
     (* Renvoie la Carte vide *)
     val empty : carte
 
