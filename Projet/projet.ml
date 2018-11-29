@@ -30,7 +30,7 @@ let rec monde_aleatoire n =
   else ("City", (Random.float 100.), (Random.float 100.))::(monde_aleatoire (n - 1))
 
 let s = Sys.time()
-let monde = monde_aleatoire 5000
+let monde = monde_aleatoire 2500
 let e = Sys.time()
 let _ = Printf.printf "Génération monde: %f\n" (e -. s)
 
