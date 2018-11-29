@@ -10,7 +10,7 @@ let test_empty =
 
 let test_insert =
     let path = MLLPath.make 1 in
-    let test = MLLPath.mem 1 path in
+    let test = MLLPath.mem_city 1 path in
     if test then
         Printf.printf "OK Test Insert 1\n"
     else
@@ -18,7 +18,7 @@ let test_insert =
 
 let test_insert_2 =
     let path = MLLPath.insert 3 2 (MLLPath.insert 2 1 (MLLPath.make 1)) in
-    let test = MLLPath.mem 1 path && MLLPath.mem 2 path && MLLPath.mem 3 path in
+    let test = MLLPath.mem_city 1 path && MLLPath.mem_city 2 path && MLLPath.mem_city 3 path in
     if test then
         Printf.printf "OK Test Insert 2\n"
     else

@@ -11,9 +11,9 @@ module CompleteCarte : sig
         type t = int
         val compare : int -> int -> int
     end
-
     (* Le type des indices, pour nous des entiers *)
-    type node = int
+    type node = Node.t
+
     (* Le module Ensemble de Noeuds (à savoir ensemble d'entiers)) *)
     module NodeSet : Set.S with type elt = node
     (* Le type des ensembles de noeuds *)
@@ -21,6 +21,7 @@ module CompleteCarte : sig
 
     (* Le type des données des villes (nom, coordonnées) *)
     type pair = string * (float * float)
+
     (* Le type final de la carte *)
     type carte
 

@@ -12,43 +12,74 @@
 
 module MLLPath = struct
     module Carte = ICarte.CompleteCarte
-    module Node = Carte.Node
-    module NodeSet = Carte.NodeSet
-    module IntMap = Map.Make(Node)
 
+    module Node = Carte.Node
     type node = Node.t
-    type value = int * int
+
+    module PathEntry : Map.OrderedType with type t = Node.t * int = struct
+        type t = Node.t * int
+        let compare x y = 
+            match x, y with
+            | (node_x, idx_x), (node_y, idx_y) ->
+                let node_comparison = Node.compare node_x node_y in 
+                if node_comparison = 0 
+                then idx_x - idx_y
+                else node_comparison
+    end
+    type path_entry = PathEntry.t
+
+    module PathEntrySet = Set.Make(PathEntry)
+    type path_entry_set = PathEntrySet.t
+
+    module PathMap = Map.Make(PathEntry)
+
+    type value = path_entry * path_entry
 
     exception AlreadyInPath
     exception NotInPath
     exception EmptyPath
 
-    type path = value IntMap.t
+    type path = value PathMap.t
 
-    let empty = IntMap.empty
+    let empty = PathMap.empty
 
-    let is_empty p = IntMap.is_empty p
+    let is_empty p = PathMap.is_empty p
 
-    let cardinal p = IntMap.cardinal p
+    let cardinal p = PathMap.cardinal p
 
-    let mem u p = IntMap.mem u p
-
-    let get_next (u : node) (p : path) =
+    let get_next (u : path_entry) (p : path) =
         try
-            let (_, next) = IntMap.find u p in
+            let (_, next) = PathMap.find u p in
             next
         with Not_found -> raise NotInPath
 
     let get_last u p =
         try
-            let (last, _) = IntMap.find u p in
+            let (last, _) = PathMap.find u p in
             last
         with Not_found -> raise NotInPath
 
     let get_first path =
         try
-            let (key, _) = IntMap.min_binding path in key
+            let (key, _) = PathMap.min_binding path in key
         with Not_found -> raise EmptyPath
+
+        let rec find_first_occurrence city path = 
+            let initial = get_first path in 
+            let rec aux current =
+                let city_cur, _ = current in 
+                if city_cur = city 
+                then current
+                else if current = initial 
+                then raise NotInPath
+                else aux (get_next current path)
+            in aux (get_next initial path)
+    
+    let mem_city u p = 
+        try
+            let _ = find_first_occurrence u p in
+            true
+        with NotInPath -> false    
 
     let print p =
         if is_empty p then
@@ -56,8 +87,9 @@ module MLLPath = struct
         else
             let start = get_first p in
             let rec aux u =
+                let (city, idx) = u in 
                 let next = get_next u p in
-                let _ = Printf.printf "%d " u in
+                let _ = Printf.printf "(%d, %d) " city idx in
                 if next = start then () else aux next
             in
                 let _ = aux start in
@@ -70,7 +102,8 @@ module MLLPath = struct
             let start = get_first p in
             let rec aux u =
                 let next = get_next u p in
-                let name, (_, _) = Carte.find u c in
+                let city, idx = u in 
+                let name, (_, _) = Carte.find city c in
                 let _ = Printf.printf "%s " name in
                 if next = start then () else aux next
             in
@@ -80,19 +113,19 @@ module MLLPath = struct
     let swap_touching_3 lu u v p =
         (* We have lu u v *)
         (* We want lu v u *)
-        IntMap.add lu (u, v)
-        (IntMap.add v (lu, u)
-        (IntMap.add u (v, lu) empty))
+        PathMap.add lu (u, v)
+        (PathMap.add v (lu, u)
+        (PathMap.add u (v, lu) empty))
 
     let swap_touching_4 lu u v nv p =
         (* We have lu u v nv *)
         (* We want lu v u nv *)
-        IntMap.add lu (nv, u)
-        (IntMap.add v (lu, u)
-        (IntMap.add u (v, nv)
-        (IntMap.add nv (u, lu) empty)))
+        PathMap.add lu (nv, u)
+        (PathMap.add v (lu, u)
+        (PathMap.add u (v, nv)
+        (PathMap.add nv (u, lu) empty)))
 
-    let swap_touching (u : node) (v : node) (p : path) =
+    let swap_touching (u : path_entry) (v : path_entry) (p : path) =
         (* We have something like 1 2 u v 5 6 7 8 *)
         (* We want                1 2 v u 5 6 7 8 *)
         let last_u = get_last u p in
@@ -107,96 +140,99 @@ module MLLPath = struct
         then swap_touching_3 last_v v u p
         else
             let result =
-            IntMap.add last_u (last_last_u, v)
-            (IntMap.add next_v (u, next_next_v)
-            (IntMap.add v (last_u, u)
-            (IntMap.add u (v, next_v) p))) in
+            PathMap.add last_u (last_last_u, v)
+            (PathMap.add next_v (u, next_next_v)
+            (PathMap.add v (last_u, u)
+            (PathMap.add u (v, next_v) p))) in
             result
 
     let swap_one_between last_last_u last_u u next_u last_v v next_v next_next_v p =
         (* Au milieu, on a next_u = last_v *)
         (* Avant: llu lu u nu v nv nnv *)
         (* Après: llu lu v nu u nv nnv *)
-        IntMap.add last_u (last_last_u, v)
-        (IntMap.add v (last_u, next_u)
-        (IntMap.add next_u (v, u)
-        (IntMap.add u (next_u, next_v)
-        (IntMap.add next_v (u, next_next_v) p))))
+        PathMap.add last_u (last_last_u, v)
+        (PathMap.add v (last_u, next_u)
+        (PathMap.add next_u (v, u)
+        (PathMap.add u (next_u, next_v)
+        (PathMap.add next_v (u, next_next_v) p))))
 
     let swap u v p =
         (* let _ = print p in *)
-        if not(mem u p) || not(mem v p)
+        let city_u, idx_u = u in 
+        let city_v, idx_v = v in 
+        if not(mem_city city_u p) || not(mem_city city_v p)
         then raise NotInPath
         else if u = v
         (* Cas où on souhaite échanger u et u, pas très intéressant *)
         then p
         else
-            let (last_u, next_u) = IntMap.find u p in
+            let (last_u, next_u) = PathMap.find u p in
             if last_u = next_u
             (* Cas où le suivant et le précédent de u sont les mêmes (et sont v, d'ailleurs), échanger ne ferait rien *)
             then p
             else
-                let (last_v, next_v) = IntMap.find v p in
+                let (last_v, next_v) = PathMap.find v p in
                 if last_v = u || last_u = v
                 (* Cas où on a ... -> u -> v -> ... *)
                 then swap_touching u v p
                 else
                     (* Before: llu lu u nu nnu ... llv lv v nv nnv*)
-                    let (last_last_u, _) = IntMap.find last_u p in
-                    let (_, next_next_u) = IntMap.find next_u p in
-                    let (last_last_v, _) = IntMap.find last_v p in
-                    let (_, next_next_v) = IntMap.find next_v p in
+                    let (last_last_u, _) = PathMap.find last_u p in
+                    let (_, next_next_u) = PathMap.find next_u p in
+                    let (last_last_v, _) = PathMap.find last_v p in
+                    let (_, next_next_v) = PathMap.find next_v p in
                     if next_next_u = v then
                         swap_one_between last_last_u last_u u next_u last_v v next_v next_next_v p
                     else if next_next_v = u then
                         swap_one_between last_last_v last_v v next_v last_u u next_u next_next_u p
                     else
-                        IntMap.add v (last_u, next_u)
-                        (IntMap.add last_u (last_last_u, v)
-                        (IntMap.add next_u (v, next_next_u)
-                        (IntMap.add u (last_v, next_v)
-                        (IntMap.add last_v (last_last_v, u)
-                        (IntMap.add next_v (u, next_next_v) p)))))
+                        PathMap.add v (last_u, next_u)
+                        (PathMap.add last_u (last_last_u, v)
+                        (PathMap.add next_u (v, next_next_u)
+                        (PathMap.add u (last_v, next_v)
+                        (PathMap.add last_v (last_last_v, u)
+                        (PathMap.add next_v (u, next_next_v) p)))))
 
     let insert_in_unary u last p =
-        IntMap.add u (last, last) (IntMap.add last (u, u) empty)
+        PathMap.add u (last, last) (PathMap.add last (u, u) empty)
 
     let insert_in_binary u last p =
-        let (v, _) = IntMap.find last p in
-        IntMap.add last (v, u)
-        (IntMap.add u (last, v)
-        (IntMap.add v (u, last) empty))
+        let (v, _) = PathMap.find last p in
+        PathMap.add last (v, u)
+        (PathMap.add u (last, v)
+        (PathMap.add v (u, last) empty))
 
     let insert u last p =
-        if mem u p
+        let city_u, idx_u = u in 
+        if mem_city city_u p
         then raise AlreadyInPath
         else
             try
-                let (last_last, last_next) = IntMap.find last p in
+                let (last_last, last_next) = PathMap.find last p in
                 if last_last = last then
                     insert_in_unary u last p
                 else if last_last = last_next then
                     insert_in_binary u last p
                 else
-                    let (_, last_next_next) = IntMap.find last_next p in
-                    IntMap.add
+                    let (_, last_next_next) = PathMap.find last_next p in
+                    PathMap.add
                         last (last_last, u)
-                        (IntMap.add u (last, last_next)
-                        (IntMap.add last_next (u, last_next_next) p))
+                        (PathMap.add u (last, last_next)
+                        (PathMap.add last_next (u, last_next_next) p))
             with Not_found -> raise NotInPath
 
     let insert_before_or_after u other p _ = insert u other p
 
     let remove_standard u p =
-        let (last, next) = IntMap.find u p in
-        let (last_last, _) = IntMap.find last p in
-        let (_, next_next) = IntMap.find next p in
-        IntMap.add last (last_last, next)
-        (IntMap.add next (last, next_next)
-        (IntMap.remove u p))
+        let (last, next) = PathMap.find u p in
+        let (last_last, _) = PathMap.find last p in
+        let (_, next_next) = PathMap.find next p in
+        PathMap.add last (last_last, next)
+        (PathMap.add next (last, next_next)
+        (PathMap.remove u p))
 
     let make u =
-        IntMap.add u (u, u) empty
+        PathMap.add (u, 0) ((u, 0), (u, 0)) empty
 
     let remove_two u p =
         (*
@@ -205,15 +241,17 @@ module MLLPath = struct
          * Si on part de 1 -> 2 -> 1
          * On renvoie 2
          *)
-        let (last, next) = IntMap.find u p in
+        let (last, next) = PathMap.find u p in
             (* let _ = Printf.printf "last : %d next : %d u : %d\n" last next u in  *)
-            make last
+            let city_last, _ = last in 
+            make city_last
 
     let remove u p =
-        if not (mem u p)
+        let city_u, idx_u = u in 
+        if not (mem_city city_u p)
         then raise NotInPath
         else
-            let (last, next) = IntMap.find u p in
+            let (last, next) = PathMap.find u p in
             (* let _ = Printf.printf "u = %d last = %d next = %d\n" u last next in  *)
             if last = u && next = u then
                 empty
@@ -236,8 +274,10 @@ module MLLPath = struct
         let rec aux u =
             (* On détermine la ville après u *)
             let next = get_next u p in
+            let city_u, idx_u = u in
+            let city_next, idx_next = next in 
             (* On détermine la distance entre u et la ville suivante *)
-            let distance = Carte.distance u next c in
+            let distance = Carte.distance city_u city_next c in
             (* Si la ville suivante est la ville de départ, on a fini de calculer *)
             if next = start
             then distance
@@ -251,8 +291,8 @@ module MLLPath = struct
         let rec to_set_from u =
             let next = get_next u path in
             if next = start
-            then Carte.NodeSet.add u (Carte.NodeSet.empty)
-            else Carte.NodeSet.add u (to_set_from next)
+            then PathEntrySet.add u (PathEntrySet.empty)
+            else PathEntrySet.add u (to_set_from next)
         in to_set_from start
 
     let to_list (path : path) =
@@ -271,7 +311,7 @@ module MLLPath = struct
     c : Carte
     Revoie: p avec to_insert dedans
     *)
-    let insert_minimize_length to_insert p c =
+    let insert_minimize_length to_insert new_index p c =
         (*
         rec trouve où insérer la ville
         u : Ville en cours d'évaluation
@@ -281,8 +321,10 @@ module MLLPath = struct
             (* Calcul du successeur de u dans p *)
             let next = get_next u p in
             (* Calcul de la différence de distance en cas d'insertion après u *)
-            let distance_u_next = Carte.distance u next c in
-            let somme_distances = Carte.distance u to_insert c +. Carte.distance to_insert next c in
+            let city_u, idx_u = u in 
+            let city_next, idx_next = next in 
+            let distance_u_next = Carte.distance city_u city_next c in
+            let somme_distances = Carte.distance city_u to_insert c +. Carte.distance to_insert city_next c in
             let delta =  somme_distances -. distance_u_next in
             (* let _ = Printf.printf "Distance de %d à %d : %f\n" u next distance_u_next in
             let _ = Printf.printf "Delta avec %d après %d : %f\n" to_insert u delta in
@@ -304,26 +346,30 @@ module MLLPath = struct
         (* Débogage *)
         (* let _ = Printf.printf "u = %d should be inserted after %d\n" to_insert after in *)
         (* On renvoie p avec to_insert insérée au bon endroit *)
-        insert to_insert after p
+        insert (to_insert, new_index) after p
 
-    let insert_nearest_minimize_length p cities cities_list cities_set =
+    let insert_nearest_minimize_length p cities cities_list cities_set new_index =
         let insert_after, nearest, dist = Carte.find_nearest_not_in_path cities_list cities_set cities in
-        nearest, (insert nearest insert_after p)
+        let insert_after = find_first_occurrence insert_after p in
+        (nearest, new_index), (insert (nearest, new_index) insert_after p)
 
-    let insert_farthest_minimize_length p cities cities_list cities_set = 
+    let insert_farthest_minimize_length p cities cities_list cities_set new_index = 
         let insert_after, farthest, dist = Carte.find_farthest_not_in_path cities_list cities_set cities in 
-        farthest, (insert farthest insert_after p)
+        let insert_after = find_first_occurrence insert_after p in 
+        (farthest, new_index), (insert (farthest, new_index) insert_after p)
 
-    let insert_random_minimize p c _ cities_set =
+    let insert_random_minimize p c _ cities_set new_index =
         let (random_city_index, _) = Carte.get_random c cities_set in
-        random_city_index, (insert_minimize_length random_city_index p c)
+        (random_city_index, new_index), (insert_minimize_length random_city_index new_index p c)
 
     let get_next_by_name name p c =
         let index = Carte.get_index name c in
-        get_next index p
+        let entry = find_first_occurrence index p in 
+        get_next entry p
 
     let get_last_by_name name p c =
         let index = Carte.get_index name c in
-        get_last index p
+        let entry = find_first_occurrence index p in 
+        get_last entry p
 
 end
