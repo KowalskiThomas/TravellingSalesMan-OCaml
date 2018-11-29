@@ -58,7 +58,7 @@ module Optimizer = struct
 
     let rec find_optimal f l = 
         let rec aux l = match l with
-        | [] -> failwith "find_closest_index: empty list"
+        | [] -> failwith "find_optimal: empty list"
         | [(u, closest_u, dist)] -> u, closest_u, dist, []
         | (u, closest_u, dist)::t -> 
             let best_u, best_closest, best_dist, l' = aux t in 
@@ -67,7 +67,7 @@ module Optimizer = struct
             else u, closest_u, dist, (best_u, best_closest, best_dist)::l'
         in aux l
     
-    let find_closest = find_optimal (fun x y -> x < y)
+    let find_nearest = find_optimal (fun x y -> x < y)
     let find_farthest = find_optimal (fun x y -> x > y)
     
     let build_initial_mins_list carte initial = 
@@ -84,26 +84,7 @@ module Optimizer = struct
         in 
         aux (Carte.bindings carte)
 
-    let rec build_solution_nearest carte idx_start =
-        (* Détermination d'éléments de départ aléatoires *)
-        let initial_entry, initial_path = MLLPath.make idx_start in 
-        (* Construction de la liste initiale des villes les plus proches *)
-        let initial_mins_list = build_initial_mins_list carte initial_entry in 
-        (* Construit un chemin à partir d'un chemin initial p en utilisant la liste des noeuds les plus proches *)
-        let rec build_path l p = 
-            let new_element, closest_in_path, dist, l' = find_closest l in 
-            (* On insère u dans le chemin, avant ou après closest_u (en fonction d'où ça donne le chemin le plus court) *)
-            let (new_city, new_index) as new_entry, p' = MLLPath.insert_before_or_after new_element closest_in_path p carte in 
-            match l' with
-            | [] -> p' 
-            | l' -> 
-                (* On a inséré u dans le chemin, on vérifie qu'il n'est pas devenu le plus proche dans le chemin d'un noeud hors chemin *)
-                let l'' = rebuild_mins_list l' new_entry carte in 
-                build_path l'' p'
-        in 
-        build_path initial_mins_list initial_path
-
-    let rec build_solution_farthest carte idx_start = 
+    let rec build_solution finder carte idx_start = 
         (* Détermination d'éléments de départ aléatoires *)
         let initial_entry, initial_path = MLLPath.make idx_start in 
         (* Construction de la liste initiale des villes les plus proches *)
@@ -111,7 +92,7 @@ module Optimizer = struct
         (* Construit un chemin à partir d'un chemin initial p en utilisant la liste des noeuds les plus proches *)
         let rec build_path l p = 
             (* On trouve l'élément qui maximise la distance minimale au chemin *)
-            let new_element, closest_in_path, dist, l' = find_farthest l in
+            let new_element, closest_in_path, dist, l' = finder l in
             (* On l'insère après closest_in_path pour minimiser la distance totale *)
             let (new_city, new_uid) as new_entry, p' = MLLPath.insert_before_or_after new_element closest_in_path p carte in 
             match l' with
@@ -121,6 +102,8 @@ module Optimizer = struct
                 build_path l'' p'
         in build_path initial_mins_list initial_path
 
+    let build_solution_nearest = build_solution find_nearest
+    let build_solution_farthest = build_solution find_farthest
 
     let rec build_solution_random carte initial =
         let intial_entry, initial_path = MLLPath.make initial in 
