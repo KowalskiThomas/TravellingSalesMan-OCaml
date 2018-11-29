@@ -13,9 +13,12 @@ let test_inversion_locale =
     ] in
 
     let carte = Carte.make_carte_from_cities cities in
-    let chemin = MLLPath.insert 3 2 (MLLPath.insert 2 1 (MLLPath.insert 1 0 (MLLPath.make 0))) in
+    let u0, chemin = MLLPath.make 0 in 
+    let u1, chemin = MLLPath.insert 1 u0 chemin in 
+    let u2, chemin = MLLPath.insert 2 u1 chemin in 
+    let u3, chemin = MLLPath.insert 3 u2 chemin in 
 
-    let chemin_avec_inversion_en_a = Optimizer.inversion_locale 0 chemin carte in
+    let chemin_avec_inversion_en_a = Optimizer.inversion_locale u0 chemin carte in
 
     let _ = Printf.printf "Test inversion (avec inversion conservée).\n" in
     let _ = MLLPath.print_with_names chemin carte in
@@ -33,9 +36,12 @@ let test_inversion_locale_2 =
     ] in
 
     let carte = Carte.make_carte_from_cities cities in
-    let chemin = MLLPath.insert 3 2 (MLLPath.insert 2 1 (MLLPath.insert 1 0 (MLLPath.make 0))) in
+    let u0, chemin = MLLPath.make 0 in 
+    let u1, chemin = MLLPath.insert 1 u0 chemin in 
+    let u2, chemin = MLLPath.insert 2 u1 chemin in 
+    let u3, chemin = MLLPath.insert 3 u2 chemin in 
 
-    let chemin_avec_inversion_en_a = Optimizer.inversion_locale 0 chemin carte in
+    let chemin_avec_inversion_en_a = Optimizer.inversion_locale u0 chemin carte in
 
     let _ = Printf.printf "Test inversion (avec inversion annulée).\n" in
     let _ = Printf.printf "Expected: A B C D.\n" in
@@ -53,9 +59,12 @@ let test_repositionnement =
     ] in
 
     let carte = Carte.make_carte_from_cities cities in
-    let chemin = MLLPath.insert 3 2 (MLLPath.insert 2 1 (MLLPath.insert 1 0 (MLLPath.make 0))) in
+    let u0, chemin = MLLPath.make 0 in 
+    let u1, chemin = MLLPath.insert 1 u0 chemin in 
+    let u2, chemin = MLLPath.insert 2 u1 chemin in 
+    let u3, chemin = MLLPath.insert 3 u2 chemin in 
 
-    let chemin_avec_repositionnement = Optimizer.repositionnement_noeud 2 chemin carte in
+    let chemin_avec_repositionnement = Optimizer.repositionnement_noeud u2 chemin carte in
 
     let _ = Printf.printf "Test repositionnement.\n" in
     let _ = Printf.printf "Expected: A B D C.\n" in

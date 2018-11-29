@@ -13,15 +13,18 @@ let test_insert_minimize =
         ] in
 
         let carte = Carte.make_carte_from_cities cities in
-        let chemin = MLLPath.insert 3 2 (MLLPath.insert 2 1 (MLLPath.insert 1 0 (MLLPath.make 0))) in
-
+        let u0, chemin = MLLPath.make 0 in
+        let u1, chemin = MLLPath.insert 1 u0 chemin in 
+        let u2, chemin = MLLPath.insert 2 u0 chemin in 
+        let u3, chemin = MLLPath.insert 3 u0 chemin in 
+        
         let _ = Printf.printf "Chemin initial: " in
         let _ = MLLPath.print chemin in
 
         let length = MLLPath.length chemin carte in
         let _ = Printf.printf "Longueur chemin initial : %f\n" length in
 
-        let chemin_avec_3 = MLLPath.insert_minimize_length 4 chemin carte  in
+        let u4, chemin_avec_3 = MLLPath.insert_minimize_length 4 chemin carte  in
 
         let _ = MLLPath.print chemin_avec_3 in
 
@@ -38,11 +41,12 @@ let test_nearest_farthest =
         ] in
 
         let cities = Carte.make_carte_from_cities cities in
-        let chemin = MLLPath.insert 0 1 (MLLPath.make 1) in
+        let u0, chemin = MLLPath.make 0 in 
+        let u1, chemin = MLLPath.insert 1 u0 chemin in
 
         let idx = 0 in
-        let nearest, distance_n = Carte.find_nearest idx (MLLPath.to_set chemin) cities in
-        let farthest, distance_f = Carte.find_farthest idx (MLLPath.to_set chemin) cities in
+        let nearest, distance_n = Carte.find_nearest idx (MLLPath.cities_set chemin) cities in
+        let farthest, distance_f = Carte.find_farthest idx (MLLPath.cities_set chemin) cities in
         let name_idx, (_, _) = Carte.find idx cities in
         let name_nearest, (_, _) = Carte.find nearest cities in
         let name_farthest, (_, _) = Carte.find farthest cities in
@@ -61,15 +65,18 @@ let test_insert_nearest =
     ] in
     let carte = Carte.make_carte_from_cities cities in
     (* On créé un chemin Paris -> Londres -> Berlin *)
-    let chemin = MLLPath.insert 5 2 (MLLPath.insert 2 1 (MLLPath.insert 1 0 (MLLPath.make 0))) in
+    let u0, chemin = MLLPath.make 0 in 
+    let u1, chemin = MLLPath.insert 1 u0 chemin in
+    let u2, chemin = MLLPath.insert 2 u1 chemin in
+    let u5, chemin = MLLPath.insert 5 u2 chemin in
     (* On ajoute au chemin le point le plus proche en minimisant la distance totale *)
-    let node_set = MLLPath.to_set chemin in  
-    let node_list = MLLPath.to_list chemin in 
+    let node_set = MLLPath.cities_set chemin in  
+    let node_list = MLLPath.cities_list chemin in 
     let new_elt, chemin_avec_plus_proche = MLLPath.insert_nearest_minimize_length chemin carte node_list node_set in
     (* On affiche le chemin. Normalement, ça donne Paris -> Londres -> Nearest -> Berlin -> Budapest *)
     (* MLLPath.print_with_names chemin_avec_plus_proche carte *)
-    let next_londres = MLLPath.get_next_by_name "Londres" chemin_avec_plus_proche carte in
-    let next_nearest = MLLPath.get_next_by_name "Nearest" chemin_avec_plus_proche carte in
+    let (next_londres, idx_next_londres) = MLLPath.get_next_by_name "Londres" chemin_avec_plus_proche carte in
+    let (next_nearest, idx_next_nearest) = MLLPath.get_next_by_name "Nearest" chemin_avec_plus_proche carte in
     let name_next_londres = Carte.get_name next_londres carte in
     let name_next_nearest = Carte.get_name next_nearest carte in
     (* On ne vérifie pas que l'insertion a bien mis à jour les last, puisqu'on a déjà testé insert dans un autre test *)
@@ -92,15 +99,18 @@ let test_insert_farthest =
     ] in
     let carte = Carte.make_carte_from_cities cities in
     (* On créé un chemin Paris -> Londres -> Berlin *)
-    let chemin = MLLPath.insert 5 2 (MLLPath.insert 2 1 (MLLPath.insert 1 0 (MLLPath.make 0))) in
+    let u0, chemin = MLLPath.make 0 in 
+    let u1, chemin = MLLPath.insert 1 u0 chemin in
+    let u2, chemin = MLLPath.insert 2 u1 chemin in
+    let u5, chemin = MLLPath.insert 5 u2 chemin in
     (* On ajoute au chemin le point le plus proche en minimisant la distance totale *)
-    let node_set = MLLPath.to_set chemin in  
-    let node_list = MLLPath.to_list chemin in 
+    let node_set = MLLPath.cities_set chemin in  
+    let node_list = MLLPath.cities_list chemin in 
     let new_elt, chemin_avec_plus_proche = MLLPath.insert_nearest_minimize_length chemin carte node_list node_set in
     (* On affiche le chemin. Normalement, ça donne Paris -> Londres -> Nearest -> Berlin -> Budapest *)
     (* MLLPath.print_with_names chemin_avec_plus_proche carte *)
-    let next_londres = MLLPath.get_next_by_name "Londres" chemin_avec_plus_proche carte in
-    let next_nearest = MLLPath.get_next_by_name "Nearest" chemin_avec_plus_proche carte in
+    let (next_londres, idx_next_londres) = MLLPath.get_next_by_name "Londres" chemin_avec_plus_proche carte in
+    let (next_nearest, idx_next_nearest) = MLLPath.get_next_by_name "Nearest" chemin_avec_plus_proche carte in
     let name_next_londres = Carte.get_name next_londres carte in
     let name_next_nearest = Carte.get_name next_nearest carte in
     (* On ne vérifie pas que l'insertion a bien mis à jour les last, puisqu'on a déjà testé insert dans un autre test *)

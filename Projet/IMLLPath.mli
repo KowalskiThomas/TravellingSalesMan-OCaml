@@ -15,6 +15,7 @@ module MLLPath : sig
         val compare : int -> int -> int
     end
     type node = int
+    type node_set = Carte.NodeSet.t
 
     module PathEntry : Map.OrderedType with type t = Node.t * int
     (* Le type des éléments des chemins *)
@@ -76,13 +77,18 @@ module MLLPath : sig
     val length : path -> Carte.carte -> float
 
     (* Renvoie une liste contenant tous les indices d'un chemin *)
-    val to_list : path -> path_entry list
+    val entries_list : path -> path_entry list
+
+    val cities_list : path -> node list
 
     (* Renvoie un ensemble contenant tous les indices d'un chemin *)
-    val to_set : path -> path_entry_set
+    val cities_set : path -> node_set
 
     (* Renvoie le premier indice du chemin (dans N) *)
     val get_first : path -> path_entry
+
+    (* Renvoie un élément aléatoire du chemin *)
+    val get_random : path -> path_entry
 
     (* Ajoute un indice à un chemin
     Utilisation: insert [noeud] après [after] dans [chemin] *)

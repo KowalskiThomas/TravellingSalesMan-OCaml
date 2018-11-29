@@ -14,7 +14,9 @@ module MLLPath = struct
     module Carte = ICarte.CompleteCarte
 
     module Node = Carte.Node
+    module NodeSet = Carte.NodeSet
     type node = Carte.Node.t
+    type node_set = NodeSet.t
 
     module PathEntry : Map.OrderedType with type t = Node.t * int = struct
         type t = Node.t * int
@@ -97,6 +99,8 @@ module MLLPath = struct
         try
             let (key, _) = min_binding path in key
         with Not_found -> raise EmptyPath
+
+    let get_random path = get_first path (* TODO: Fix this *)
     
     let mem u { map = m } = PathMap.mem u m
         
@@ -336,22 +340,33 @@ module MLLPath = struct
         (* Appel à aux (de u à u) *)
         in aux start
 
-    let to_set (path : path) =
+    let cities_set (path : path) =
         let start = get_first path in
         let rec to_set_from u =
             let next = get_next u path in
+            let city, _ = next in 
             if next = start
-            then PathEntrySet.add u (PathEntrySet.empty)
-            else PathEntrySet.add u (to_set_from next)
+            then NodeSet.add city (NodeSet.empty)
+            else NodeSet.add city (to_set_from next)
         in to_set_from start
 
-    let to_list (path : path) =
+    let entries_list (path : path) =
         let start = get_first path in
         let rec to_list_from u =
             let next = get_next u path in
             if next = start
             then [u]
             else u::(to_list_from next)
+        in to_list_from start
+
+    let cities_list (path : path) =
+        let start = get_first path in
+        let rec to_list_from u =
+            let next = get_next u path in
+            let city, _ = next in 
+            if next = start
+            then [city]
+            else city::(to_list_from next)
         in to_list_from start
 
     (*
