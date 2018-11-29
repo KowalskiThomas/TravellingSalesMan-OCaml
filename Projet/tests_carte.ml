@@ -80,4 +80,48 @@ let test_add_many_many_nodes =
     let b = Sys.time() in
     let _ = aux it in
     let e = Sys.time() in
-    Printf.printf "\tTemps pour %d fois 150000 insertions: %fs\n" it (e -. b)
+    Printf.printf "Temps pour %d fois 150000 insertions: %fs\n" it (e -. b)
+
+let cities_distance_3 = [
+    ("Paris", 2.0, 0.0);
+    ("Londres", 1.0, 1.0);
+    ("Berlin", 0.0, 1.0);
+    ("Madrid", 0.0, 2.0)
+]
+let test_broken_road_1 = 
+    let carte = Carte.make_carte_from_cities cities_distance_3 in
+    let carte = Carte.add_broken_road (0, 1) carte in 
+    let dist = Carte.distance 0 1 carte in 
+    let test = dist = infinity in 
+    if test then
+        Printf.printf "OK Tests Distance Route Inexistante\n"
+    else
+        Printf.printf "XX Tests Distance Route Inexistante\n"
+    
+let test_broken_road_2 = 
+    let carte = Carte.empty in 
+    let br = (0, 1) in
+    let carte = Carte.add_broken_road br carte in 
+    let test_1 = Carte.mem_broken_road br carte in 
+    let carte = Carte.remove_broken_road br carte in 
+    let test_2 = not(Carte.mem_broken_road br carte) in 
+    if test_1 && test_2 then
+        Printf.printf "OK Tests Ajout / Remove Broken Road\n"
+    else
+        Printf.printf "XX Tests Ajout / Remove Broken Road\n"
+
+let test_broken_road_3 = 
+    let carte = Carte.empty in 
+    let br1 = (0, 1) in 
+    let br2 = (1, 2) in 
+    let carte = Carte.add_broken_road br1 carte in
+    let carte = Carte.add_broken_road br2 carte in 
+    let test_1 = Carte.mem_broken_road br1 carte in 
+    let test_2 = Carte.mem_broken_road br2 carte in 
+    let test_3 = not(Carte.mem_broken_road (9, 3) carte) in 
+    if test_1 && test_2 && test_3 then
+        Printf.printf "OK Tests Ajout / Remove Broken Road 2\n"
+    else
+        Printf.printf "XX Tests Ajout / Remove Broken Road 2\n"
+
+        
