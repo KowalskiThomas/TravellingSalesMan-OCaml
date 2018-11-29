@@ -103,19 +103,6 @@ module MLLPath : sig
     (* Insère un indice aléatoire de la Carte en minimisant la longueur du chemin *)
     val insert_random_minimize : path -> Carte.carte -> node list -> Carte.node_set -> path_entry * path
 
-    (* Insère la ville la plus proche du chemin dans la Carte non-déjà présente en minimsant sa longueur *)
-    val insert_nearest_minimize_length : path -> Carte.carte -> node list -> Carte.node_set -> path_entry * path
-
-    (* Insère la ville qui est la plus lointaine de toutes les villes à la fois.
-        C'est à dire que si
-        - A -> X = 100km
-        - A -> Y = 5km
-        - B -> X = 20km
-        - B -> Y = 25km
-        Alors c'est B qu'on insère.
-    *)
-    val insert_farthest_minimize_length : path -> Carte.carte -> node list -> Carte.node_set -> path_entry * path
-
     (* A FINS DE TESTS
     Trouve la ville suivant une autre ville par son nom
     *)

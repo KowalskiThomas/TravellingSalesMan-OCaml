@@ -413,16 +413,6 @@ module MLLPath = struct
         (* On renvoie p avec to_insert insérée au bon endroit *)
         insert to_insert after p
 
-    let insert_nearest_minimize_length p cities cities_list cities_set =
-        let insert_after, nearest, dist = Carte.find_nearest_not_in_path cities_list cities_set cities in
-        let insert_after = find_first_occurrence insert_after p in
-        insert nearest insert_after p
-
-    let insert_farthest_minimize_length p cities cities_list cities_set = 
-        let insert_after, farthest, dist = Carte.find_farthest_not_in_path cities_list cities_set cities in 
-        let insert_after = find_first_occurrence insert_after p in 
-        insert farthest insert_after p
-
     let insert_random_minimize p c _ cities_set =
         let (random_city_index, _) = Carte.get_random c cities_set in
         insert_minimize_length random_city_index p c

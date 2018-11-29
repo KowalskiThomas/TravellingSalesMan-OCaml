@@ -9,15 +9,22 @@ module CompleteCarte : sig
     (* Le type ordonné des indices *)
     module Node : sig
         type t = int
-        val compare : int -> int -> int
+        val compare : t -> t -> int
     end
     (* Le type des indices, pour nous des entiers *)
     type node = Node.t
-
     (* Le module Ensemble de Noeuds (à savoir ensemble d'entiers)) *)
     module NodeSet : Set.S with type elt = node
     (* Le type des ensembles de noeuds *)
     type node_set = NodeSet.t
+    
+    module BrokenRoad : sig 
+        type t = node * node
+        val compare : t -> t -> int
+    end
+    type broken_road = BrokenRoad.t
+    module BrokenRoadSet : Set.S with type elt = broken_road
+    type broken_road_set = BrokenRoadSet.t
 
     (* Le type des données des villes (nom, coordonnées) *)
     type pair = string * (float * float)
@@ -78,18 +85,6 @@ module CompleteCarte : sig
 
     (* Calcule la longueur d'un chemin donné sous la forme d'une liste de noeuds *)
     val distance_path : node list -> carte -> float
-
-    (* Détermine l'indice et la distance de la ville la plus proche d'un noeud et absente d'un ensemble de noeuds donnés.
-    Utilisation: find_nearest noeud noeuds_a_exclude carte *)
-    val find_nearest : node -> node_set -> carte -> (node * float)
-
-    (* Trouve l'indice de la ville la plus proche du chemin mais pas dans le chemin *)
-    val find_nearest_not_in_path : node list -> node_set -> carte -> node * node * float
-
-    val find_farthest_not_in_path : node list -> node_set -> carte -> node * node * float
-
-    (* Comme find_nearest, mais avec la ville la plus éloignée. *)
-    val find_farthest : node -> node_set -> carte -> (node * float)
 
     (* A FINS DE TESTS *)
     val get_index : string -> carte -> node
