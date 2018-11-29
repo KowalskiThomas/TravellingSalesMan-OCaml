@@ -112,7 +112,7 @@ module CompleteCarte = struct
 
     let rec find_nearest_not_in_path cities_list cities_set carte =
         let rec aux cities = match cities with
-        | [] -> failwith "insert_nearest_minimize_length: Nothing left to add."
+        | [] -> failwith "find_nearest_not_in_path: Nothing left to add."
             | [u] ->
                 let nearest, dist = find_nearest u cities_set carte in
                 u, nearest, dist

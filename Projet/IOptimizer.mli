@@ -6,6 +6,7 @@ module Optimizer : sig
     val inversion_locale : MLLPath.path_entry -> MLLPath.path -> Carte.carte -> MLLPath.path
 
     val find_solution_nearest : Carte.carte -> MLLPath.path
+    val find_solution_farthest : Carte.carte -> MLLPath.path
     val find_solution_random : Carte.carte -> MLLPath.path
 
 end
