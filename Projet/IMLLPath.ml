@@ -14,7 +14,7 @@ module MLLPath = struct
     module Carte = ICarte.CompleteCarte
 
     module Node = Carte.Node
-    type node = Node.t
+    type node = Carte.Node.t
 
     module PathEntry : Map.OrderedType with type t = Node.t * int = struct
         type t = Node.t * int
@@ -51,7 +51,12 @@ module MLLPath = struct
         cardinal = 0;
     }
 
-    let is_empty p = p = empty
+    let is_empty { map = m; cardinal = n } = 
+        if m = PathMap.empty && n = 0 
+        then true
+        else if m <> PathMap.empty && n > 0 
+        then false
+        else failwith "Inconsistent state"
 
     let cardinal { cardinal = n } = n
 
@@ -59,18 +64,42 @@ module MLLPath = struct
 
     let min_binding { map = m } = PathMap.min_binding m
 
+    let get_last_index { last_index = k } = k
+
+    let get_next_index { last_index = k } = k + 1 
+
     let add entry value { map = m; cardinal = n; last_index = k } = {
         map = PathMap.add entry value m;
         cardinal = n + 1;
-        last_index = k;
+        last_index = k + 1;
     }
 
-    let remove entry { map = m; cardinal = n; last_index = k } = {
-        map = PathMap.remove entry m;
-        cardinal = n - 1;
-        last_index = k;
-    }
+    let make u =
+        (u, 0), add (u, 0) ((u, 0), (u, 0)) empty
 
+    let make_with_index u idx = 
+        (u, idx), 
+        {
+            cardinal = 1;
+            last_index = idx;
+            map = PathMap.add (u, idx) ((u, idx), (u, idx)) PathMap.empty
+        }
+
+    let path_remove entry { map = m; cardinal = n; last_index = k } = 
+        let result = {
+            map = PathMap.remove entry m;
+            cardinal = n - 1;
+            last_index = k;
+        }
+        in result
+
+    let get_first path =
+        try
+            let (key, _) = min_binding path in key
+        with Not_found -> raise EmptyPath
+    
+    let mem u { map = m } = PathMap.mem u m
+        
     let get_next (u : path_entry) (p : path) =
         try
             let (_, next) = find u p in
@@ -83,28 +112,25 @@ module MLLPath = struct
             last
         with Not_found -> raise NotInPath
 
-    let get_first path =
-        try
-            let (key, _) = min_binding path in key
-        with Not_found -> raise EmptyPath
+    let rec find_first_occurrence city path = 
+        let initial = get_first path in 
+        let rec aux current =
+            let city_cur, _ = current in 
+            if city_cur = city 
+            then current
+            else if current = initial 
+            then raise NotInPath
+            else aux (get_next current path)
+        in aux (get_next initial path)
 
-        let rec find_first_occurrence city path = 
-            let initial = get_first path in 
-            let rec aux current =
-                let city_cur, _ = current in 
-                if city_cur = city 
-                then current
-                else if current = initial 
-                then raise NotInPath
-                else aux (get_next current path)
-            in aux (get_next initial path)
-    
     let mem_city u p = 
         try
-            let _ = find_first_occurrence u p in
-            true
-        with NotInPath -> false    
-
+            try
+                let _ = find_first_occurrence u p in
+                true
+            with NotInPath -> false
+        with EmptyPath -> false
+        
     let print p =
         if is_empty p then
             Printf.printf "< Empty path >"
@@ -227,36 +253,36 @@ module MLLPath = struct
         (add v (u, last) empty))
 
     let insert u last p =
-        let city_u, idx_u = u in 
-        if mem_city city_u p
+        if mem_city u p
         then raise AlreadyInPath
         else
             try
-                let (last_last, last_next) = find last p in
+            let (last_last, last_next) = find last p in
+                let next_index = get_next_index p in 
+                let u = (u, next_index) in 
                 if last_last = last then
-                    insert_in_unary u last p
+                    u, insert_in_unary u last p
                 else if last_last = last_next then
-                    insert_in_binary u last p
+                    u, insert_in_binary u last p
                 else
                     let (_, last_next_next) = find last_next p in
-                    add
-                    last (last_last, u)
-                    (add u (last, last_next)
-                    (add last_next (u, last_next_next) p))
+                    u, (add last (last_last, u) (add u (last, last_next) (add last_next (u, last_next_next) p)))
             with Not_found -> raise NotInPath
 
     let insert_before_or_after u other p _ = insert u other p
 
     let remove_standard u p =
+        (* 
+         * Cas normal pour la suppression d'un élément
+         * A savoir A -> B -> C -> D -> E
+         * Donne    A -> B -> D -> E
+         *)
         let (last, next) = find u p in
         let (last_last, _) = find last p in
         let (_, next_next) = find next p in
         add last (last_last, next)
         (add next (last, next_next)
-        (remove u p))
-
-    let make u =
-        add (u, 0) ((u, 0), (u, 0)) empty
+        (path_remove u p))
 
     let remove_two u p =
         (*
@@ -267,12 +293,12 @@ module MLLPath = struct
          *)
         let (last, next) = find u p in
             (* let _ = Printf.printf "last : %d next : %d u : %d\n" last next u in  *)
-            let city_last, _ = last in 
-            make city_last
+            let city_last, index_last = last in 
+            let _ , p = make_with_index city_last index_last
+            in p 
 
     let remove u p =
-        let city_u, idx_u = u in 
-        if not (mem_city city_u p)
+        if not (mem u p)
         then raise NotInPath
         else
             let (last, next) = find u p in
@@ -335,7 +361,7 @@ module MLLPath = struct
     c : Carte
     Revoie: p avec to_insert dedans
     *)
-    let insert_minimize_length to_insert new_index p c =
+    let insert_minimize_length to_insert p c =
         (*
         rec trouve où insérer la ville
         u : Ville en cours d'évaluation
@@ -370,21 +396,21 @@ module MLLPath = struct
         (* Débogage *)
         (* let _ = Printf.printf "u = %d should be inserted after %d\n" to_insert after in *)
         (* On renvoie p avec to_insert insérée au bon endroit *)
-        insert (to_insert, new_index) after p
+        insert to_insert after p
 
-    let insert_nearest_minimize_length p cities cities_list cities_set new_index =
+    let insert_nearest_minimize_length p cities cities_list cities_set =
         let insert_after, nearest, dist = Carte.find_nearest_not_in_path cities_list cities_set cities in
         let insert_after = find_first_occurrence insert_after p in
-        (nearest, new_index), (insert (nearest, new_index) insert_after p)
+        insert nearest insert_after p
 
-    let insert_farthest_minimize_length p cities cities_list cities_set new_index = 
+    let insert_farthest_minimize_length p cities cities_list cities_set = 
         let insert_after, farthest, dist = Carte.find_farthest_not_in_path cities_list cities_set cities in 
         let insert_after = find_first_occurrence insert_after p in 
-        (farthest, new_index), (insert (farthest, new_index) insert_after p)
+        insert farthest insert_after p
 
-    let insert_random_minimize p c _ cities_set new_index =
+    let insert_random_minimize p c _ cities_set =
         let (random_city_index, _) = Carte.get_random c cities_set in
-        (random_city_index, new_index), (insert_minimize_length random_city_index new_index p c)
+        insert_minimize_length random_city_index p c
 
     let get_next_by_name name p c =
         let index = Carte.get_index name c in

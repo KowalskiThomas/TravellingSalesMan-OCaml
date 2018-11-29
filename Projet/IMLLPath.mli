@@ -10,12 +10,15 @@ module MLLPath : sig
     (* Un ensemble de villes d'une carte (<=> noeuds sur un graphe) *)
     (* module NodeSet : Set.S *)
     (* Une ville. Dans un chemin, elle est représentée par un entier qui est son "indice" dans la carte *)
-    module Node = Carte.Node
-    type node 
+    module Node : sig
+        type t = int
+        val compare : int -> int -> int
+    end
+    type node = int
 
     module PathEntry : Map.OrderedType with type t = Node.t * int
     (* Le type des éléments des chemins *)
-    type path_entry
+    type path_entry = PathEntry.t
 
     (* Le type des données contenues dans la Map. En pratique, c'est un couple (précédent, suivant) d'indices *)
     type value
@@ -58,12 +61,8 @@ module MLLPath : sig
     (* Vérifie si une ville appartient au chemin *)
     val mem_city : node -> path -> bool
 
-    (* Ajoute un indice à un chemin
-    Utilisation: insert [noeud] après [after] dans [chemin] *)
-    val insert : path_entry -> path_entry -> path -> path
-
-    (* Ajoute un indice dans un chemin afin d'optimiser la longueur totale *)
-    val insert_before_or_after : path_entry -> path_entry -> path -> Carte.carte -> path
+    (* Vérifie si un path_entry appartient au chemin *)
+    val mem : path_entry -> path -> bool
 
     (* Supprime un indice d'un chemin
     Lève NotInPath si l'indice n'y est pas. *)
@@ -71,7 +70,7 @@ module MLLPath : sig
 
     (* Construit un chemin de base avec un seul indice.
     Le chemin est alors de la forme indice -> (indice, indice) *)
-    val make : node -> path
+    val make : node -> path_entry * path
 
     (* Détermine la longueur totale d'un chemin *)
     val length : path -> Carte.carte -> float
@@ -85,14 +84,21 @@ module MLLPath : sig
     (* Renvoie le premier indice du chemin (dans N) *)
     val get_first : path -> path_entry
 
+    (* Ajoute un indice à un chemin
+    Utilisation: insert [noeud] après [after] dans [chemin] *)
+    val insert : node -> path_entry -> path -> path_entry * path
+
+    (* Ajoute un indice dans un chemin afin d'optimiser la longueur totale *)
+    val insert_before_or_after : node -> path_entry -> path -> Carte.carte -> path_entry * path
+
     (* Insère un indice dans un chemin en minimsant sa longueur *)
-    val insert_minimize_length : node -> int -> path -> Carte.carte -> path
+    val insert_minimize_length : node -> path -> Carte.carte -> path_entry * path
 
     (* Insère un indice aléatoire de la Carte en minimisant la longueur du chemin *)
-    val insert_random_minimize : path -> Carte.carte -> node list -> Carte.node_set -> int -> path_entry * path
+    val insert_random_minimize : path -> Carte.carte -> node list -> Carte.node_set -> path_entry * path
 
     (* Insère la ville la plus proche du chemin dans la Carte non-déjà présente en minimsant sa longueur *)
-    val insert_nearest_minimize_length : path -> Carte.carte -> node list -> Carte.node_set -> int -> path_entry * path
+    val insert_nearest_minimize_length : path -> Carte.carte -> node list -> Carte.node_set -> path_entry * path
 
     (* Insère la ville qui est la plus lointaine de toutes les villes à la fois.
         C'est à dire que si
@@ -102,7 +108,7 @@ module MLLPath : sig
         - B -> Y = 25km
         Alors c'est B qu'on insère.
     *)
-    val insert_farthest_minimize_length : path -> Carte.carte -> node list -> Carte.node_set -> int -> path_entry * path
+    val insert_farthest_minimize_length : path -> Carte.carte -> node list -> Carte.node_set -> path_entry * path
 
     (* A FINS DE TESTS
     Trouve la ville suivant une autre ville par son nom
