@@ -5,11 +5,11 @@ let _ = Printf.printf "Tests insertion optimale\n"
 
 let test_insert_minimize =
     let cities = [
-    ("Londres", 0.0, 0.0);
-    ("Paris", 2.0, 0.0);
-    ("Helsinki", 4.0, 0.0);
-    ("Budapest", 6.0, 1.0);
-    ("Berlin", 1.0, 0.0)
+        ("Londres", 0.0, 0.0);
+        ("Paris", 2.0, 0.0);
+        ("Helsinki", 4.0, 0.0);
+        ("Budapest", 6.0, 1.0);
+        ("Berlin", 1.0, 0.0)
     ] in
 
     let carte = Carte.make_carte_from_cities cities in
@@ -32,3 +32,23 @@ let test_insert_minimize =
     let _ = Printf.printf "Longueur chemin modifié : %f\n" length
     in ()
 
+let _ = 
+    let cities = [
+        ("0", 0.0, 0.0);
+        ("1", 1.0, 1.0);
+        ("2", 2.0, 1.0);
+        ("3", 3.0, 0.0);
+        ("4", 2.0, -1.0);
+        ("5", -1.0, -1.0)
+    ] in
+
+    let br1 = (0, 1) in 
+    let br5 = (0, 5) in
+    
+    let carte = Carte.make_carte_from_cities cities in
+    let carte = Carte.add_broken_road br1 carte in 
+    let carte = Carte.add_broken_road br5 carte in 
+
+    let chemin = IOptimizer.Optimizer.find_solution_nearest carte in 
+    
+    MLLPath.print chemin 
