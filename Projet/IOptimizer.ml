@@ -70,25 +70,57 @@ module Optimizer = struct
     let find_nearest = find_optimal (fun x y -> x < y)
     let find_farthest = find_optimal (fun x y -> x > y)
     
-    let build_initial_mins_list carte initial = 
-        let initial_city, initial_index = initial in 
-        let xi, yi = Carte.get_coordinates initial_city carte in 
-        let rec aux l = match l with
+    (* 
+        Builds a list of the following form for cities that aren't in the path:
+        [(first_city_out_of_path, closest_city_in_path, distance), (second_city_out_of_path, ...), ...]
+    *)
+    let build_initial_mins_list carte path = 
+        (* Get the first city of the path. We need that since we're cycling in it. *)
+        let (initial_city, initial_idx) as initial = MLLPath.get_first path in 
+        (* Construct a set with all the cities in the path (in order to skip cities from the Carte that already are in the path *)
+        let cities_set = MLLPath.cities_set path in 
+        (* If x is not in path, then find the closest city to x in the path. *)
+        let rec find_closest_in_path current city = 
+            (* Get next city in the path (it's our stop condition) *)
+            let (next_city, next_idx) as next = MLLPath.get_next current path in
+            (* Unpack our current path entry *)
+            let current_city, current_idx = current in 
+            (* Compute the distance between current path entry and out-of-path node *)
+            let current_distance = Carte.distance current_city city carte in
+            (* Stop condition *)
+            if next = initial
+            then current, current_distance
+            else 
+                (* Compare this distance with the distance computed by calling recursively on the end of the path *)
+                let closest_next, distance_next = find_closest_in_path next city in
+                if distance_next < current_distance 
+                then current, current_distance
+                else closest_next, distance_next
+        in
+        (* 
+            The main auxiliary function. 
+            Constructs the said list from the bindings of the Carte.
+        *)
+        let rec construct_list_from_bindings l = match l with
         | [] -> []
-        | (idx, (_, (x, y)))::t -> 
-            if idx = initial_city
-            then aux t
+        | (idx, _)::t -> 
+            (* The binding is in the form (city_id, (...)) but we're not interested in the rest. *)
+            (* Verify if the city is already in path *)
+            if Carte.NodeSet.mem idx cities_set
+            (* If so, skip it *)
+            then construct_list_from_bindings t
             else
-                let dist = Carte.distance_from_coordinates xi yi x y in 
-                (idx, initial, dist)::(aux t)
+                (* Otherwise, find the closest in path *)
+                let closest, dist = find_closest_in_path initial idx in 
+                (* And cons it to the recursive call *)
+                (idx, closest, dist)::(construct_list_from_bindings t)
         in 
-        aux (Carte.bindings carte)
+        (* Call the aux function *)
+        construct_list_from_bindings (Carte.bindings carte)
 
-    let rec build_solution finder carte idx_start = 
-        (* Détermination d'éléments de départ aléatoires *)
-        let initial_entry, initial_path = MLLPath.make idx_start in 
+    let rec build_solution finder carte initial_path = 
         (* Construction de la liste initiale des villes les plus proches *)
-        let initial_mins_list = build_initial_mins_list carte initial_entry in 
+        let initial_mins_list = build_initial_mins_list carte initial_path in 
         (* Construit un chemin à partir d'un chemin initial p en utilisant la liste des noeuds les plus proches *)
         let rec build_path l p = 
             (* On trouve l'élément qui maximise la distance minimale au chemin *)
@@ -105,9 +137,8 @@ module Optimizer = struct
     let build_solution_nearest = build_solution find_nearest
     let build_solution_farthest = build_solution find_farthest
 
-    let rec build_solution_random carte initial =
-        let intial_entry, initial_path = MLLPath.make initial in 
-        let initial_set = Carte.NodeSet.add initial Carte.NodeSet.empty in 
+    let rec build_solution_random carte initial_path =
+        let initial_set = MLLPath.cities_set initial_path in 
         let target_card = Carte.card carte in 
         let rec aux card cities_set path = 
             if card = target_card 
@@ -121,11 +152,12 @@ module Optimizer = struct
         in aux 1 initial_set initial_path
 
     let find_solution builder carte =
-        let idx_start, _ = Carte.get_random_any carte in
+        let city_start, _ = Carte.get_random_any carte in
+        let (city_start, idx_start), initial_path = MLLPath.make city_start in
 
         let _ = Printf.printf "Construction sol initiale\n" in 
         let s = Sys.time() in
-        let solution = builder carte idx_start in
+        let solution = builder carte initial_path in
         let e = Sys.time() in
         let _ = Printf.printf "Temps construction sol initiale: %f\n" (e -. s) in
         (* let _ = Printf.printf "Before: " in *)
