@@ -1,5 +1,6 @@
 module MLLPath = IMLLPath.MLLPath
 module Carte = ICarte.CompleteCarte
+module Optimizer = IOptimizer.Optimizer
 
 let _ = Printf.printf "Tests insertion optimale\n"
 
@@ -49,6 +50,6 @@ let _ =
     let carte = Carte.add_broken_road br1 carte in 
     let carte = Carte.add_broken_road br5 carte in 
 
-    let chemin = IOptimizer.Optimizer.find_solution_nearest carte in 
+    let chemin = Optimizer.find_solution_nearest carte in 
     
     MLLPath.print chemin 
