@@ -257,23 +257,36 @@ module MLLPath = struct
         (add v (u, last) empty))
 
     let insert u last p =
-        if mem_city u p
-        then raise AlreadyInPath
-        else
-            try
-            let (last_last, last_next) = find last p in
-                let next_index = get_next_index p in 
-                let u = (u, next_index) in 
-                if last_last = last then
-                    u, insert_in_unary u last p
-                else if last_last = last_next then
-                    u, insert_in_binary u last p
-                else
-                    let (_, last_next_next) = find last_next p in
-                    u, (add last (last_last, u) (add u (last, last_next) (add last_next (u, last_next_next) p)))
-            with Not_found -> raise NotInPath
+        (* if mem_city u p then failwith "test" else *)
+        try
+        let (last_last, last_next) = find last p in
+            let next_index = get_next_index p in 
+            let u = (u, next_index) in 
+            if last_last = last then
+                u, insert_in_unary u last p
+            else if last_last = last_next then
+                u, insert_in_binary u last p
+            else
+                let (_, last_next_next) = find last_next p in
+                u, (add last (last_last, u) (add u (last, last_next) (add last_next (u, last_next_next) p)))
+        with Not_found -> raise NotInPath
 
-    let insert_before_or_after u other p _ = insert u other p
+    let insert_in_path u other p c = 
+        let c_other, _ = other in 
+        let (c_prev_other, _) as prev_other = get_last other p in 
+        let (c_next_other, _) as next_other = get_next other p in 
+        let broken_prev = Carte.mem_broken_road (c_prev_other, u) c in
+        let broken_next = Carte.mem_broken_road (c_next_other, u) c in
+        if  broken_prev && not broken_next 
+        then insert u other p 
+        else if not broken_prev && broken_next
+        then insert u prev_other p 
+        else if broken_prev && broken_next 
+        then 
+            let (u, u_uid) as entry_u, path_with_new = insert u other p in 
+            insert c_other entry_u path_with_new
+        else (* Both are available *)
+            insert u other p 
 
     let remove_standard u p =
         (* 

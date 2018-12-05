@@ -89,6 +89,15 @@ module Optimizer = struct
     let find_nearest = find_optimal (fun x y -> x < y)
     let find_farthest = find_optimal (fun x y -> x > y)
     
+    let rec print_mins_list l = match l with
+    | [] -> ()
+    | (idx, None)::t -> 
+        let _ = Printf.printf "%d [None]\n" idx in
+        print_mins_list t 
+    | (idx, Some((closest_city, closest_uid), dist))::t -> 
+        let _ = Printf.printf "%d (%d, %d) (%f)\n" idx closest_city closest_uid dist in
+        print_mins_list t
+
     (* 
         Builds a list of the following form for cities that aren't in the path:
         [(first_city_out_of_path, closest_city_in_path, distance), (second_city_out_of_path, ...), ...]
@@ -116,7 +125,7 @@ module Optimizer = struct
                     (* let _ = Printf.printf "Result from %d to (%d, %d) is inf\n" city current_city current_idx in  *)
                     None
                 else 
-                    (* let _ = Printf.printf "Result from %d to (%d, %d) is %f\n" city current_city current_idx current_distance in                *)
+                    (* let _ = Printf.printf "Result from %d to (%d, %d) is %f\n" city current_city current_idx current_distance in *)
                     Some(current, current_distance) 
             in
             if next = initial
@@ -170,6 +179,7 @@ module Optimizer = struct
         carte initial_path = 
         (* Construction de la liste initiale des villes les plus proches *)
         let initial_mins_list = build_initial_mins_list carte initial_path in 
+        (* let _ = print_mins_list initial_mins_list in  *)
         (* Construit un chemin à partir d'un chemin initial p en utilisant la liste des noeuds les plus proches *)
         let rec build_path l p = 
             (* On trouve l'élément qui maximise la distance minimale au chemin *)
@@ -182,16 +192,23 @@ module Optimizer = struct
             (* On l'insère après closest_in_path pour minimiser la distance totale *)
             let new_entry, p' = match new_element_option with
             | None -> failwith "Nothing to add"
-            | Some(new_element, closest_in_path, dist) -> MLLPath.insert_before_or_after new_element closest_in_path p carte 
+            | Some(new_element, closest_in_path, dist) -> 
+                (* 1205 *)
+                (* let _ = print_mins_list l in  *)
+                (* let _ = Printf.printf "Inserting %d\n" new_element in  *)
+                MLLPath.insert_in_path new_element closest_in_path p carte 
             in 
+            (* let _ = MLLPath.print p' in  *)
             let l'' = match new_element_option with
-            | None -> l
+            | None -> failwith "Nothing to add"
             | Some(new_element, closest_in_path, dist) -> rebuild_mins_list l' new_entry carte
             in
+            (* let _ = print_mins_list l' in   *)
+            (* let _ = Printf.printf "New distance: %f\n" (Carte.distance_path (MLLPath.cities_list p') carte) in  *)
+            (* let _ = Printf.printf "\n" in  *)
             match l' with
             | [] -> p'
-            | l' ->
-                build_path l'' p'
+            | l' -> build_path l'' p'
         
         in build_path initial_mins_list initial_path
 

@@ -95,7 +95,7 @@ module MLLPath : sig
     val insert : node -> path_entry -> path -> path_entry * path
 
     (* Ajoute un indice dans un chemin afin d'optimiser la longueur totale *)
-    val insert_before_or_after : node -> path_entry -> path -> Carte.carte -> path_entry * path
+    val insert_in_path : node -> path_entry -> path -> Carte.carte -> path_entry * path
 
     (* Insère un indice dans un chemin en minimsant sa longueur *)
     val insert_minimize_length : node -> path -> Carte.carte -> path_entry * path
