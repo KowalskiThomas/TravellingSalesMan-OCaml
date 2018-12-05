@@ -17,10 +17,10 @@ module Optimizer = struct
             let _, chemin = MLLPath.insert_minimize_length u (MLLPath.remove u p) c
             in chemin *)
 
-    let inversion_locale a path carte =
+    let inversion_locale a path carte = (* TODO FIX IT *)
         (* From ... -> A -> B -> C -> D -> ... *)
         (* To   ... -> A -> C -> B -> D -> ... *)
-        let (ca, ia) = a in 
+        let (ca, ia) as a = a in 
         let (cb, ib) as b = MLLPath.get_next a path in
         let (cc, ic) as c = MLLPath.get_next b path in
         let (cd, id) as d = MLLPath.get_next c path in
@@ -243,8 +243,8 @@ module Optimizer = struct
 
         (* let s = Sys.time() in
         let solution = inversion_n_fois solution 200 carte in
-        let e = Sys.time() in *)
-        let _ = Printf.printf "Temps repos: %f\n" (e -. s) in
+        let e = Sys.time() in 
+        let _ = Printf.printf "Temps repos: %f\n" (e -. s) in *)
         let l = MLLPath.cities_list solution in 
         let dist = Carte.distance_path l carte in 
         let _ = Printf.printf "Distance: %f\n" dist in 

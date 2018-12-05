@@ -44,12 +44,21 @@ let _ =
     ] in
 
     let br1 = (0, 1) in 
-    let br5 = (0, 5) in
+    let br5 = (0, 5) in 
+    let br3 = (3, 2) in
+    let br4 = (4, 3) in
     
     let carte = Carte.make_carte_from_cities cities in
     let carte = Carte.add_broken_road br1 carte in 
     let carte = Carte.add_broken_road br5 carte in 
+    let carte = Carte.add_broken_road br3 carte in 
+    let carte = Carte.add_broken_road br4 carte in 
 
     let chemin = Optimizer.find_solution_nearest carte in 
-    
-    MLLPath.print chemin 
+    let chemin2 = Optimizer.find_solution_farthest carte in 
+    let chemin3 = Optimizer.find_solution_random carte in 
+
+    let _ = MLLPath.print chemin in
+    let _ = MLLPath.print chemin2 in
+    let _ = MLLPath.print chemin3 in
+    ()
