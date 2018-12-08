@@ -19,8 +19,15 @@ tests_optimizer:
 	ocamlbuild tests_optimizer.native
 	./tests_optimizer.native
 
-all_tests: tests_carte tests_mll_path tests_insert tests_optimizer
+tests_hull:
+	ocamlbuild tests_hull.native
+	./tests_hull.native
+
+all_tests: tests_carte tests_mll_path tests_insert tests_optimizer tests_hull
 
 projet:
 	ocamlbuild projet.native
 	./projet.native
+
+clean:
+	rm -rf *.cmo *.cmi *.cmx *.native *.out *.byte build_ log
