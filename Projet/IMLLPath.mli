@@ -73,6 +73,8 @@ module MLLPath : sig
     Le chemin est alors de la forme indice -> (indice, indice) *)
     val make : node -> path_entry * path
 
+    val from_list : node list -> Carte.carte -> path
+
     (* Détermine la longueur totale d'un chemin *)
     val length : path -> Carte.carte -> float
 

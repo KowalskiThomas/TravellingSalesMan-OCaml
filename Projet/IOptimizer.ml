@@ -1,7 +1,9 @@
 module Optimizer = struct
     module MLLPath = IMLLPath.MLLPath
     module Carte = ICarte.CompleteCarte
+    module Hull = IHull.ConvexHull
     type mins_list = (Carte.node * (MLLPath.path_entry * float) option) list
+    type builder = Carte.carte -> MLLPath.path -> MLLPath.path
 
     (*
       Cas card <= 3:
@@ -217,6 +219,7 @@ module Optimizer = struct
 
     let rec build_solution_random carte initial_path =
         let initial_set = MLLPath.cities_set initial_path in 
+        let initial_card = MLLPath.cardinal initial_path in 
         let target_card = Carte.card carte in 
         let rec aux card cities_set path = 
             if card = target_card 
@@ -227,11 +230,14 @@ module Optimizer = struct
                 let new_elt, path' = MLLPath.insert_minimize_length new_element path carte in 
                 let card' = card + 1 in 
                 aux card' cities_set' path'
-        in aux 1 initial_set initial_path
+        in aux initial_card initial_set initial_path
 
-    let find_solution builder carte =
-        let city_start, _ = Carte.get_random_any carte in
-        let (city_start, idx_start), initial_path = MLLPath.make city_start in
+    let find_solution builder (carte : Carte.carte) =
+        let hull : Hull.hull = Hull.convex_hull carte in 
+        let hull_indices : Carte.node list = Hull.to_indices hull in 
+        let initial_path : MLLPath.path = MLLPath.from_list hull_indices carte in 
+        (* let city_start, _ = Carte.get_random_any carte in
+        let (city_start, idx_start), initial_path = MLLPath.make city_start in *)
 
         let _ = Printf.printf "Construction sol initiale\n" in 
         let s = Sys.time() in

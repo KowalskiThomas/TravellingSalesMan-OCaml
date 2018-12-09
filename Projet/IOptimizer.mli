@@ -4,6 +4,8 @@ module Optimizer : sig
 
     type mins_list = (Carte.node * (MLLPath.path_entry * float) option) list
 
+    type builder = Carte.carte -> MLLPath.path -> MLLPath.path
+
     val repositionnement_noeud : MLLPath.path_entry -> MLLPath.path -> Carte.carte -> MLLPath.path
     val inversion_locale : MLLPath.path_entry -> MLLPath.path -> Carte.carte -> MLLPath.path
 
@@ -22,5 +24,9 @@ module Optimizer : sig
     val find_solution_nearest : Carte.carte -> MLLPath.path
     val find_solution_farthest : Carte.carte -> MLLPath.path
     val find_solution_random : Carte.carte -> MLLPath.path
+
+    val build_solution_random : builder
+    val build_solution_nearest : builder
+    val build_solution_farthest : builder
 
 end

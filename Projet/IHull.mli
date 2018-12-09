@@ -10,4 +10,6 @@ module ConvexHull : sig
   val print_hull : hull -> unit
   
   val in_hull : hull -> string -> bool
+
+  val to_indices : hull -> Carte.node list 
 end

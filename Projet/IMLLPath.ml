@@ -426,6 +426,16 @@ module MLLPath = struct
         (* On renvoie p avec to_insert insérée au bon endroit *)
         insert to_insert after p
 
+    let rec from_list (l : node list) (c : Carte.carte) : path = 
+        match l with
+        | [] -> empty
+        | [e] -> 
+            let _, p = make e in p
+        | h::t ->
+            let p = from_list t c in 
+            let _, p' = insert_minimize_length h p c in 
+            p'
+
     let insert_random_minimize p c _ cities_set =
         let (random_city_index, _) = Carte.get_random c cities_set in
         insert_minimize_length random_city_index p c
