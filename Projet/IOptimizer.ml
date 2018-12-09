@@ -10,14 +10,23 @@ module Optimizer = struct
       - Si il n'y a qu'une ville, on ne peut tout simplement pas faire de repositionnement
       - S'il y a deux villes, on obtient le même résultat en repositionnant
       - S'il y a trois villes aussi, puisque c'est "un triangle"
-      Sinon, on retire u du chemin et on le rajoute en minimisant la distance totale.
+      Sinon, si on a x -> u -> y, alors 
+      - On vérifie que la route de x vers y existe (sinon on renvoie le chemin initial)
+      - On retire u de p 
+      - On réinsère u dans p 
     *)
-    let repositionnement_noeud u p c = p (* TODO FIX IT *)
-        (* if MLLPath.cardinal p <= 3
+    let repositionnement_noeud u p c = 
+        if MLLPath.cardinal p <= 3
         then p
         else
-            let _, chemin = MLLPath.insert_minimize_length u (MLLPath.remove u p) c
-            in chemin *)
+            let city_prev, _ = MLLPath.get_last u p in 
+            let city_next, _ = MLLPath.get_next u p in 
+            if Carte.mem_broken_road (city_prev, city_next) c
+            then p
+            else
+                let city, _ = u in 
+                let _, chemin = MLLPath.insert_minimize_length city (MLLPath.remove u p) c
+                in chemin
 
     let inversion_locale a path carte = (* TODO FIX IT *)
         (* From ... -> A -> B -> C -> D -> ... *)
