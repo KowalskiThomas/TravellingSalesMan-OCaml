@@ -196,20 +196,20 @@ let test_swap_touching =
     let test_3 = next_4 = u3 in
     let _ =
         if test_1 && test_2 && test_3 then
-            Printf.printf "OK touching next\n"
+            Printf.printf "OK Test Touching next\n"
         else
             let _ = MLLPath.print swapped in
-            Printf.printf "XX touching next\n"
+            Printf.printf "XX Test Touching next\n"
     in
     let test_1 = last_4 = u2 in
     let test_2 = last_3 = u4 in
     let test_3 = last_5 = u3 in
     let _ =
         if test_1 && test_2 && test_3 then
-            Printf.printf "OK touching last\n"
+            Printf.printf "OK Test Touching last\n"
         else
             let _ = MLLPath.print swapped in
-            Printf.printf "XX touching last\n" in ()
+            Printf.printf "XX Test Touching last\n" in ()
 
 let test_swap_touching_3 =
     (* From 1 2 3 *)
@@ -229,10 +229,10 @@ let test_swap_touching_3 =
     let test_3 = next_2 = u1 in
     let _ =
         if test_1 && test_2 && test_3 then
-            Printf.printf "OK Touching 3 Next\n"
+            Printf.printf "OK Test Touching 3 Next\n"
         else
             let _ = MLLPath.print swapped in
-            Printf.printf "XX Touching 3 Next\n"
+            Printf.printf "XX Test Touching 3 Next\n"
     in
     let test_1 = last_1 = u2 in
     let test_2 = last_2 = u3 in

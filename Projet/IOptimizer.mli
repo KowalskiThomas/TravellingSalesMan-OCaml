@@ -7,7 +7,10 @@ module Optimizer : sig
     type builder = Carte.carte -> MLLPath.path -> MLLPath.path
 
     val repositionnement_noeud : MLLPath.path_entry -> MLLPath.path -> Carte.carte -> MLLPath.path
-    val inversion_locale : MLLPath.path_entry -> MLLPath.path -> Carte.carte -> MLLPath.path
+    val inversion_locale : MLLPath.path_entry -> MLLPath.path_entry  -> MLLPath.path -> Carte.carte -> MLLPath.path
+
+    val repositionnement_n_fois : MLLPath.path -> int -> Carte.carte -> MLLPath.path
+    val inversion_n_fois : MLLPath.path -> int -> Carte.carte -> MLLPath.path
 
     (* val build_solution : 
         mins_list -> MLLPath.node * (MLLPath.path_entry * 'a) option * (Carte.node * MLLPath.path_entry * float) list -> Carte.carte -> MLLPath.path -> MLLPath.path *)

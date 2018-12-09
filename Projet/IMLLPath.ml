@@ -213,7 +213,7 @@ module MLLPath = struct
         (* let _ = print p in *)
         let city_u, idx_u = u in 
         let city_v, idx_v = v in 
-        if not(mem_city city_u p) || not(mem_city city_v p)
+        if not(mem u p) || not(mem v p)
         then raise NotInPath
         else if u = v
         (* Cas où on souhaite échanger u et u, pas très intéressant *)

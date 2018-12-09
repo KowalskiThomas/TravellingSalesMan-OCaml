@@ -24,19 +24,35 @@ module Optimizer = struct
             if Carte.mem_broken_road (city_prev, city_next) c
             then p
             else
-                let city, _ = u in 
-                let _, chemin = MLLPath.insert_minimize_length city (MLLPath.remove u p) c
-                in chemin
+                let city, idx = u in
+                let solution_without_u = MLLPath.remove u p in 
+                let _, chemin = MLLPath.insert_minimize_length city solution_without_u c in
+                chemin
 
-    let inversion_locale a path carte = (* TODO FIX IT *)
-        (* From ... -> A -> B -> C -> D -> ... *)
-        (* To   ... -> A -> C -> B -> D -> ... *)
+    let rec repositionnement_n_fois solution n carte =
+        if n = 0
+        then solution
+        else
+            let entry = MLLPath.get_random solution in
+            let new_solution = repositionnement_noeud entry solution carte in
+            repositionnement_n_fois new_solution (n - 1) carte
+            
+    let inversion_locale a c path carte = (* TODO FIX IT *)
+        (* From ... -> A -> B -> ... -> C -> D -> ... *)
+        (* To   ... -> A -> C -> ... -> B -> D -> ... *)
         let (ca, ia) as a = a in 
         let (cb, ib) as b = MLLPath.get_next a path in
-        let (cc, ic) as c = MLLPath.get_next b path in
+        let (cc, ic) as c = c in
         let (cd, id) as d = MLLPath.get_next c path in
-        (* let _ = Printf.printf "%d %d %d %d\n" a b c d in  *)
+        if Carte.mem_broken_road (ca, cc) carte
+        then path
+        else if Carte.mem_broken_road (cb, cd) carte 
+        then path
+        else
         let swapped = MLLPath.swap b c path in
+        let _ = MLLPath.print path in 
+        let _ = Printf.printf "\n\n\n" in 
+        let _ = MLLPath.print swapped in 
         let distance_before = Carte.distance ca cb carte +. Carte.distance cb cc carte +. Carte.distance cc cd carte in
         let distance_after = Carte.distance ca cc carte +. Carte.distance cc cb carte +. Carte.distance cb cd carte in
         if distance_after < distance_before
@@ -47,13 +63,14 @@ module Optimizer = struct
             (* let _ = Printf.printf "N A: %f B: %f\n" distance_after distance_before in  *)
             path
 
-    let rec inversion_n_fois solution n c =
+    let rec inversion_n_fois solution n carte =
         if n = 0
         then solution
         else
-            let entry = MLLPath.get_random solution in
-            let swapped = inversion_locale entry solution c in
-            inversion_n_fois swapped (n - 1) c
+            let a = MLLPath.get_random solution in
+            let c = MLLPath.get_random solution in 
+            let swapped = inversion_locale a c solution carte in
+            inversion_n_fois swapped (n - 1) carte
 
     let rebuild_mins_list l new_element carte = 
         let new_city, new_index = new_element in 
@@ -259,7 +276,13 @@ module Optimizer = struct
         (* let s = Sys.time() in
         let solution = inversion_n_fois solution 200 carte in
         let e = Sys.time() in 
-        let _ = Printf.printf "Temps repos: %f\n" (e -. s) in *)
+        let _ = Printf.printf "Temps inversion: %f\n" (e -. s) in *)
+
+        let s = Sys.time() in
+        let solution = repositionnement_n_fois solution 200 carte in
+        let e = Sys.time() in 
+        let _ = Printf.printf "Temps repos: %f\n" (e -. s) in
+
         let l = MLLPath.cities_list solution in 
         let dist = Carte.distance_path l carte in 
         let _ = Printf.printf "Distance: %f\n" dist in 

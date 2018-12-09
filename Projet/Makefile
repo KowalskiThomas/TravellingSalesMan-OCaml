@@ -30,4 +30,4 @@ projet:
 	./projet.native
 
 clean:
-	rm -rf *.cmo *.cmi *.cmx *.native *.out *.byte build_ log
+	rm -rf *.cmo *.cmi *.cmx *.native *.out *.byte _build log
