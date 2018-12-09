@@ -14,6 +14,7 @@ module MLLPath : sig
         type t = int
         val compare : int -> int -> int
     end
+    module NodeSet = Carte.NodeSet
     type node = int
     type node_set = Carte.NodeSet.t
 
@@ -28,8 +29,6 @@ module MLLPath : sig
     (* Le type des ensembles d'éléments des chemins *)
     type path_entry_set
 
-    (* Exception levée si on essaie d'insérer une ville déjà dans le chemin *)
-    exception AlreadyInPath
     (* Exception levée si on essaie d'obtenir des informations ou d'insérer après une ville absente du chemin *)
     exception NotInPath
     (* Exception levée lors de l'appel d'une fonction demandant un chemin non vide sur un chemin vide *)

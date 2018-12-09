@@ -37,7 +37,6 @@ module MLLPath = struct
 
     type value = path_entry * path_entry
 
-    exception AlreadyInPath
     exception NotInPath
     exception EmptyPath
 

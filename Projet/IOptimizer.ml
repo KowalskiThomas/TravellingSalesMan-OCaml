@@ -217,9 +217,9 @@ module Optimizer = struct
     let build_solution_nearest = build_solution find_nearest
     let build_solution_farthest = build_solution find_farthest
 
-    let rec build_solution_random carte initial_path =
+    let build_solution_random carte initial_path =
         let initial_set = MLLPath.cities_set initial_path in 
-        let initial_card = MLLPath.cardinal initial_path in 
+        let initial_card = MLLPath.NodeSet.cardinal initial_set in 
         let target_card = Carte.card carte in 
         let rec aux card cities_set path = 
             if card = target_card 

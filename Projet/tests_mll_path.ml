@@ -39,18 +39,6 @@ let test_insert_after_non_existent =
     else
         Printf.printf "XX Test Insertion Après Absent\n"
 
-let test_insert_already_in_path =
-    let test =
-        try
-            let _, path = MLLPath.make 2 in
-            let _ = MLLPath.insert 2 (2, 0) path in false
-        with MLLPath.AlreadyInPath -> true
-    in
-    if test then
-        Printf.printf "OK Test Insertion Déjà Dans Chemin\n"
-    else
-        Printf.printf "XX Test Insertion Déjà Dans Chemin\n"
-
 let test_insert_two =
     let u1, path = MLLPath.make 1 in
     let u2, path = MLLPath.insert 2 u1 path in
