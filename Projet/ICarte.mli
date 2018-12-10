@@ -18,11 +18,15 @@ module CompleteCarte : sig
     (* Le type des ensembles de noeuds *)
     type node_set = NodeSet.t
     
+    (* Le module des "Arcs rompus" *)
+    (* Ils sont implémentés avec des couples d'indices *)
     module BrokenRoad : sig 
         type t = node * node
+        (* Comparaison lexicographique *)
         val compare : t -> t -> int
     end
     type broken_road = BrokenRoad.t
+    (* Ensemble d'arcs rompus, pour stocker tous les arcs inexistants *)
     module BrokenRoadSet : Set.S with type elt = broken_road
     type broken_road_set = BrokenRoadSet.t
 
@@ -35,8 +39,15 @@ module CompleteCarte : sig
     (* Exception levée si un élément supposé présent est absent *)
     exception NotInCarte
 
+    (* Ajoute un arc rompu dans le graphe *)
     val add_broken_road : broken_road -> carte -> carte
+    
+    (* Vérifie si un arc est rompu dans le graphe *)
     val mem_broken_road : broken_road -> carte -> bool
+    
+    (* Supprime un arc rompu du le graphe 
+       Lève Not_found s'il n'existe pas.
+    *)
     val remove_broken_road : broken_road -> carte -> carte
 
     (* Renvoie la Carte vide *)
@@ -74,7 +85,6 @@ module CompleteCarte : sig
     *)
     val print : carte -> unit
 
-
     (* Ajoute toutes les villes d'une liste de triplets (nom, x, y) à une carte *)
     val add_cities : (string * float * float) list -> carte -> carte
 
@@ -90,8 +100,13 @@ module CompleteCarte : sig
     (* Calcule la longueur d'un chemin donné sous la forme d'une liste de noeuds *)
     val distance_path : node list -> carte -> float
 
-    (* A FINS DE TESTS *)
+    (* ------------- A FINS DE TESTS ------------- *)
+    (* Trouve l'indice correspondant à un nom de ville *)
     val get_index : string -> carte -> node
+
+    (* Trouve le nom de la ville à partir de son indice *)
     val get_name : node -> carte -> string
+
+    (* Trouve les coordonnées d'une ville à partir de son indice *)
     val get_coordinates : node -> carte -> (float * float)
 end

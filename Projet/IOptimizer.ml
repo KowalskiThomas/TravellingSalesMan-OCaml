@@ -90,6 +90,7 @@ module Optimizer = struct
             else (u, Some(current_closest, dist))::(aux t)
         in aux l
 
+    (* Fonction auxiliaire pour find_optimal. Trouve l'élément optimal tout en reconstruisant la liste, en ne perdant pas d'information. *)
     let rec find_optimal_aux f 
         (l : (Carte.node * (MLLPath.path_entry * float) option) list) : 
         (Carte.node * (MLLPath.path_entry * float) option) * (Carte.node * (MLLPath.path_entry * float) option) list = 
@@ -108,6 +109,7 @@ module Optimizer = struct
                 then (next, Some(closest_next, dist_next)), (u, Some(closest_u, dist))::l'
                 else (u, Some(closest_u, dist)), (next, Some(closest_next, dist_next))::l'
 
+    (* Trouve l'élément maximisant f dans l. Renvoie None si f n'est pas satisfiable (ex: ville infiniment loin) *)
     let find_optimal f l = 
         let result_aux = find_optimal_aux f l in 
         match result_aux with
@@ -240,9 +242,13 @@ module Optimizer = struct
         
         in build_path initial_mins_list initial_path
 
+    (* Construit une solution initiale en prenant la ville la plus proche *)
     let build_solution_nearest = build_solution find_nearest
+
+    (* Construit une solution initiale en prenant la ville la plus lointaine *)
     let build_solution_farthest = build_solution find_farthest
 
+    (* Construit une solution initiale en prenant des villes au hasard *)
     let build_solution_random carte initial_path =
         let initial_set = MLLPath.cities_set initial_path in 
         let initial_card = MLLPath.NodeSet.cardinal initial_set in 
@@ -258,6 +264,7 @@ module Optimizer = struct
                 aux card' cities_set' path'
         in aux initial_card initial_set initial_path
 
+    (* Construit une solution grâce à un builder et à une carte fournis. *)
     let find_solution builder (carte : Carte.carte) =
         let hull : Hull.hull = Hull.convex_hull carte in 
         let hull_indices : Carte.node list = Hull.to_indices hull in 

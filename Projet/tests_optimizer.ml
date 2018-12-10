@@ -18,7 +18,7 @@ let test_inversion_locale =
     let u2, chemin = MLLPath.insert 2 u1 chemin in 
     let u3, chemin = MLLPath.insert 3 u2 chemin in 
 
-    let chemin_avec_inversion_en_a = Optimizer.inversion_locale u0 chemin carte in
+    let chemin_avec_inversion_en_a = Optimizer.inversion_locale u0 u2 chemin carte in
 
     let _ = Printf.printf "Test inversion (avec inversion conservée).\n" in
     let _ = MLLPath.print_with_names chemin carte in
@@ -41,7 +41,7 @@ let test_inversion_locale_2 =
     let u2, chemin = MLLPath.insert 2 u1 chemin in 
     let u3, chemin = MLLPath.insert 3 u2 chemin in 
 
-    let chemin_avec_inversion_en_a = Optimizer.inversion_locale u0 chemin carte in
+    let chemin_avec_inversion_en_a = Optimizer.inversion_locale u0 u2 chemin carte in
 
     let _ = Printf.printf "Test inversion (avec inversion annulée).\n" in
     let _ = Printf.printf "Expected: A B C D.\n" in
@@ -136,4 +136,4 @@ let test_repos_sans_br =
     let _ = Printf.printf "Tests Repositionnement (expected vs result)\n" in 
     let _ = Printf.printf "(0, _) (1, _) (2, _) (3, _)\n" in 
     let _ = MLLPath.print p' in
-    exit 1
+    ()

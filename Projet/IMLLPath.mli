@@ -104,9 +104,9 @@ module MLLPath : sig
     (* Insère un indice aléatoire de la Carte en minimisant la longueur du chemin *)
     val insert_random_minimize : path -> Carte.carte -> node list -> Carte.node_set -> path_entry * path
 
-    (* A FINS DE TESTS
-    Trouve la ville suivant une autre ville par son nom
-    *)
+    (* --------------- A FINS DE TESTS --------------- *)
+    (* Trouve la ville suivant une autre ville par son nom *)
     val get_next_by_name : string -> path -> Carte.carte -> path_entry
+    (* Trouve la ville précédant une autre ville par son nom *)
     val get_last_by_name : string -> path -> Carte.carte -> path_entry
 end
