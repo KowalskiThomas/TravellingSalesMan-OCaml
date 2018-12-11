@@ -51,8 +51,8 @@ module Optimizer = struct
         then path
         else
         let reverted = MLLPath.reverted path c b in
-        let distance_before = Carte.distance ca cb carte +. Carte.distance cb cc carte +. Carte.distance cc cd carte in
-        let distance_after = Carte.distance ca cc carte +. Carte.distance cc cb carte +. Carte.distance cb cd carte in
+        let distance_before = Carte.distance_path (MLLPath.cities_list path) carte in
+        let distance_after = Carte.distance_path (MLLPath.cities_list reverted) carte in
         if distance_after < distance_before
         then
             (* let _ = Printf.printf "S A: %f B: %f\n" distance_after distance_before in  *)
@@ -282,8 +282,8 @@ module Optimizer = struct
         let solution = builder carte initial_path in
         let e = Sys.time() in
         let distance = Carte.distance_path (MLLPath.cities_list solution) carte in 
-        let _ = Printf.printf "Distance initiale: %f\n" distance in 
         let _ = Printf.printf "Temps construction sol initiale: %f\n" (e -. s) in
+        let _ = Printf.printf "Distance initiale: %f\n" distance in 
         let _ = Printf.printf "\n" in 
 
         let s = Sys.time() in
