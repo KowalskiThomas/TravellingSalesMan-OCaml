@@ -136,7 +136,7 @@ module MLLPath = struct
         
     let print p =
         if is_empty p then
-            Printf.printf "< Empty path >"
+            Printf.printf "< Empty path >\n"
         else
             let start = get_first p in
             let rec aux u =
@@ -352,6 +352,56 @@ module MLLPath = struct
         (* Appel à aux (de u à u) *)
         in aux start
 
+    let rec entries_between (p : path) (u : path_entry) v = 
+        let next_u = get_next u p in
+        if next_u = v 
+        then u::v::[]
+        else 
+            u :: (entries_between p next_u v)
+
+    let rec remove_entries_from (l : path_entry list) (p : path) = 
+        match l with
+        | [] -> p
+        | h::t -> 
+            let p' = remove h p in 
+            remove_entries_from t p'
+
+    let rec add_all_after (l : path_entry list) (u : path_entry) (p : path) = 
+        match l with
+        | [] -> p
+        | (c, _)::q -> 
+            let new_entry, p' = insert c u p in
+            add_all_after q new_entry p'
+
+    let rec print_list (l : path_entry list) = match l with
+        | [] -> ()
+        | (c, i)::q -> 
+            let _ = Printf.printf "(%d, %d) " c i in 
+            let _ = print_list q in 
+            ()
+
+    let reverted p u v = 
+        let prev_u = get_last u p in
+        (* let _ = print p in  *)
+        let entries = entries_between p u v in
+        (* let _ = print_list entries in let _ = Printf.printf "\n" in  *)
+        let without_path_between_u_and_v = remove_entries_from entries p in 
+        (* let _ = print without_path_between_u_and_v in *)
+        let entries_reverted = List.rev entries in 
+        (* let _ = print_list entries_reverted in let _ = Printf.printf "\n" in  *)
+        let new_path = 
+            try
+                add_all_after entries_reverted prev_u without_path_between_u_and_v 
+            with NotInPath ->
+                match entries_reverted with
+                | [] -> without_path_between_u_and_v
+                | (first_city, _)::entries_reverted' -> 
+                    let first_entry, new_path = make first_city in 
+                    add_all_after entries_reverted' first_entry new_path
+        in
+        (* let _ = print new_path in *)
+        new_path
+
     let cities_set (path : path) =
         let start = get_first path in
         let rec to_set_from u =
@@ -403,10 +453,6 @@ module MLLPath = struct
             let distance_u_next = Carte.distance city_u city_next c in
             let somme_distances = Carte.distance city_u to_insert c +. Carte.distance to_insert city_next c in
             let delta = somme_distances -. distance_u_next in
-            (* let _ = Printf.printf "Distance de %d à %d : %f\n" u next distance_u_next in
-            let _ = Printf.printf "Delta avec %d après %d : %f\n" to_insert u delta in
-            let _ = Printf.printf "Distance %d à %d : %f, %d à %d : %f\n" u to_insert (Carte.distance u to_insert c) to_insert next (Carte.distance next to_insert c) in
-            let _ = Printf.printf "\n" in *)
             (* Si on a fait le tour, on n'a plus d'appel récursif à faire *)
             if next = start
             then (delta, u)
@@ -420,8 +466,6 @@ module MLLPath = struct
         in
         (* On détermine après quelle ville insérer la nouvelle ville *)
         let _, after = aux start in
-        (* Débogage *)
-        (* let _ = Printf.printf "u = %d should be inserted after %d\n" to_insert after in *)
         (* On renvoie p avec to_insert insérée au bon endroit *)
         insert to_insert after p
 

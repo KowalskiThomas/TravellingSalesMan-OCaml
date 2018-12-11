@@ -49,16 +49,13 @@ module Optimizer = struct
         else if Carte.mem_broken_road (cb, cd) carte 
         then path
         else
-        let swapped = MLLPath.swap b c path in
-        let _ = MLLPath.print path in 
-        let _ = Printf.printf "\n\n\n" in 
-        let _ = MLLPath.print swapped in 
+        let reverted = MLLPath.reverted path c b in
         let distance_before = Carte.distance ca cb carte +. Carte.distance cb cc carte +. Carte.distance cc cd carte in
         let distance_after = Carte.distance ca cc carte +. Carte.distance cc cb carte +. Carte.distance cb cd carte in
         if distance_after < distance_before
         then
             (* let _ = Printf.printf "S A: %f B: %f\n" distance_after distance_before in  *)
-            swapped
+            reverted
         else
             (* let _ = Printf.printf "N A: %f B: %f\n" distance_after distance_before in  *)
             path
@@ -265,36 +262,36 @@ module Optimizer = struct
         in aux initial_card initial_set initial_path
 
     (* Construit une solution grâce à un builder et à une carte fournis. *)
-    let find_solution builder (carte : Carte.carte) =
+    let find_solution (builder : builder) (carte : Carte.carte) =
         let hull : Hull.hull = Hull.convex_hull carte in 
         let hull_indices : Carte.node list = Hull.to_indices hull in 
-        let initial_path : MLLPath.path = MLLPath.from_list hull_indices carte in 
-        (* let city_start, _ = Carte.get_random_any carte in
-        let (city_start, idx_start), initial_path = MLLPath.make city_start in *)
+        (* let initial_path : MLLPath.path = MLLPath.from_list hull_indices carte in  *)
+        let city_start, _ = Carte.get_random_any carte in
+        let (city_start, idx_start), initial_path = MLLPath.make city_start in
 
         let _ = Printf.printf "Construction sol initiale\n" in 
         let s = Sys.time() in
         let solution = builder carte initial_path in
         let e = Sys.time() in
+        let distance = Carte.distance_path (MLLPath.cities_list solution) carte in 
+        let _ = Printf.printf "Distance initiale: %f\n" distance in 
         let _ = Printf.printf "Temps construction sol initiale: %f\n" (e -. s) in
-        (* let _ = Printf.printf "Before: " in *)
-        (* let _ = MLLPath.print_with_names solution carte in  *)
+        let _ = Printf.printf "\n" in 
 
-        (* let s = Sys.time() in
+        let s = Sys.time() in
         let solution = inversion_n_fois solution 200 carte in
         let e = Sys.time() in 
-        let _ = Printf.printf "Temps inversion: %f\n" (e -. s) in *)
+        let _ = Printf.printf "Temps inversion: %f\n" (e -. s) in
+        let distance = Carte.distance_path (MLLPath.cities_list solution) carte in 
+        let _ = Printf.printf "Distance: %f\n" distance in 
 
         let s = Sys.time() in
         let solution = repositionnement_n_fois solution 200 carte in
         let e = Sys.time() in 
-        let _ = Printf.printf "Temps repos: %f\n" (e -. s) in
+        let _ = Printf.printf "Temps repositionnement: %f\n" (e -. s) in
+        let distance = Carte.distance_path (MLLPath.cities_list solution) carte in 
+        let _ = Printf.printf "Distance: %f\n" distance in 
 
-        let l = MLLPath.cities_list solution in 
-        let dist = Carte.distance_path l carte in 
-        let _ = Printf.printf "Distance: %f\n" dist in 
-        (* let _ = Printf.printf "After: " in  *)
-        (* let _ = MLLPath.print_with_names solution carte in  *)
         solution
 
     let find_solution_nearest = find_solution build_solution_nearest

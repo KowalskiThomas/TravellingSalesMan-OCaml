@@ -43,6 +43,9 @@ module MLLPath : sig
     (* Renvoie le nombre d'éléments dans le chemin *)
     val cardinal : path -> int
 
+    (* Retourne un chemin entre deux points *)
+    val reverted : path -> path_entry -> path_entry -> path
+
     (* Echange deux villes sur un chemin *)
     val swap : path_entry -> path_entry -> path -> path
 
