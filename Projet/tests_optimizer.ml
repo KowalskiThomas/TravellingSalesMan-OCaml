@@ -82,7 +82,7 @@ let test_monde_simple =
     ] in
     let _ =
         let s = Sys.time() in
-        let _ = Optimizer.find_solution_nearest monde_simple in
+        let _ = Optimizer.find_solution Optimizer.random_point_initial_path Optimizer.build_solution_nearest monde_simple in
         let e = Sys.time() in
         Printf.printf "Optimization nearest: %f\n" (e -. s)
     in ()
@@ -137,6 +137,7 @@ let test_repos_sans_br =
 
     let _ = MLLPath.print p' in 
 
+    (*
     let expected = [0; 3; 2; 1] in 
     let l = MLLPath.cities_list p' in
 
@@ -146,8 +147,9 @@ let test_repos_sans_br =
         | _, [] -> false
         | t1::q1, t2::q2 -> t1 = t2 && (comp_list q1 q2)
     in
-    ()
-    (* if (comp_list expected l) then
+    if (comp_list expected l) then
         Printf.printf "OK Tests Repositionnement\n"
     else
-        Printf.printf "XX Tests Repositionnement\n" *)
+        Printf.printf "XX Tests Repositionnement\n" 
+    *)
+    ()
