@@ -6,6 +6,8 @@ module Optimizer : sig
 
     type builder = Carte.carte -> MLLPath.path -> MLLPath.path
 
+    type initial_path_builder = Carte.carte -> MLLPath.path
+
     (* Repositionne un élément du chemin pour minimiser la distance totale *)
     val repositionnement_noeud : MLLPath.path_entry -> MLLPath.path -> Carte.carte -> MLLPath.path
 
@@ -40,14 +42,15 @@ module Optimizer : sig
         mins_list -> (* La liste des noeuds les plus proches ou les plus loins *)
         ((Carte.node * MLLPath.path_entry * float) option) * mins_list (* L'élément à rajouter s'il existe, et la liste privée de cet élément *)
 
-    (* Applications partielles de la fonction find_optimal, avec des noms descriptifs *)
-    val find_solution_nearest : Carte.carte -> MLLPath.path
-    val find_solution_farthest : Carte.carte -> MLLPath.path
-    val find_solution_random : Carte.carte -> MLLPath.path
-
-    (* Constructeurs de solutions avec les finders correspondants *)
+    (* Constructeurs de solutions initiales avec les finders correspondants *)
     val build_solution_random : builder
     val build_solution_nearest : builder
     val build_solution_farthest : builder
 
+    (* Constructeurs de chemins initiaux (avec un point au hasard ou l'enveloppe convexe) *)
+    val random_point_initial_path : Carte.carte -> MLLPath.path
+    val hull_initial_path : Carte.carte -> MLLPath.path
+
+    (* La solution de résolution principale *)
+    val find_solution : initial_path_builder -> builder -> Carte.carte -> MLLPath.path
 end

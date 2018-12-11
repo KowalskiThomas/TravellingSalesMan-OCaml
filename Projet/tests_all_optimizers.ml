@@ -45,23 +45,16 @@ let rec test_n_fois f n =
         let _ = f n monde in
         test_n_fois f (n-1)
 
-let _ = Printf.printf "------------------------------------ NEAREST ------------------------------------\n"
-let _ =
+let execute_test name initial_path_builder solution_builder = 
+  let _ = Printf.printf "\n------------------------------------ %s ------------------------------------\n" name in
   let s = Sys.time() in
-  let _ = Optimizer.find_solution_nearest monde in
+  let _ = Optimizer.find_solution initial_path_builder solution_builder monde in
   let e = Sys.time() in
-  Printf.printf "Optimization nearest: %f\n" (e -. s)
+  Printf.printf "Temps total: %f\n" (e -. s)
 
-let _ = Printf.printf "------------------------------------ FARTHEST ------------------------------------\n"
-let _ =
-  let s = Sys.time() in
-  let _ = Optimizer.find_solution_farthest monde in
-  let e = Sys.time() in
-  Printf.printf "Optimization farthest: %f\n" (e -. s)
-
-let _ = Printf.printf "------------------------------------ RANDOM ------------------------------------\n"
-let _ =
-  let s = Sys.time() in
-  let _ = Optimizer.find_solution_random monde in
-  let e = Sys.time() in
-  Printf.printf "Optimization random: %f\n" (e -. s)
+let _ = execute_test "Point + Nearest " Optimizer.random_point_initial_path Optimizer.build_solution_nearest
+let _ = execute_test "Point + Farthest" Optimizer.random_point_initial_path Optimizer.build_solution_farthest
+let _ = execute_test "Point + Random  " Optimizer.random_point_initial_path Optimizer.build_solution_random
+let _ = execute_test " Hull + Nearest " Optimizer.hull_initial_path Optimizer.build_solution_nearest
+let _ = execute_test " Hull + Farthest" Optimizer.hull_initial_path Optimizer.build_solution_farthest
+let _ = execute_test " Hull + Random  " Optimizer.hull_initial_path Optimizer.build_solution_random

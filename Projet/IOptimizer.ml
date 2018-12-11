@@ -4,6 +4,7 @@ module Optimizer = struct
     module Hull = IHull.ConvexHull
     type mins_list = (Carte.node * (MLLPath.path_entry * float) option) list
     type builder = Carte.carte -> MLLPath.path -> MLLPath.path
+    type initial_path_builder = Carte.carte -> MLLPath.path
 
     (*
       Cas card <= 3:
@@ -261,13 +262,20 @@ module Optimizer = struct
                 aux card' cities_set' path'
         in aux initial_card initial_set initial_path
 
-    (* Construit une solution grâce à un builder et à une carte fournis. *)
-    let find_solution (builder : builder) (carte : Carte.carte) =
+    let hull_initial_path carte = 
         let hull : Hull.hull = Hull.convex_hull carte in 
         let hull_indices : Carte.node list = Hull.to_indices hull in 
-        (* let initial_path : MLLPath.path = MLLPath.from_list hull_indices carte in  *)
+        let initial_path : MLLPath.path = MLLPath.from_list hull_indices carte in 
+        initial_path
+
+    let random_point_initial_path carte =
         let city_start, _ = Carte.get_random_any carte in
         let (city_start, idx_start), initial_path = MLLPath.make city_start in
+        initial_path
+
+    (* Construit une solution grâce à un builder et à une carte fournis. *)
+    let find_solution initial_path_builder builder carte =
+        let initial_path = initial_path_builder carte in
 
         let _ = Printf.printf "Construction sol initiale\n" in 
         let s = Sys.time() in
@@ -293,8 +301,4 @@ module Optimizer = struct
         let _ = Printf.printf "Distance: %f\n" distance in 
 
         solution
-
-    let find_solution_nearest = find_solution build_solution_nearest
-    let find_solution_farthest = find_solution build_solution_farthest
-    let find_solution_random = find_solution build_solution_random
 end
