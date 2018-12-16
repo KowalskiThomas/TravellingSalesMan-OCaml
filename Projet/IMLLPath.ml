@@ -439,6 +439,7 @@ module MLLPath = struct
     Revoie: p avec to_insert dedans
     *)
     let insert_minimize_length to_insert p c =
+        (* TESTER LA MAISON *)
         (*
         rec trouve où insérer la ville
         u : Ville en cours d'évaluation

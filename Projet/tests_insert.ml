@@ -62,3 +62,31 @@ let _ =
     let _ = MLLPath.print chemin2 in
     let _ = MLLPath.print chemin3 in
     ()
+
+let rec print_list l = match l with
+    | [] -> Printf.printf "\n"
+    | t::q -> 
+        let _ = Printf.printf "%d " t in
+        print_list q 
+
+let test_builder = 
+    let cities = [
+        ("BG", 0., 0.);
+        ("BD", 3., 0.); 
+        ("HG", 3., 0.); 
+        ("HD", 3., 3.); 
+        ("T", 1.5, 5.)
+    ] in
+    let monde = Carte.make_carte_from_cities cities in  
+    let u0, path = MLLPath.make 0 in 
+    let u1, path = MLLPath.insert 1 u0 path in 
+    let u2, path = MLLPath.insert 2 u1 path in 
+    let u3, path = MLLPath.insert 3 u2 path in 
+    let ut, path_after = MLLPath.insert_minimize_length 4 path monde in 
+    let cities = MLLPath.cities_list path_after in 
+    let expected = [1; 2; 3; 4; 0] in
+    let test = cities = expected in 
+    if test then    
+        Printf.printf "OK Test insertion à la fin\n"
+    else
+        Printf.printf "XX Test insertion à la fin\n"
