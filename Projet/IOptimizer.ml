@@ -6,6 +6,9 @@ module Optimizer = struct
     type builder = Carte.carte -> MLLPath.path -> MLLPath.path
     type initial_path_builder = Carte.carte -> MLLPath.path
 
+    let n_repositionnement = 5000
+    let n_inversion = 5000
+
     (*
       Cas card <= 3:
       - Si il n'y a qu'une ville, on ne peut tout simplement pas faire de repositionnement
@@ -30,14 +33,7 @@ module Optimizer = struct
                 let solution_without_u = MLLPath.remove u p in 
                 let _, chemin = MLLPath.insert_minimize_length city solution_without_u c in
                 let d_after = Carte.distance_path (MLLPath.cities_list chemin) c in 
-                let _ = 
-                if d_after > d_before then
-                    let city_u, idx_u = u in 
-                    let _ = Printf.printf "Bougé: (%d, %d)\n" city_u idx_u in 
-                    let _ = MLLPath.print p in
-                    let _ = MLLPath.print chemin in 
-                    ()
-                else ()
+                let _ = assert (d_after <= d_before)
                 in
                 chemin
 
@@ -49,7 +45,7 @@ module Optimizer = struct
             let new_solution = repositionnement_noeud entry solution carte in
             repositionnement_n_fois new_solution (n - 1) carte
             
-    let inversion_locale a c path carte = (* TODO FIX IT *)
+    let inversion_locale a c path carte =
         (* From ... -> A -> B -> ... -> C -> D -> ... *)
         (* To   ... -> A -> C -> ... -> B -> D -> ... *)
         let (ca, ia) as a = a in 
@@ -295,14 +291,14 @@ module Optimizer = struct
         let _ = Printf.printf "Distance initiale: %f\n" distance in 
 
         let s = Sys.time() in
-        let solution_inv = inversion_n_fois solution 200 carte in
+        let solution_inv = inversion_n_fois solution n_inversion carte in
         let e = Sys.time() in 
         let _ = Printf.printf "Temps inversion: %f\n" (e -. s) in
         let distance_inv = Carte.distance_path (MLLPath.cities_list solution_inv) carte in 
         let _ = Printf.printf "Distance: %f\n" distance_inv in 
 
         let s = Sys.time() in
-        let solution_repos = repositionnement_n_fois solution_inv 200 carte in
+        let solution_repos = repositionnement_n_fois solution_inv n_repositionnement carte in
         let e = Sys.time() in 
         let _ = Printf.printf "Temps repositionnement: %f\n" (e -. s) in
         let distance_repos = Carte.distance_path (MLLPath.cities_list solution_repos) carte in 

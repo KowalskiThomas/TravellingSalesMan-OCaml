@@ -23,7 +23,11 @@ tests_hull:
 	ocamlbuild tests_hull.native
 	./tests_hull.native
 
-all_tests: tests_carte tests_mll_path tests_insert tests_optimizer tests_hull
+tests_parser:
+	ocamlbuild tests_parser.native
+	./tests_parser.native
+
+all_tests: tests_carte tests_mll_path tests_insert tests_optimizer tests_hull tests_parser
 
 optimizers:
 	ocamlbuild tests_all_optimizers.native

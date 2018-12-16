@@ -117,11 +117,11 @@ module CompleteCarte = struct
     }
 
     let distance_from_coordinates xu yu xv yv =
-        (((xu -. xv) *. (xu -. xv) +. (yu -. yv) *. (yu -. yv))) ** (1. /. 2.)
+        ((xu -. xv) *. (xu -. xv) +. (yu -. yv) *. (yu -. yv)) ** (1. /. 2.)
 
-    let distance_from_city_coordinates city_index x y g =
+    (* let distance_from_city_coordinates city_index x y g =
         let (_, (xcity, ycity)) = find city_index g in
-            distance_from_coordinates xcity ycity x y
+            distance_from_coordinates xcity ycity x y *)
 
     let distance u v c =
         if mem_broken_road (u, v) c 
@@ -134,12 +134,20 @@ module CompleteCarte = struct
             | (_, (xu, yu)), (_, (xv, yv)) -> distance_from_coordinates xu yu xv yv
         with Not_found -> raise NotInCarte
 
-    let rec distance_path path g = match path with
-    | [] -> 0.
-    | [_] -> 0. (* A path with only one point has no length *)
-    | a::(b::t) ->
-        (distance a b g) +.
-        (distance_path (b::t) g) (* TODO: Possible optimization here *)
+    let rec distance_path path g = 
+        match path with 
+        | [] -> 0.
+        | [e] -> 0.
+        | [a;b] -> 2. *. (distance a b g)
+        | t::q ->
+            let first_city = t in 
+            let rec aux p = match p with
+            | [] -> failwith "Unexpected empty list" 
+            | [e] -> distance first_city e g 
+            | a::(b::t) ->
+                (distance a b g) +.
+                (aux (b::t)) 
+            in aux path
 
     let add_cities villes carte =
         let rec aux i villes carte =

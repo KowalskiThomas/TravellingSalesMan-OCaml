@@ -318,7 +318,6 @@ module MLLPath = struct
         then raise NotInPath
         else
             let (last, next) = find u p in
-            (* let _ = Printf.printf "u = %d last = %d next = %d\n" u last next in  *)
             if last = u && next = u then
                 empty
             else if last = next then

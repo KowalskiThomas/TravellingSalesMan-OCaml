@@ -130,3 +130,63 @@ let test_broken_road_3 =
     else
         Printf.printf "XX Tests Ajout / Remove Broken Road 2\n"
 
+let cities = [
+    ("A", 0., 0.);
+    ("B", 1., 0.);
+    ("C", 2., 0.);
+    ("D", 2., 1.);
+    ("E", 1., 1.);
+    ("F", 0., 1.);
+]
+let monde = Carte.make_carte_from_cities cities 
+
+let test_distance_empty = 
+    let liste = [0] in 
+    let dist = Carte.distance_path liste monde in 
+    let test = dist = 0. in 
+    if test then 
+        Printf.printf "OK Test Empty Path\n"
+    else
+        let _ = Printf.printf "XX Test Empty Path\n" in 
+        exit 1
+
+let test_distance_one = 
+    let liste = [0] in 
+    let dist = Carte.distance_path liste monde in 
+    let test = dist = 0. in 
+    if test then 
+        Printf.printf "OK Test Unary Path\n"
+    else
+        let _ = Printf.printf "XX Test Unary Path\n" in 
+        exit 1
+
+let test_distance_two = 
+    let liste = [0; 1] in 
+    let dist = Carte.distance_path liste monde in 
+    let test = dist = 2. in 
+    if test then 
+        Printf.printf "OK Test Binary Path\n"
+    else
+        let _ = Printf.printf "XX Test Binary Path\n" in 
+        exit 1
+
+let test_distance_three = 
+    let liste = [0; 1; 4] in 
+    let dist = Carte.distance_path liste monde in 
+    let test = dist = 2. +. (2. ** (1. /. 2.)) in 
+    if test then 
+        Printf.printf "OK Test 3-Path\n"
+    else
+        let _ = Printf.printf "XX Test 3-Path\n" in 
+        let _ = Printf.printf "%f\n" dist in 
+        exit 1
+
+let test_distance_six = 
+    let liste = [0; 1; 2; 3; 4; 5] in 
+    let dist = Carte.distance_path liste monde in 
+    let test = dist = 6. in 
+    if test then 
+        Printf.printf "OK Test 6-Path\n"
+    else
+        let _ = Printf.printf "XX Test 6-Path\n" in 
+        exit 1
