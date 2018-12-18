@@ -36,7 +36,14 @@ let initial_path_function =
   then Optimizer.hull_initial_path
   else failwith "Invalid option"
 
-let solution = Optimizer.find_solution initial_path_function insertion_function carte
+let optimizer =
+  if optimization = "INVERSION"
+  then Optimizer.inversion_n_fois
+  else if optimization = "REPOSITIONNEMENT"
+  then Optimizer.repositionnement_n_fois
+  else failwith "Invalid option"
+
+let solution = Optimizer.find_solution initial_path_function insertion_function optimizer carte
 
 let _ = 
   MLLPath.print_with_names solution carte

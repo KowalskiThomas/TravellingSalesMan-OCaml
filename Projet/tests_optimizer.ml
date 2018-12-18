@@ -82,7 +82,7 @@ let test_monde_simple =
     ] in
     let _ =
         let s = Sys.time() in
-        let _ = Optimizer.find_solution Optimizer.random_point_initial_path Optimizer.build_solution_nearest monde_simple in
+        let _ = Optimizer.find_solution Optimizer.random_point_initial_path Optimizer.build_solution_nearest Optimizer.inversion_n_fois monde_simple in
         let e = Sys.time() in
         Printf.printf "Optimization nearest: %f\n" (e -. s)
     in ()

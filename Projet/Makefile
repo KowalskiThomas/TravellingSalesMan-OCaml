@@ -33,5 +33,9 @@ optimizers:
 	ocamlbuild tests_all_optimizers.native
 	./tests_all_optimizers.native
 
+projet:
+	ocamlbuild projet.native
+	./projet.native
+
 clean:
 	rm -rf *.cmo *.cmi *.cmx *.native *.out *.byte _build log

@@ -8,6 +8,11 @@ module Optimizer : sig
 
     type initial_path_builder = Carte.carte -> MLLPath.path
 
+    type optimizer = MLLPath.path -> 
+    int -> (* Le nombre de fois à appliquer *)
+    Carte.carte -> 
+    MLLPath.path
+
     (* Repositionne un élément du chemin pour minimiser la distance totale *)
     val repositionnement_noeud : MLLPath.path_entry -> MLLPath.path -> Carte.carte -> MLLPath.path
 
@@ -52,5 +57,5 @@ module Optimizer : sig
     val hull_initial_path : Carte.carte -> MLLPath.path
 
     (* La solution de résolution principale *)
-    val find_solution : initial_path_builder -> builder -> Carte.carte -> MLLPath.path
+    val find_solution : initial_path_builder -> builder -> optimizer -> Carte.carte -> MLLPath.path
 end

@@ -1,5 +1,5 @@
 module Carte = ICarte.CompleteCarte
-open Parser
+module Parser = IParser.Parser
 
 let test_load_carte = 
   let s = Sys.time () in

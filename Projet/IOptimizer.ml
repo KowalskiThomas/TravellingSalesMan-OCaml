@@ -5,9 +5,12 @@ module Optimizer = struct
     type mins_list = (Carte.node * (MLLPath.path_entry * float) option) list
     type builder = Carte.carte -> MLLPath.path -> MLLPath.path
     type initial_path_builder = Carte.carte -> MLLPath.path
+    type optimizer = MLLPath.path -> 
+    int -> (* Le nombre de fois à appliquer *)
+    Carte.carte -> 
+    MLLPath.path
 
-    let n_repositionnement = 5000
-    let n_inversion = 5000
+    let n_opt = 5000
 
     (*
       Cas card <= 3:
@@ -279,7 +282,7 @@ module Optimizer = struct
         initial_path
 
     (* Construit une solution grâce à un builder et à une carte fournis. *)
-    let find_solution initial_path_builder builder carte =
+    let find_solution initial_path_builder builder optimizer carte =
         let initial_path = initial_path_builder carte in
 
         let _ = Printf.printf "Construction sol initiale\n" in 
@@ -291,18 +294,11 @@ module Optimizer = struct
         let _ = Printf.printf "Distance initiale: %f\n" distance in 
 
         let s = Sys.time() in
-        let solution_inv = inversion_n_fois solution n_inversion carte in
+        let solution_optimisee = optimizer solution n_opt carte in
         let e = Sys.time() in 
-        let _ = Printf.printf "Temps inversion: %f\n" (e -. s) in
-        let distance_inv = Carte.distance_path (MLLPath.cities_list solution_inv) carte in 
-        let _ = Printf.printf "Distance: %f\n" distance_inv in 
-
-        let s = Sys.time() in
-        let solution_repos = repositionnement_n_fois solution_inv n_repositionnement carte in
-        let e = Sys.time() in 
-        let _ = Printf.printf "Temps repositionnement: %f\n" (e -. s) in
-        let distance_repos = Carte.distance_path (MLLPath.cities_list solution_repos) carte in 
-        let _ = Printf.printf "Distance: %f\n" distance_repos in 
+        let _ = Printf.printf "Temps optimisation: %f\n" (e -. s) in
+        let distance_opt = Carte.distance_path (MLLPath.cities_list solution_optimisee) carte in 
+        let _ = Printf.printf "Distance: %f\n" distance_opt in 
 
         solution
 end 

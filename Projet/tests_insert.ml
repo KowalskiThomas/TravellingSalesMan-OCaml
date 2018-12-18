@@ -54,9 +54,9 @@ let _ =
     let carte = Carte.add_broken_road br3 carte in 
     let carte = Carte.add_broken_road br4 carte in 
 
-    let chemin = Optimizer.find_solution Optimizer.random_point_initial_path Optimizer.build_solution_nearest carte in 
-    let chemin2 = Optimizer.find_solution Optimizer.random_point_initial_path Optimizer.build_solution_farthest carte in 
-    let chemin3 = Optimizer.find_solution Optimizer.random_point_initial_path Optimizer.build_solution_random carte in 
+    let chemin = Optimizer.find_solution Optimizer.random_point_initial_path Optimizer.build_solution_nearest Optimizer.inversion_n_fois carte in 
+    let chemin2 = Optimizer.find_solution Optimizer.random_point_initial_path Optimizer.build_solution_farthest Optimizer.inversion_n_fois carte in 
+    let chemin3 = Optimizer.find_solution Optimizer.random_point_initial_path Optimizer.build_solution_random Optimizer.inversion_n_fois carte in 
 
     let _ = MLLPath.print chemin in
     let _ = MLLPath.print chemin2 in
