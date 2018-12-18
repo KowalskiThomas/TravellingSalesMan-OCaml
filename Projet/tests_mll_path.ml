@@ -337,5 +337,6 @@ let test_revert =
     let u5, path = MLLPath.insert 5 u4 path in
     let u6, path = MLLPath.insert 6 u5 path in
     let u7, path = MLLPath.insert 7 u6 path in
-    let reverted = MLLPath.reverted path u3 u6 in 
+    let _ (* reverted *) = MLLPath.reverted path u3 u6 in 
+    (* TODO? *)
     ()

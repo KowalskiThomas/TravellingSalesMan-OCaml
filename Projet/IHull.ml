@@ -106,7 +106,7 @@ module ConvexHull = struct
       (* let _ = Printf.printf "Only two elements!\n" in *)
       cities_list
     | orig::l' ->
-      let idx, (name, (x, y)) = orig in 
+      (* let idx, (name, (x, y)) = orig in  *)
       (* let _ = Printf.printf "Origin: %s\n" name in 
       let _ = Printf.printf "Villes qui restent:\n" in  *)
       (* let _ = print_hull l' in  *)

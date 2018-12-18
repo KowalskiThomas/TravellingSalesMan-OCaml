@@ -98,7 +98,7 @@ let test_rapidite =
   let _ = Printf.printf "Construction carte: %f\n" (e -. s) in 
 
   let s = Sys.time() in 
-  let hull = Hull.convex_hull monde in 
+  let _ = Hull.convex_hull monde in 
   let e = Sys.time() in
   let _ = Printf.printf "Construction enveloppe convexe pour %d villes: %f\n" n (e -. s) in 
   ()

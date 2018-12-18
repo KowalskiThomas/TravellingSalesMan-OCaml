@@ -52,13 +52,15 @@ let test_distance_3 =
     let distance_1 = Carte.distance 0 1 carte in
     let distance_2 = Carte.distance 1 2 carte in
     let distance_3 = Carte.distance 2 3 carte in
-    let expected = distance_1 +. distance_2 +. distance_3 in
+    let distance_4 = Carte.distance 3 0 carte in 
+    let expected = distance_1 +. distance_2 +. distance_3 +. distance_4 in
     let d = Carte.distance_path [0; 1; 2; 3] carte in
-    let test = expected = d in
+    let test = (expected -. d) < 0.001 in
     if test then
         Printf.printf "OK Test Distance 3\n"
     else
-        Printf.printf "XX Test Distance 3 [Expected = %f, Returned = %f] \n" expected d
+        let _ = Printf.printf "XX Test Distance 3 [Expected = %f, Returned = %f] \n" expected d in
+        exit 1
 
 (* Ajout de beaucoup de noeuds à la carte pour tester les performances de la structure de données. *)
 let test_add_many_nodes =
