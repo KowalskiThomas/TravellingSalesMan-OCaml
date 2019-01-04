@@ -35,6 +35,8 @@ optimizers:
 
 projet:
 	ocamlbuild projet.native
+
+run: projet
 	./projet.native
 
 clean:

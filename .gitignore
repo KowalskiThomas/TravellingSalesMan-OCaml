@@ -6,4 +6,4 @@
 **/*.ml#
 **/*.o
 **/_build
-*.native
+**/*.native

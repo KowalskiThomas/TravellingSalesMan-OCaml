@@ -3,11 +3,11 @@ module Parser = struct
     if nb_villes = 0
     then []
     else
-      let v = Scanf.fscanf cin "%s %f %f " (fun na x y -> na, x, y) in
+      let v = Scanf.bscanf cin "%s %f %f " (fun na x y -> na, x, y) in
       v::parse_villes cin (nb_villes - 1)
 
   let parse_input cin =
-    let nb_villes = Scanf.fscanf cin "%d " (fun x -> x) in
+    let nb_villes = Scanf.bscanf cin "%d " (fun x -> x) in
     List.rev (parse_villes cin nb_villes)
 
   exception FileNotFound of string
@@ -21,12 +21,12 @@ module Parser = struct
 
   let parse_input_file file_name =
     try
-      let cin = open_in file_name in
+      let cin = Scanf.Scanning.from_file file_name in
       try
         let l = parse_input cin in
-        let _ = close_in cin in  (* parce qu'on est pas des porcs *)
+        let _ = Scanf.Scanning.close_in cin in  (* parce qu'on est pas des porcs *)
         l
-      with e -> close_in cin;raise e
+      with e -> Scanf.Scanning.close_in cin; raise e
     with
     | Sys_error _ -> (* fichier non trouvé *)
       raise (FileNotFound file_name)
@@ -35,13 +35,13 @@ module Parser = struct
 
   let parse_config_file file_name = 
     try
-      let cin = open_in file_name in 
+      let cin = Scanf.Scanning.from_file file_name in 
       try 
-        let mode = Scanf.fscanf cin "%s" (fun x -> x) in 
-        let insertion = Scanf.fscanf cin "\n%s" (fun x -> x) in 
-        let optimisation = Scanf.fscanf cin "\n%s" (fun x -> x) in 
+        let mode = Scanf.bscanf cin "%s" (fun x -> x) in 
+        let insertion = Scanf.bscanf cin "\n%s" (fun x -> x) in 
+        let optimisation = Scanf.bscanf cin "\n%s" (fun x -> x) in 
         { mode = mode; insertion = insertion; optimization = optimisation }
-      with e -> close_in cin;raise e
+      with e -> Scanf.Scanning.close_in cin; raise e
     with
     | Sys_error _ -> (* fichier non trouvé *)
       raise (FileNotFound file_name)

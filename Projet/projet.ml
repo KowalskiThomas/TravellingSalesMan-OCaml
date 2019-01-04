@@ -1,6 +1,7 @@
 module Carte = ICarte.CompleteCarte
 module Optimizer = IOptimizer.Optimizer
 module Parser = IParser.Parser
+open Parser (* Pour éviter les warnings liés aux records *)
 module MLLPath = IMLLPath.MLLPath
 
 type config = Parser.config
