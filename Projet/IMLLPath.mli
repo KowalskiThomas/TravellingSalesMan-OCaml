@@ -61,6 +61,9 @@ module MLLPath : sig
     (* Affiche un chemin (comme suite de noms de villes) *)
     val print_with_names : path -> Carte.carte -> unit
 
+    (* Affiche un chemin (comme distance puis suite de noms de villes) *)
+    val print_distance_names : path -> Carte.carte -> unit
+
     (* Vérifie si une ville appartient au chemin *)
     val mem_city : node -> path -> bool
 

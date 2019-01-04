@@ -430,6 +430,29 @@ module MLLPath = struct
             else city::(to_list_from next)
         in to_list_from start
 
+    let print_distance_names p c =
+        if is_empty p then
+            Printf.printf "0.0 : <EMPTY>\n"
+        else
+            let start = get_first p in
+            let rec aux u =
+                let next = get_next u p in
+                let city, idx = u in 
+                let name, (_, _) = Carte.find city c in
+                let _ = Printf.printf "%s " name in
+                if next = start then 
+                    let next, _ = next in 
+                    let name, _ = Carte.find next c in 
+                    let _ = Printf.printf "%s\n" name in ()
+                else 
+                    aux next
+            in
+            let d = Carte.distance_path (cities_list p) c in 
+            let _ = Printf.printf "%f : " d in 
+            let _ = aux start in
+            (* let _ = Printf.printf "\n" in  *)
+            ()
+
     (*
     Insère une ville au bon endroit pour minimiser la longueur totale
     to_insert : Indice dans la carte de la ville à insérer

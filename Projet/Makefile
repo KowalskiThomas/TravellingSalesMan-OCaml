@@ -40,4 +40,7 @@ run: projet
 	./projet.native
 
 clean:
-	rm -rf *.cmo *.cmi *.cmx *.native *.out *.byte _build log
+	rm -rf *.cmo *.cmi *.cmx *.native *.out *.byte _build log *.tgz *.tar.gz
+
+tar: clean
+	tar -cvzf Thomas_Kowalski.tgz *

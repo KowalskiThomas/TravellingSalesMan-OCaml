@@ -7,3 +7,6 @@
 **/*.o
 **/_build
 **/*.native
+**/*.pdf
+**/*.tar.gz
+**/*.tgz

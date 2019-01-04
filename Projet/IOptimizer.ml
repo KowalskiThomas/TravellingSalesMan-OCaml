@@ -285,20 +285,30 @@ module Optimizer = struct
     let find_solution initial_path_builder builder optimizer carte =
         let initial_path = initial_path_builder carte in
 
-        let _ = Printf.printf "Construction sol initiale\n" in 
         let s = Sys.time() in
         let solution = builder carte initial_path in
         let e = Sys.time() in
         let distance = Carte.distance_path (MLLPath.cities_list solution) carte in 
-        let _ = Printf.printf "Temps construction sol initiale: %f\n" (e -. s) in
-        let _ = Printf.printf "Distance initiale: %f\n" distance in 
+        let _ = 
+            if Config.debug then
+                let _ = Printf.printf "Construction sol initiale\n" in 
+                let _ = Printf.printf "Temps construction sol initiale: %f\n" (e -. s) in
+                let _ = Printf.printf "Distance initiale: %f\n" distance in 
+                ()
+            else () 
+        in
 
         let s = Sys.time() in
         let solution_optimisee = optimizer solution n_opt carte in
         let e = Sys.time() in 
-        let _ = Printf.printf "Temps optimisation: %f\n" (e -. s) in
         let distance_opt = Carte.distance_path (MLLPath.cities_list solution_optimisee) carte in 
-        let _ = Printf.printf "Distance: %f\n" distance_opt in 
+        let _ = 
+            if Config.debug then
+                let _ = Printf.printf "Temps optimisation: %f\n" (e -. s) in
+                let _ = Printf.printf "Distance: %f\n" distance_opt in 
+                ()
+            else ()
+        in
 
         solution
 end 
