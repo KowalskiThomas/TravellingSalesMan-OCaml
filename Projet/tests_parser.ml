@@ -1,4 +1,4 @@
-module Carte = ICarte.CompleteCarte
+module Carte = ICarte.Carte
 module Parser = IParser.Parser
 
 let test_load_carte = 

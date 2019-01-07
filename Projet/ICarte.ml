@@ -8,7 +8,7 @@ La deuxième possibilité est plus gourmande en recherche :
 *)
 let strategy_insert_both_couples = true
 
-module CompleteCarte = struct
+module Carte = struct
     module Node = struct
         type t = int
         let compare x y = x - y
@@ -65,6 +65,7 @@ module CompleteCarte = struct
 
     exception Found of int
     exception IndexError
+
     let get_ith i s =
         try
             let _ = NodeSet.fold (fun x acc -> if acc = i then raise (Found(x)) else acc + 1) s 0 in
@@ -77,7 +78,6 @@ module CompleteCarte = struct
         let card = NodeSet.cardinal available in
         let i = Random.int card in
         let idx = get_ith i available in
-        (* let _ = Printf.printf "%d %d\n" i idx in  *)
         (idx, find idx c)
 
     let get_random_any g = get_random g NodeSet.empty

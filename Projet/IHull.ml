@@ -1,5 +1,5 @@
 module ConvexHull = struct
-  module Carte = ICarte.CompleteCarte
+  module Carte = ICarte.Carte
   type carte = Carte.carte
   type node = Carte.node
   type city_list_entry = Carte.node * Carte.pair

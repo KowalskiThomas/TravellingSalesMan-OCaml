@@ -6,7 +6,7 @@
 
 module MLLPath : sig
     (* Le module Carte utilisé pour calculer les distances *)
-    module Carte = ICarte.CompleteCarte
+    module Carte = ICarte.Carte
     (* Un ensemble de villes d'une carte (<=> noeuds sur un graphe) *)
     (* module NodeSet : Set.S *)
     (* Une ville. Dans un chemin, elle est représentée par un entier qui est son "indice" dans la carte *)
@@ -40,22 +40,46 @@ module MLLPath : sig
     (* Vérifie si un chemin est vide *)
     val is_empty : path -> bool
 
-    (* Renvoie le nombre d'éléments dans le chemin *)
+    (* Renvoie le nombre d'éléments dans le chemin 
+      @requires Rien
+      @ensures 
+      @raises Rien
+    *)
     val cardinal : path -> int
 
-    (* Retourne un chemin entre deux points *)
+    (* Retourne un chemin entre deux points 
+      @requires Rien
+      @ensures Le chemin qui était A -> ... -> x1 ... xn --> B -> ... est A --> xn ... x1 --> B --> ...
+      @raises Rien    
+    *)
     val reverted : path -> path_entry -> path_entry -> path
 
-    (* Echange deux villes sur un chemin *)
+    (*
+      @requires Les deux path_entry sont dans le chemin 
+      @ensures Les deux path_entry sont échangés sur le chemin
+      @raises NotInPath si un des deux path_entry est absent du chemin
+    *)
     val swap : path_entry -> path_entry -> path -> path
 
-    (* Trouve la ville suivante dans un chemin *)
+    (* 
+      @requires
+      @ensures Trouve la ville suivante dans un chemin
+      @raises NotInPath si l'élément passé n'est pas dans le chemin
+    *)
     val get_next : path_entry -> path -> path_entry
 
-    (* Trouve la ville précédente dans un chemin *)
+    (* 
+      @requires
+      @ensures Trouve la ville précédente dans un chemin
+      @raises NotInPath si l'élément passé n'est pas dans le chemin
+    *)
     val get_last : path_entry -> path -> path_entry
 
-    (* Affiche un chemin (comme suite d'indices) *)
+    (* 
+      @requires Rien
+      @ensures Affiche un chemin (comme suite d'indices) 
+      @raises Rien  
+    *)
     val print : path -> unit
 
     (* Affiche un chemin (comme suite de noms de villes) *)
@@ -70,35 +94,56 @@ module MLLPath : sig
     (* Vérifie si un path_entry appartient au chemin *)
     val mem : path_entry -> path -> bool
 
-    (* Supprime un indice d'un chemin
-    Lève NotInPath si l'indice n'y est pas. *)
+    (* 
+      @requires L'élément est dans le chemin
+      @ensures Supprime l'élément du chemin
+      @raises NotInPath si l'indice n'y est pas. 
+    *)
     val remove : path_entry -> path -> path
 
     (* Construit un chemin de base avec un seul indice.
     Le chemin est alors de la forme indice -> (indice, indice) *)
     val make : node -> path_entry * path
 
+    (*
+      @requires Rien
+      @ensures Créé un chemin à partir d'une liste de villes (indices)
+      @raises Rien
+    *)
     val from_list : node list -> Carte.carte -> path
 
     (* Détermine la longueur totale d'un chemin *)
     val length : path -> Carte.carte -> float
 
-    (* Renvoie une liste contenant tous les indices d'un chemin *)
+    (* Renvoie une liste contenant tous les éléments d'un chemin *)
     val entries_list : path -> path_entry list
 
+    (* Renvoie la liste des villes d'un chemin dans l'ordre *)
     val cities_list : path -> node list
 
-    (* Renvoie un ensemble contenant tous les indices d'un chemin *)
+    (* Renvoie un ensemble contenant toutes les villes présentes dans un chemin *)
     val cities_set : path -> node_set
 
-    (* Renvoie le premier indice du chemin (dans N) *)
+    (* 
+      @requires Le chemin est non vide
+      @ensures Renvoie le premier indice du chemin (dans N) 
+      @raises EmptyPath si le chemin est vide
+    *)
     val get_first : path -> path_entry
 
-    (* Renvoie un élément aléatoire du chemin *)
+    (* 
+      @requires Le chemin est non vide
+      @ensures Renvoie un élément aléatoire du chemin
+      @raises EmptyPath si le chemin est vide
+    *)
     val get_random : path -> path_entry
 
-    (* Ajoute un indice à un chemin
-    Utilisation: insert [noeud] après [after] dans [chemin] *)
+    (* 
+      @requires Le chemin contient l'élément passé en paramètre
+      @ensures Ajoute un indice à un chemin 
+               Utilisation: insert [noeud] après [after] dans [chemin] 
+      @raises NotInPath si l'élément donné comme référence n'est pas dans le chemin.
+    *)
     val insert : node -> path_entry -> path -> path_entry * path
 
     (* Ajoute un indice dans un chemin afin d'optimiser la longueur totale *)

@@ -6,7 +6,7 @@ let test_empty =
     if test then
         Printf.printf "OK Test Empty\n"
     else
-        Printf.printf "XX Test Empty\n"
+        let _ = Printf.printf "XX Test Empty\n" in exit 1
 
 let test_insert =
     let u, path = MLLPath.make 1 in
@@ -15,7 +15,7 @@ let test_insert =
     if test_1 && test_2 then
         Printf.printf "OK Test Insert 1\n"
     else
-        Printf.printf "XX Test Insert 1\n"
+        let _ = Printf.printf "XX Test Insert 1\n" in exit 1
 
 let test_insert_2 =
     let u, path = MLLPath.make 1 in
@@ -25,7 +25,7 @@ let test_insert_2 =
     if test then
         Printf.printf "OK Test Insert 2\n"
     else
-        Printf.printf "XX Test Insert 2\n"
+        let _ = Printf.printf "XX Test Insert 2\n" in exit 1
 
 let test_insert_after_non_existent =
     let test =
@@ -37,7 +37,7 @@ let test_insert_after_non_existent =
     if test then
         Printf.printf "OK Test Insertion Après Absent\n"
     else
-        Printf.printf "XX Test Insertion Après Absent\n"
+        let _ = Printf.printf "XX Test Insertion Après Absent\n" in exit 1
 
 let test_insert_two =
     let u1, path = MLLPath.make 1 in
@@ -49,7 +49,7 @@ let test_insert_two =
     if next_1 = u2 && next_2 = u1 && last_1 = u2 && last_2 = u1 then
         Printf.printf "OK Test Insertion Deux Elements\n"
     else
-        Printf.printf "XX Test Insertion Deux Elements\n"
+        let _ = Printf.printf "XX Test Insertion Deux Elements\n" in exit 1
 
 let test_insert_next =
     let u1, path = MLLPath.make 1 in
@@ -62,7 +62,7 @@ let test_insert_next =
     if test then
         Printf.printf "OK Test Insertion Next\n"
     else
-        Printf.printf "XX Test Cycle\n"
+        let _ = Printf.printf "XX Test Cycle\n" in exit 1
 
 let test_insert_last =
     let u1, path = MLLPath.make 1 in
@@ -75,7 +75,7 @@ let test_insert_last =
     if test then
         Printf.printf "OK Test Insertion Last\n"
     else
-        Printf.printf "XX Test Cycle\n"
+        let _ = Printf.printf "XX Test Cycle\n" in exit 1
 
 let test_remove_1 =
     let u1, path = MLLPath.make 1 in
@@ -86,7 +86,7 @@ let test_remove_1 =
     if test_1 && test_2 && test_3 then
         Printf.printf "OK Test Remove avec 1 élément\n"
     else
-        Printf.printf "XX Test Remove avec 1 élément\n"
+        let _ = Printf.printf "XX Test Remove avec 1 élément\n" in exit 1
 
 let test_remove_2 =
     let u1, path = MLLPath.make 1 in
@@ -101,7 +101,7 @@ let test_remove_2 =
     if test_1 && test_2 && test_3 && test_4 then
         Printf.printf "OK Test Suppression avec 2 éléments\n"
     else
-        Printf.printf "XX Test suppression avec 2 éléments\n"
+        let _ = Printf.printf "XX Test suppression avec 2 éléments\n" in exit 1
 
 let test_remove =
     let u1, path = MLLPath.make 1 in
@@ -112,7 +112,7 @@ let test_remove =
     if test_1 then
         Printf.printf "OK Test Suppression\n"
     else
-        Printf.printf "XX Test suppression\n"
+        let _ = Printf.printf "XX Test suppression\n" in exit 1
 
 let test_remove_next =
     let u1, path = MLLPath.make 1 in
@@ -126,7 +126,7 @@ let test_remove_next =
     if test_1 && test_2 then
         Printf.printf "OK Test Suppression Next\n"
     else
-        Printf.printf "XX Test Suppression Next\n"
+        let _ = Printf.printf "XX Test Suppression Next\n" in exit 1
 
 let test_remove_last =
     let u1, path = MLLPath.make 1 in
@@ -140,7 +140,7 @@ let test_remove_last =
     if test_1 && test_2 then
         Printf.printf "OK Test Suppression Last\n"
     else
-        Printf.printf "XX Test Suppression Last\n"
+        let _ = Printf.printf "XX Test Suppression Last\n" in exit 1
 
 let test_remove_absent =
     let _, path = MLLPath.make 1 in
@@ -152,7 +152,7 @@ let test_remove_absent =
     if test then
         Printf.printf "OK Test Remove Absent\n"
     else
-        Printf.printf "XX Test Remove Absent\n"
+        let _ = Printf.printf "XX Test Remove Absent\n" in exit 1
 
 let test_swap_not_in_path =
     let u1, path = MLLPath.make 1 in
@@ -166,7 +166,7 @@ let test_swap_not_in_path =
     if success then
         Printf.printf "OK Test Swap Not In Path\n"
     else
-        Printf.printf "XX Test Swap Not In Path\n"
+        let _ = Printf.printf "XX Test Swap Not In Path\n" in exit 1
 
 let test_swap_touching =
     (* Go from 1 2 3 4 5 6 7 *)
@@ -192,7 +192,7 @@ let test_swap_touching =
             Printf.printf "OK Test Touching next\n"
         else
             let _ = MLLPath.print swapped in
-            Printf.printf "XX Test Touching next\n"
+            let _ = Printf.printf "XX Test Touching next\n" in exit 1
     in
     let test_1 = last_4 = u2 in
     let test_2 = last_3 = u4 in
@@ -202,7 +202,9 @@ let test_swap_touching =
             Printf.printf "OK Test Touching last\n"
         else
             let _ = MLLPath.print swapped in
-            Printf.printf "XX Test Touching last\n" in ()
+            let _ = Printf.printf "XX Test Touching last\n"
+            in exit 1
+    in ()
 
 let test_swap_touching_3 =
     (* From 1 2 3 *)
@@ -225,7 +227,7 @@ let test_swap_touching_3 =
             Printf.printf "OK Test Touching 3 Next\n"
         else
             let _ = MLLPath.print swapped in
-            Printf.printf "XX Test Touching 3 Next\n"
+            let _ = Printf.printf "XX Test Touching 3 Next\n" in exit 1
     in
     let test_1 = last_1 = u2 in
     let test_2 = last_2 = u3 in
@@ -235,7 +237,9 @@ let test_swap_touching_3 =
             Printf.printf "OK Touching 3 Last\n"
         else
             let _ = MLLPath.print swapped in
-            Printf.printf "XX Touching 3 Last\n" in ()
+            let _ = Printf.printf "XX Touching 3 Last\n"
+            in exit 1
+    in ()
 
 let test_swap_unary =
     let u1, initial = MLLPath.make 1 in
@@ -243,7 +247,8 @@ let test_swap_unary =
     if swapped = initial then
         Printf.printf "OK Test Swap Unary\n"
     else
-        Printf.printf "XX Test Swap Unary\n"
+        let _ = Printf.printf "XX Test Swap Unary\n"
+        in exit 1
 
 let test_swap_binary =
     let u1, path = MLLPath.make 1 in
@@ -252,7 +257,7 @@ let test_swap_binary =
     if swapped = path then
         Printf.printf "OK Test Swap Binary\n"
     else
-        Printf.printf "XX Test Swap Binary\n"
+        let _ = Printf.printf "XX Test Swap Binary\n" in exit 1
 
 let test_swap_binary_permutation =
     let u1, path = MLLPath.make 1 in
@@ -263,7 +268,7 @@ let test_swap_binary_permutation =
     if swapped_1 = swapped_2 then
         Printf.printf "OK Test Swap Binary Permutation\n"
     else
-        Printf.printf "XX Test Swap Binary Permutation\n"
+        let _ = Printf.printf "XX Test Swap Binary Permutation\n" in exit 1
 
 let test_swap_3 =
     (* Before: 1 2 3 *)
@@ -282,7 +287,7 @@ let test_swap_3 =
         Printf.printf "OK Test Swap 3\n"
     else
         let _ = MLLPath.print swapped  in
-        Printf.printf "XX Test Swap 3\n"
+        let _ = Printf.printf "XX Test Swap 3\n" in exit 1
 
 let test_swap =
     (* Initial : 1 2 3 4 5 6 7 *)
@@ -327,9 +332,9 @@ let test_swap =
         let _ = MLLPath.print path in
         let _ = Printf.printf "Swapped\n\t" in
         let _ = MLLPath.print swapped in
-        Printf.printf "XX Test Swap One Between\n"
+        let _ = Printf.printf "XX Test Swap One Between\n" in exit 1
 
-let test_revert = 
+let test_revert =
     let u1, path = MLLPath.make 1 in
     let u2, path = MLLPath.insert 2 u1 path in
     let u3, path = MLLPath.insert 3 u2 path in
@@ -337,6 +342,6 @@ let test_revert =
     let u5, path = MLLPath.insert 5 u4 path in
     let u6, path = MLLPath.insert 6 u5 path in
     let u7, path = MLLPath.insert 7 u6 path in
-    let _ (* reverted *) = MLLPath.reverted path u3 u6 in 
+    let _ (* reverted *) = MLLPath.reverted path u3 u6 in
     (* TODO? *)
     ()

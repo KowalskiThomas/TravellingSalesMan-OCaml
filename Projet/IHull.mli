@@ -1,6 +1,6 @@
 module ConvexHull : sig
   (* Le module des Crtes *)
-  module Carte = ICarte.CompleteCarte
+  module Carte = ICarte.Carte
   (* Le type des Cartes *)
   type carte = Carte.carte
   (* Le type des noeuds de la carte (indices de villes) *)

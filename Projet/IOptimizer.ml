@@ -1,6 +1,6 @@
 module Optimizer = struct
     module MLLPath = IMLLPath.MLLPath
-    module Carte = ICarte.CompleteCarte
+    module Carte = ICarte.Carte
     module Hull = IHull.ConvexHull
     type mins_list = (Carte.node * (MLLPath.path_entry * float) option) list
     type builder = Carte.carte -> MLLPath.path -> MLLPath.path
@@ -149,24 +149,18 @@ module Optimizer = struct
             let (next_city, next_idx) as next = MLLPath.get_next current path in
             (* Unpack our current path entry *)
             let current_city, current_idx = current in 
-            (* 1205 *)
-            (* let _ = Printf.printf "Current is %d %d\n" current_city current_idx in 
-            let _ = Printf.printf "Next is    %d %d\n" next_city next_idx in  *)
             (* Compute the distance between current path entry and out-of-path node *)
             let current_distance = Carte.distance current_city city carte in
             (* Stop condition *)
             let current_result = 
                 if current_distance = infinity 
                 then 
-                    (* let _ = Printf.printf "Result from %d to (%d, %d) is inf\n" city current_city current_idx in  *)
                     None
                 else 
-                    (* let _ = Printf.printf "Result from %d to (%d, %d) is %f\n" city current_city current_idx current_distance in *)
                     Some(current, current_distance) 
             in
             if next = initial
             then
-                (* let _ = Printf.printf "(%d, %d) is initial, exiting.\n" next_city next_idx in  *)
                 current_result
             else 
                 (* Compare this distance with the distance computed by calling recursively on the end of the path *)
@@ -193,17 +187,9 @@ module Optimizer = struct
             (* If so, skip it *)
             then construct_list_from_bindings t
             else
-                (* 1205 *)
-                (* let _ = Printf.printf "Finding closest to %d\n" idx in  *)
                 (* Otherwise, find the closest in path *)
                 let closest = find_closest_in_path initial idx in 
                 (idx, closest)::(construct_list_from_bindings t)
-                (* match closest with
-                | None -> failwith "construct_list_from_bindings: No node accessible."
-                | Some(closest, dist) -> 
-                    let cc, ci = closest in 
-                    let _ = Printf.printf "Closest to %d: (%d, %d)\n" idx cc ci in  *)
-                    (* And cons it to the recursive call *)
         in 
         (* Call the aux function *)
         construct_list_from_bindings (Carte.bindings carte)

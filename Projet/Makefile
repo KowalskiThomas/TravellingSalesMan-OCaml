@@ -1,7 +1,7 @@
 default: all_tests
 
 merlin:
-	ocamlbuild merlin.ml
+	ocamlbuild merlin.native
 
 tests_carte:
 	ocamlbuild tests_carte.native

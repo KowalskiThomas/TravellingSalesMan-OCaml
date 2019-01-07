@@ -3,9 +3,10 @@
     - Un indice
     - Un nom
     - Des coordonnées cartésiennes
-    Ces données sont stockées sous la forme d'une Map (int -> (nom, (x, y)))
+    Ces données sont stockées sous la forme d'une Map (indice (int) -> (nom (str), (x (float), y (float))))
+    Une Carte stocke également un ensemble de "routes inexistantes" à savoir des couples (ville, ville) tels que ces villes ne sont pas reliées par un chemin direct.
 *)
-module CompleteCarte : sig
+module Carte : sig
     (* Le type ordonné des indices *)
     module Node : sig
         type t = int
@@ -94,7 +95,11 @@ module CompleteCarte : sig
     (* Calcule la distance entre deux couples de coordonnées *)
     val distance_from_coordinates : float -> float -> float -> float -> float
 
-    (* Calcule la distance entre deux villes repérées par leurs indices *)
+    (* 
+      @requires Les deux villes données sont dans le chemin
+      @ensures Calcule la distance entre deux villes repérées par leurs indices 
+      @raises NotInCarte si l'une des deux villes est absente du chemin
+    *)
     val distance : node -> node -> carte -> float
 
     (* Calcule la longueur d'un chemin donné sous la forme d'une liste de noeuds *)
@@ -105,8 +110,10 @@ module CompleteCarte : sig
     val get_index : string -> carte -> node
 
     (* Trouve le nom de la ville à partir de son indice *)
+    (* Lève NotInCarte si la ville n'est pas dans la carte *)
     val get_name : node -> carte -> string
 
     (* Trouve les coordonnées d'une ville à partir de son indice *)
+    (* Lève NotInCarte si la ville n'est pas dans la carte *)
     val get_coordinates : node -> carte -> (float * float)
 end

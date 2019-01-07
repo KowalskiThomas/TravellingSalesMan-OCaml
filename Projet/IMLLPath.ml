@@ -11,7 +11,7 @@
 *)
 
 module MLLPath = struct
-    module Carte = ICarte.CompleteCarte
+    module Carte = ICarte.Carte
 
     module Node = Carte.Node
     module NodeSet = Carte.NodeSet
@@ -256,7 +256,6 @@ module MLLPath = struct
         (add v (u, last) empty))
 
     let insert u last p =
-        (* if mem_city u p then failwith "test" else *)
         try
         let (last_last, last_next) = find last p in
             let next_index = get_next_index p in 

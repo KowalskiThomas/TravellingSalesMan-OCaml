@@ -1,5 +1,5 @@
 module MLLPath = IMLLPath.MLLPath
-module Carte = ICarte.CompleteCarte
+module Carte = ICarte.Carte
 module Optimizer = IOptimizer.Optimizer
 
 let _ = Random.self_init()

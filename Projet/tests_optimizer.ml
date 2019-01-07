@@ -1,6 +1,6 @@
 module Optimizer = IOptimizer.Optimizer
 module MLLPath = IMLLPath.MLLPath
-module Carte = ICarte.CompleteCarte
+module Carte = ICarte.Carte
 
 let _ = Printf.printf "Tests Optimizer\n"
 
@@ -136,20 +136,4 @@ let test_repos_sans_br =
     let p' = Optimizer.repositionnement_noeud u1 p monde in
 
     let _ = MLLPath.print p' in 
-
-    (*
-    let expected = [0; 3; 2; 1] in 
-    let l = MLLPath.cities_list p' in
-
-    let rec comp_list (l1 : int list) (l2 : int list) = match l1, l2 with
-        | [], [] -> true 
-        | [], _ -> false
-        | _, [] -> false
-        | t1::q1, t2::q2 -> t1 = t2 && (comp_list q1 q2)
-    in
-    if (comp_list expected l) then
-        Printf.printf "OK Tests Repositionnement\n"
-    else
-        Printf.printf "XX Tests Repositionnement\n" 
-    *)
     ()

@@ -1,5 +1,5 @@
 module Hull = IHull.ConvexHull
-module Carte = ICarte.CompleteCarte
+module Carte = ICarte.Carte
 
 let _ = Random.self_init()
 
