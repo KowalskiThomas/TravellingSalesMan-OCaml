@@ -90,29 +90,16 @@ module ConvexHull = struct
 
   let rec convex_hull c =
     let cities_list = Carte.bindings c in 
-    (* let _ = Printf.printf "Villes:\n" in  *)
-    (* let _ = print_hull cities_list in  *)
     let cities_list = transform_list cities_list in 
-    (* let _ = Printf.printf "After select first:\n" in  *)
-    (* let _ = print_hull cities_list in  *)
     match cities_list with
     | [] -> 
-      (* let _ = Printf.printf "Empty list\n" in  *)
       []
     | [e] -> 
-      (* let _ = Printf.printf "Only one element!\n" in  *)
       [e]
     | orig::p::[] -> 
-      (* let _ = Printf.printf "Only two elements!\n" in *)
       cities_list
     | orig::l' ->
-      (* let idx, (name, (x, y)) = orig in  *)
-      (* let _ = Printf.printf "Origin: %s\n" name in 
-      let _ = Printf.printf "Villes qui restent:\n" in  *)
-      (* let _ = print_hull l' in  *)
       let l'' = sort_list_by_angle orig l' in 
-      (* let _ = Printf.printf "Après tri:\n" in        *)
-      (* let _ = print_hull l'' in  *)
       match l'' with
       | [] -> l''
       | p1::l'' -> 
