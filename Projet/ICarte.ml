@@ -242,6 +242,8 @@ module Carte = struct
             roads = road_map;
         }
 
+    let make_carte_from_cities cities = make_carte_from_cities_and_roads cities WordMap.empty
+
     let get_index target c =
         let rec find_from_bindings l = match l with
             | [] -> failwith (target ^ " non trouvé dans la Carte")

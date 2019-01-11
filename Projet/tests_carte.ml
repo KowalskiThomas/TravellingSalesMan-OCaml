@@ -10,7 +10,7 @@ let cities = [
 ]
 
 let _ =
-    let test = Carte.make_carte_from_cities_and_roads cities
+    let test = Carte.make_carte_from_cities cities
     in test
 
 let cities_distance_1 = [
@@ -18,7 +18,7 @@ let cities_distance_1 = [
     ("Londres", 0.0, 2.0)
 ]
 let test_distance_1 =
-    let carte = Carte.make_carte_from_cities_and_roads cities_distance_1 in
+    let carte = Carte.make_carte_from_cities cities_distance_1 in
     let d = Carte.distance 0 1 carte in
     (* Expected: (2 - 1)² = 1 *)
     let test = d = 1.0 in
@@ -32,7 +32,7 @@ let cities_distance_2 = [
     ("Londres", 1.0, 0.0)
 ]
 let test_distance_2 =
-    let carte = Carte.make_carte_from_cities_and_roads cities_distance_2 in
+    let carte = Carte.make_carte_from_cities cities_distance_2 in
     let d = Carte.distance 0 1 carte in
     let expected = 2.0  ** (1. /. 2.) in
     let test = d = expected in
@@ -48,7 +48,7 @@ let cities_distance_3 = [
     ("Madrid", 0.0, 2.0)
 ]
 let test_distance_3 =
-    let carte = Carte.make_carte_from_cities_and_roads cities_distance_3 in
+    let carte = Carte.make_carte_from_cities cities_distance_3 in
     let distance_1 = Carte.distance 0 1 carte in
     let distance_2 = Carte.distance 1 2 carte in
     let distance_3 = Carte.distance 2 3 carte in
@@ -90,47 +90,6 @@ let cities_distance_3 = [
     ("Berlin", 0.0, 1.0);
     ("Madrid", 0.0, 2.0)
 ]
-let test_broken_road_1 = 
-    let carte = Carte.make_carte_from_cities_and_roads cities_distance_3 in
-    let carte = Carte.add_broken_road (0, 1) carte in 
-    let dist = Carte.distance 0 1 carte in 
-    let test = dist = infinity in 
-    if test then
-        Printf.printf "OK Tests Distance Route Inexistante\n"
-    else
-        Printf.printf "XX Tests Distance Route Inexistante\n"
-    
-let inverse (x, y) = (y, x)
-
-let test_broken_road_2 = 
-    let carte = Carte.empty in 
-    let br = (0, 1) in
-    let carte = Carte.add_broken_road br carte in 
-    let test_1 = Carte.mem_broken_road br carte in 
-    let test_2 = Carte.mem_broken_road (inverse br) carte in 
-    let carte = Carte.remove_broken_road br carte in 
-    let test_3 = not(Carte.mem_broken_road br carte) in 
-    let test_4 = not(Carte.mem_broken_road (inverse br) carte) in 
-    if test_1 && test_2 && test_3 && test_4 then
-        Printf.printf "OK Tests Ajout / Remove Broken Road\n"
-    else
-        Printf.printf "XX Tests Ajout / Remove Broken Road\n"
-
-let test_broken_road_3 = 
-    let carte = Carte.empty in 
-    let br1 = (0, 1) in 
-    let br2 = (1, 2) in 
-    let carte = Carte.add_broken_road br1 carte in
-    let carte = Carte.add_broken_road br2 carte in 
-    let test_1 = Carte.mem_broken_road br1 carte in 
-    let test_2 = Carte.mem_broken_road (inverse br1) carte in 
-    let test_3 = Carte.mem_broken_road br2 carte in 
-    let test_4 = Carte.mem_broken_road (inverse br2) carte in 
-    let test_5 = not(Carte.mem_broken_road (9, 3) carte) in 
-    if test_1 && test_2 && test_3 && test_4 && test_5 then
-        Printf.printf "OK Tests Ajout / Remove Broken Road 2\n"
-    else
-        Printf.printf "XX Tests Ajout / Remove Broken Road 2\n"
 
 let cities = [
     ("A", 0., 0.);
@@ -140,7 +99,7 @@ let cities = [
     ("E", 1., 1.);
     ("F", 0., 1.);
 ]
-let monde = Carte.make_carte_from_cities_and_roads cities 
+let monde = Carte.make_carte_from_cities cities 
 
 let test_distance_empty = 
     let liste = [0] in 

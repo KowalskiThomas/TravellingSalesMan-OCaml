@@ -96,6 +96,8 @@ module Carte : sig
     (* Génère une carte à partir d'une liste de triplets (nom, x, y) *)
     val make_carte_from_cities_and_roads : (string * float * float) list -> road_map -> carte
 
+    val make_carte_from_cities : (string * float * float) list -> carte
+
     (* Calcule la distance entre deux couples de coordonnées *)
     val distance_from_coordinates : float -> float -> float -> float -> float
 
