@@ -13,11 +13,20 @@ module Carte = struct
         type t = int
         let compare x y = x - y
     end
-    type node = Node.t
-
     module NodeSet = Set.Make(Node)
     type node_set = NodeSet.t
+    type node = Node.t
 
+    module Word = struct
+        type t = String.t
+        let compare x y = String.compare x y
+    end
+    type word = Word.t
+    module WordMap = Map.Make(Word)
+    module WordSet = Set.Make(Word)
+    type word_set = WordSet.t
+    type road_map = word_set WordMap.t
+    
     module BrokenRoad = struct 
         type t = node * node
         let compare (x, y) (z, t) =
@@ -32,10 +41,13 @@ module Carte = struct
     type pair = string * (float * float)
 
     module IntMap = Map.Make(Node)
+
+    type ind_road_map = node_set IntMap.t
+
     type carte = 
     {
         cities : pair IntMap.t;
-        broken_roads : broken_road_set; 
+        roads : ind_road_map;
     }
 
     exception NotInCarte
@@ -44,15 +56,15 @@ module Carte = struct
 
     let empty = {
         cities = IntMap.empty;
-        broken_roads = BrokenRoadSet.empty
+        roads = IntMap.empty;
     }
 
     let is_empty c = c = empty
 
-    let add_node index name x y { broken_roads = br; cities = g } =
+    let add_node index name x y { roads = r; cities = g } =
     {
         cities = IntMap.add index (name, (x, y)) g;
-        broken_roads = br
+        roads = r;
     }
 
     let fold f { cities = g } acc = IntMap.fold f g acc
@@ -72,12 +84,75 @@ module Carte = struct
             raise IndexError
         with Found(x) -> x
 
+    let mem_broken_road (x, y) { roads = m } =
+        not(NodeSet.mem x (IntMap.find y m))
+
+    exception InSet
+    let accessible_from_city city from { roads = r } =             
+        try
+            NodeSet.fold
+            (
+                fun accessible_city _ -> if accessible_city = city then raise InSet else false
+            ) (IntMap.find from r) false
+        with InSet -> true
+
+    let accessible_from_cityset city set c = 
+        try
+            NodeSet.fold
+            (
+                fun excluded_city _ -> 
+                    if accessible_from_city city excluded_city c 
+                    then raise InSet
+                    else false
+            ) set false
+        with InSet -> true
+
+    let filter_accessible av ex c = 
+        NodeSet.fold
+        (
+            (* Pour chaque ville dispo *)
+            fun av_city s -> 
+                (* Si la ville est accessible depuis ex *)
+                if accessible_from_cityset av_city ex c 
+                (* Alors on l'ajoute *)
+                then let _ = Printf.printf "test ON AJOUTE\n" in NodeSet.add av_city s 
+                (* Sinon on ne l'ajoute pas *)
+                else s
+        )
+        av NodeSet.empty 
+
+    let get_name idx c =
+        try
+            let (name, (_, _)) = find idx c in name
+        with Not_found -> raise NotInCarte
+        
+    let print_roads c = 
+        IntMap.fold
+        (
+            fun orig s _ ->
+                let _ = Printf.printf "%s\n" (get_name orig c) in 
+                NodeSet.fold
+                (
+                    fun elt _ -> let _ = Printf.printf "\t%s\n" (get_name elt c) in ()
+                ) s ()
+        ) c.roads ()
+
+
     let rec get_random ({ cities = g } as c) exclude =
         let all_cities_indices = keys c in
         let available = NodeSet.diff all_cities_indices exclude in
-        let card = NodeSet.cardinal available in
+        let accessible = 
+            if NodeSet.cardinal exclude = 0 
+            then available
+            else filter_accessible available exclude c 
+        in
+        let card = NodeSet.cardinal accessible in
+        let _ = 
+            if card = 0 
+            then failwith "Impossible de trouver une ville accessible." 
+            else () in
         let i = Random.int card in
-        let idx = get_ith i available in
+        let idx = get_ith i accessible in
         (idx, find idx c)
 
     let get_random_any g = get_random g NodeSet.empty
@@ -95,37 +170,18 @@ module Carte = struct
             in let _ = Printf.printf "Cities in map:\n"
             in print_from_bindings (bindings c)
 
-    let add_broken_road (x, y) { broken_roads = s; cities = g } = {
-        broken_roads = 
-            if strategy_insert_both_couples 
-            then BrokenRoadSet.add (y, x) (BrokenRoadSet.add (x, y) s)
-            else BrokenRoadSet.add (x, y) s;
-        cities = g
-    }
-
-    let mem_broken_road (x, y) { broken_roads = s } = 
-        if strategy_insert_both_couples
-        then BrokenRoadSet.mem (x, y) s
-        else BrokenRoadSet.mem (x, y) s || BrokenRoadSet.mem (y, x) s
-
-    let remove_broken_road (x, y) { broken_roads = s; cities = g } = {
-        broken_roads = 
-            if strategy_insert_both_couples 
-            then BrokenRoadSet.remove (y, x) (BrokenRoadSet.remove (x, y) s)
-            else BrokenRoadSet.remove (x, y) s;
-        cities = g
-    }
-
     let distance_from_coordinates xu yu xv yv =
         ((xu -. xv) *. (xu -. xv) +. (yu -. yv) *. (yu -. yv)) ** (1. /. 2.)
 
-    (* let distance_from_city_coordinates city_index x y g =
-        let (_, (xcity, ycity)) = find city_index g in
-            distance_from_coordinates xcity ycity x y *)
-
     let distance u v c =
-        if mem_broken_road (u, v) c 
-        then infinity 
+        if u = v then 0.0 
+        else if mem_broken_road (u, v) c 
+        then
+            let _ = 
+                if Config.debug then
+                    Printf.printf "Warning: Infinity between %d %s and %d %s\n" u (get_name u c) v (get_name v c) 
+                else () 
+            in infinity 
         else 
         try
             let data_u = find u c in
@@ -150,14 +206,41 @@ module Carte = struct
             in aux path
 
     let add_cities villes carte =
-        let rec aux i villes carte =
+        let rec aux i villes carte indices =
             match villes with
-            | [] -> carte
-            | (n, x, y)::t -> add_node i n x y (aux (i + 1) t carte)
-        in aux 0 villes carte
+            | [] -> carte, indices
+            | (n, x, y)::t -> 
+                let carte', indices' = aux (i + 1) t carte indices in
+                add_node i n x y carte', WordMap.add n i indices'
+            in aux 0 villes carte WordMap.empty
 
-    let make_carte_from_cities cities =
-        add_cities cities empty
+    let indices_destinations destinations indices : NodeSet.t = 
+        WordSet.fold
+        (
+            fun destination s -> 
+                let indice_dest = WordMap.find destination indices in 
+                NodeSet.add indice_dest s
+        ) 
+        destinations NodeSet.empty
+
+    let make_road_map (roads : word_set WordMap.t) (indices : int WordMap.t) : ind_road_map =
+        WordMap.fold 
+        (
+            fun origine destinations acc ->
+                let indice_origine : int = WordMap.find origine indices in 
+                let ind_destinations = indices_destinations destinations indices in 
+                let res = IntMap.add (indice_origine) (ind_destinations) acc in 
+                res
+        ) 
+        roads IntMap.empty
+
+    let make_carte_from_cities_and_roads cities roads =
+        let c, indices = add_cities cities empty in 
+        let road_map = make_road_map roads indices in 
+        { 
+            cities = c.cities;
+            roads = road_map;
+        }
 
     let get_index target c =
         let rec find_from_bindings l = match l with
@@ -169,11 +252,6 @@ module Carte = struct
             in
             let b = bindings c in
             find_from_bindings b
-
-    let get_name idx c =
-        try
-            let (name, (_, _)) = find idx c in name
-        with Not_found -> raise NotInCarte
 
     let get_coordinates idx c =
         try

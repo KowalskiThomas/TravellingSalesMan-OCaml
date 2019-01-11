@@ -7,11 +7,11 @@ module MLLPath = IMLLPath.MLLPath
 type config = Parser.config
 
 (* On charge les villes *)
-let villes = Parser.parse_input_file "villes.txt"
+let villes, routes = Parser.parse_input_file "villes.tuareg.txt"
 (* On charge la configuration *)
 let config = Parser.parse_config_file "config.txt"
 (* On créé la carte à partir de la liste d'infos *)
-let carte = Carte.make_carte_from_cities villes
+let carte = Carte.make_carte_from_cities_and_roads villes routes
 
 (* On unpack la configuration *)
 let mode, insertion, optimization = 

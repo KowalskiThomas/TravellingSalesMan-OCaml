@@ -1,0 +1,21 @@
+10
+cad 96372.8516804 34525.5828481
+dhd 152941.917034 72763.6131814
+ecn 158369.108984 183669.353206
+fjg 113532.581396 38043.7404646
+ggk 24425.7356375 186415.81632
+hsf 11969.8243209 80718.8571483
+lqn 48206.1708549 97173.9288615
+szb 125885.450774 79835.0382576
+yoi 79300.5858893 153752.533327
+zsi 72001.6712358 92265.4197505
+cad : dhd ecn fjg hsf szb 
+dhd : cad ecn fjg ggk lqn zsi 
+ecn : cad dhd fjg ggk lqn szb yoi zsi 
+fjg : cad dhd ecn ggk lqn zsi 
+ggk : dhd ecn fjg hsf lqn yoi 
+hsf : cad ggk szb yoi 
+lqn : dhd ecn fjg ggk yoi zsi 
+szb : cad ecn hsf 
+yoi : ecn ggk hsf lqn zsi 
+zsi : dhd ecn fjg lqn yoi 

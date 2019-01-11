@@ -1,0 +1,9 @@
+4
+Paris 0.2 1.2
+Londres 2.0 3.14
+Berlin 4.5 5.5
+Lima 25.5 52.9
+Paris : Londres Berlin
+Lima : Londres
+Londres : Lima Paris
+Berlin : Paris

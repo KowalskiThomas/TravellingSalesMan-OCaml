@@ -1,3 +1,5 @@
+module Carte = ICarte.Carte
+
 module Parser : sig
   exception FileNotFound of string
   exception SyntaxError of string * string  
@@ -17,7 +19,7 @@ module Parser : sig
     @ensures La liste contient autant de villes que la première ligne du fichier l'indique
     @raises Sys_error si le fichier n'existe pas ou ne peut être ouvert, Scan_failure si le fichier n'est pas au format attendu.
   *)
-  val parse_input_file : string -> (string * float * float) list
+  val parse_input_file : string -> (string * float * float) list * Carte.word_set Carte.WordMap.t
   
   (* Ouvre un fichier dont le nom est passé en paramètre et renvoie une configuration d'optimisation
     @requires Le fichier passé existe, le fichier est au format donné par le manuel.

@@ -201,9 +201,8 @@ module Optimizer = struct
         carte initial_path = 
         (* Construction de la liste initiale des villes les plus proches *)
         let initial_mins_list = build_initial_mins_list carte initial_path in 
-        (* let _ = print_mins_list initial_mins_list in  *)
         (* Construit un chemin à partir d'un chemin initial p en utilisant la liste des noeuds les plus proches *)
-        let rec build_path l p = 
+        let rec build_path l p : MLLPath.path = 
             (* On trouve l'élément qui maximise la distance minimale au chemin *)
             (* 
                 new_element -> le noeud à ajouter
@@ -212,17 +211,19 @@ module Optimizer = struct
             *)
             let new_element_option, l' = finder l in
             (* On l'insère après closest_in_path pour minimiser la distance totale *)
+            if new_element_option = None 
+            then build_path (build_initial_mins_list carte p) p else
             let new_entry, p' = match new_element_option with
             | None -> failwith "Nothing to add"
             | Some(new_element, closest_in_path, dist) -> 
-                (* 1205 *)
-                (* let _ = print_mins_list l in  *)
-                (* let _ = Printf.printf "Inserting %d\n" new_element in  *)
+                let closest_city, _ = closest_in_path in 
+                (* let _ = Printf.printf "Inserting %s after %s in " (Carte.get_name new_element carte) (Carte.get_name closest_city carte) in 
+                let _ = MLLPath.print p in  *)
                 MLLPath.insert_in_path new_element closest_in_path p carte 
             in 
             (* let _ = MLLPath.print p' in  *)
             let l'' = match new_element_option with
-            | None -> failwith "Nothing to add"
+            | None -> failwith "Nothing to add 2"
             | Some(new_element, closest_in_path, dist) -> rebuild_mins_list l' new_entry carte
             in
             (* let _ = print_mins_list l' in   *)
@@ -251,6 +252,7 @@ module Optimizer = struct
             else
                 let new_element, _ = Carte.get_random carte cities_set in 
                 let cities_set' = Carte.NodeSet.add new_element cities_set in 
+                (* let _ = Printf.printf "Inserting %s\n" (Carte.get_name new_element carte) in *)
                 let new_elt, path' = MLLPath.insert_minimize_length new_element path carte in 
                 let card' = card + 1 in 
                 aux card' cities_set' path'
@@ -279,6 +281,7 @@ module Optimizer = struct
             if Config.debug then
                 let _ = Printf.printf "Construction sol initiale\n" in 
                 let _ = Printf.printf "Temps construction sol initiale: %f\n" (e -. s) in
+                let _ = MLLPath.print solution in 
                 let _ = Printf.printf "Distance initiale: %f\n" distance in 
                 ()
             else () 

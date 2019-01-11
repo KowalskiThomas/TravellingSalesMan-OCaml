@@ -36,7 +36,7 @@ let _ = Printf.printf "------------------------------------ TRUCS DU DEBUT -----
 let _ = Printf.printf "Génération monde: %f\n" (e -. s)
 
 let s = Sys.time()
-let monde = Carte.make_carte_from_cities monde
+let monde = Carte.make_carte_from_cities_and_roads monde
 let e = Sys.time()
 let _ = Printf.printf "Construction carte: %f\n" (e -. s)
 

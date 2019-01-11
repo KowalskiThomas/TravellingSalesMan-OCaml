@@ -452,6 +452,29 @@ module MLLPath = struct
             (* let _ = Printf.printf "\n" in  *)
             ()
 
+    let find_closest_elt x p (c : Carte.carte) =
+        let _ = print p in 
+        let (first_city, i_fst) as first = get_first p in 
+        let rec aux current =
+            let city, curr_i = current in 
+            let (city_next, i) as next = get_next (city, curr_i) p in 
+            if next = first then
+                let distance_fst = Carte.distance x first_city c in 
+                let distance_crt = Carte.distance x city c in
+                let _ = Printf.printf "Final: %s %f\n" (Carte.get_name city c) distance_fst in 
+                if distance_fst < distance_crt 
+                then first, distance_fst
+                else current, distance_crt
+            else
+                let (city_rem, i_rem) as best_rem, dst_rem = aux next in 
+                let distance = Carte.distance x city c in
+                let _ = Printf.printf "Best rem / dist : %s %f \n" (Carte.get_name city_rem c) dst_rem in 
+                if dst_rem < distance 
+                then best_rem, dst_rem
+                else current, distance
+        in let closest, dst = aux first 
+        in if dst = infinity then failwith "Graphe non connexe." else closest
+
     (*
     Insère une ville au bon endroit pour minimiser la longueur totale
     to_insert : Indice dans la carte de la ville à insérer
@@ -460,7 +483,6 @@ module MLLPath = struct
     Revoie: p avec to_insert dedans
     *)
     let insert_minimize_length to_insert p c =
-        (* TESTER LA MAISON *)
         (*
         rec trouve où insérer la ville
         u : Ville en cours d'évaluation
@@ -487,9 +509,21 @@ module MLLPath = struct
                 else (delta, u)
         in
         (* On détermine après quelle ville insérer la nouvelle ville *)
-        let _, after = aux start in
-        (* On renvoie p avec to_insert insérée au bon endroit *)
-        insert to_insert after p
+        let delta, after = aux start in
+        if delta < infinity then
+            (* On renvoie p avec to_insert insérée au bon endroit *)
+            insert to_insert after p
+        else
+            let closest = find_closest_elt to_insert p c in 
+            let new_elt, p' = insert to_insert closest p in 
+            let city_closest, _ = closest in 
+            let a, b = new_elt in 
+            let  new_elt_2, p'' = insert city_closest new_elt p' in
+            let _ = print p'' in 
+            let _ = Printf.printf "on insère %d après (%d %d)\n" city_closest a b in 
+            let _ = Printf.printf "%f\n" (Carte.distance_path (cities_list p'') c) in 
+            let _ = Printf.printf "----------------\n" in 
+            new_elt_2, p''
 
     let rec from_list (l : node list) (c : Carte.carte) : path = 
         match l with

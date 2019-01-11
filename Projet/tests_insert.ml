@@ -13,7 +13,7 @@ let test_insert_minimize =
         ("Berlin", 1.0, 0.0)
     ] in
 
-    let carte = Carte.make_carte_from_cities cities in
+    let carte = Carte.make_carte_from_cities_and_roads cities in
     let u0, chemin = MLLPath.make 0 in
     let u1, chemin = MLLPath.insert 1 u0 chemin in 
     let u2, chemin = MLLPath.insert 2 u1 chemin in 
@@ -48,7 +48,7 @@ let _ =
     let br3 = (3, 2) in
     let br4 = (4, 3) in
     
-    let carte = Carte.make_carte_from_cities cities in
+    let carte = Carte.make_carte_from_cities_and_roads cities in
     let carte = Carte.add_broken_road br1 carte in 
     let carte = Carte.add_broken_road br5 carte in 
     let carte = Carte.add_broken_road br3 carte in 
@@ -77,7 +77,7 @@ let test_builder =
         ("HD", 3., 3.); 
         ("T", 1.5, 5.)
     ] in
-    let monde = Carte.make_carte_from_cities cities in  
+    let monde = Carte.make_carte_from_cities_and_roads cities in  
     let u0, path = MLLPath.make 0 in 
     let u1, path = MLLPath.insert 1 u0 path in 
     let u2, path = MLLPath.insert 2 u1 path in 

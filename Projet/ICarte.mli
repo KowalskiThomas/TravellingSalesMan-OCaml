@@ -12,12 +12,24 @@ module Carte : sig
         type t = int
         val compare : t -> t -> int
     end
+    module Word : sig
+        type t = String.t
+        val compare : t -> t -> int
+    end
+    type word = Word.t
+    module WordMap : Map.S with type key = word
+    module WordSet : Set.S with type elt = word
+    type word_set = WordSet.t
+    type road_map = word_set WordMap.t
+
     (* Le type des indices, pour nous des entiers *)
     type node = Node.t
     (* Le module Ensemble de Noeuds (à savoir ensemble d'entiers)) *)
     module NodeSet : Set.S with type elt = node
     (* Le type des ensembles de noeuds *)
     type node_set = NodeSet.t
+
+    module IntMap : Map.S with type key = int
     
     (* Le module des "Arcs rompus" *)
     (* Ils sont implémentés avec des couples d'indices *)
@@ -40,16 +52,8 @@ module Carte : sig
     (* Exception levée si un élément supposé présent est absent *)
     exception NotInCarte
 
-    (* Ajoute un arc rompu dans le graphe *)
-    val add_broken_road : broken_road -> carte -> carte
-    
     (* Vérifie si un arc est rompu dans le graphe *)
     val mem_broken_road : broken_road -> carte -> bool
-    
-    (* Supprime un arc rompu du le graphe 
-       Lève Not_found s'il n'existe pas.
-    *)
-    val remove_broken_road : broken_road -> carte -> carte
 
     (* Renvoie la Carte vide *)
     val empty : carte
@@ -87,10 +91,10 @@ module Carte : sig
     val print : carte -> unit
 
     (* Ajoute toutes les villes d'une liste de triplets (nom, x, y) à une carte *)
-    val add_cities : (string * float * float) list -> carte -> carte
+    val add_cities : (string * float * float) list -> carte -> carte * IntMap.key WordMap.t
 
     (* Génère une carte à partir d'une liste de triplets (nom, x, y) *)
-    val make_carte_from_cities : (string * float * float) list -> carte
+    val make_carte_from_cities_and_roads : (string * float * float) list -> road_map -> carte
 
     (* Calcule la distance entre deux couples de coordonnées *)
     val distance_from_coordinates : float -> float -> float -> float -> float
@@ -116,4 +120,7 @@ module Carte : sig
     (* Trouve les coordonnées d'une ville à partir de son indice *)
     (* Lève NotInCarte si la ville n'est pas dans la carte *)
     val get_coordinates : node -> carte -> (float * float)
+
+    val accessible_from_city : node -> node -> carte -> bool
+    val accessible_from_cityset : node -> node_set -> carte -> bool
 end
