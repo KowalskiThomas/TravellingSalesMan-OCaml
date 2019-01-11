@@ -461,14 +461,12 @@ module MLLPath = struct
             if next = first then
                 let distance_fst = Carte.distance x first_city c in 
                 let distance_crt = Carte.distance x city c in
-                let _ = Printf.printf "Final: %s %f\n" (Carte.get_name city c) distance_fst in 
                 if distance_fst < distance_crt 
                 then first, distance_fst
                 else current, distance_crt
             else
                 let (city_rem, i_rem) as best_rem, dst_rem = aux next in 
                 let distance = Carte.distance x city c in
-                let _ = Printf.printf "Best rem / dist : %s %f \n" (Carte.get_name city_rem c) dst_rem in 
                 if dst_rem < distance 
                 then best_rem, dst_rem
                 else current, distance
@@ -517,12 +515,7 @@ module MLLPath = struct
             let closest = find_closest_elt to_insert p c in 
             let new_elt, p' = insert to_insert closest p in 
             let city_closest, _ = closest in 
-            let a, b = new_elt in 
-            let  new_elt_2, p'' = insert city_closest new_elt p' in
-            let _ = print p'' in 
-            let _ = Printf.printf "on insère %d après (%d %d)\n" city_closest a b in 
-            let _ = Printf.printf "%f\n" (Carte.distance_path (cities_list p'') c) in 
-            let _ = Printf.printf "----------------\n" in 
+            let new_elt_2, p'' = insert city_closest new_elt p' in
             new_elt_2, p''
 
     let rec from_list (l : node list) (c : Carte.carte) : path = 

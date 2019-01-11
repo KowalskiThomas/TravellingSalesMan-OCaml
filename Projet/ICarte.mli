@@ -55,6 +55,9 @@ module Carte : sig
     (* Vérifie si un arc est rompu dans le graphe *)
     val mem_broken_road : broken_road -> carte -> bool
 
+    (* Ajoute une route *)
+    val add_road : node -> node -> carte -> carte
+
     (* Renvoie la Carte vide *)
     val empty : carte
 

@@ -202,7 +202,11 @@ module Optimizer = struct
         (* Construction de la liste initiale des villes les plus proches *)
         let initial_mins_list = build_initial_mins_list carte initial_path in 
         (* Construit un chemin à partir d'un chemin initial p en utilisant la liste des noeuds les plus proches *)
-        let rec build_path l p : MLLPath.path = 
+        let rec build_path l p calls : MLLPath.path = 
+            let _ = 
+                if calls = 10 
+                then failwith "Recursion error"
+                else () in
             (* On trouve l'élément qui maximise la distance minimale au chemin *)
             (* 
                 new_element -> le noeud à ajouter
@@ -212,13 +216,10 @@ module Optimizer = struct
             let new_element_option, l' = finder l in
             (* On l'insère après closest_in_path pour minimiser la distance totale *)
             if new_element_option = None 
-            then build_path (build_initial_mins_list carte p) p else
+            then build_path (build_initial_mins_list carte p) p (calls + 1) else
             let new_entry, p' = match new_element_option with
             | None -> failwith "Nothing to add"
             | Some(new_element, closest_in_path, dist) -> 
-                let closest_city, _ = closest_in_path in 
-                (* let _ = Printf.printf "Inserting %s after %s in " (Carte.get_name new_element carte) (Carte.get_name closest_city carte) in 
-                let _ = MLLPath.print p in  *)
                 MLLPath.insert_in_path new_element closest_in_path p carte 
             in 
             (* let _ = MLLPath.print p' in  *)
@@ -231,9 +232,9 @@ module Optimizer = struct
             (* let _ = Printf.printf "\n" in  *)
             match l' with
             | [] -> p'
-            | l' -> build_path l'' p'
+            | l' -> build_path l'' p' calls
         
-        in build_path initial_mins_list initial_path
+        in build_path initial_mins_list initial_path 0
 
     (* Construit une solution initiale en prenant la ville la plus proche *)
     let build_solution_nearest = build_solution find_nearest
@@ -286,7 +287,7 @@ module Optimizer = struct
                 ()
             else () 
         in
-
+            
         let s = Sys.time() in
         let solution_optimisee = optimizer solution n_opt carte in
         let e = Sys.time() in 

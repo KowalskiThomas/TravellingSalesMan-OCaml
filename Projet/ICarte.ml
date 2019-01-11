@@ -59,6 +59,8 @@ module Carte = struct
         roads = IntMap.empty;
     }
 
+    let is_complete { roads = r } = IntMap.is_empty r 
+
     let is_empty c = c = empty
 
     let add_node index name x y { roads = r; cities = g } =
@@ -84,8 +86,25 @@ module Carte = struct
             raise IndexError
         with Found(x) -> x
 
-    let mem_broken_road (x, y) { roads = m } =
-        not(NodeSet.mem x (IntMap.find y m))
+    let mem_broken_road (x, y) ({ roads = m } as c) =
+        not (is_complete c) && not(NodeSet.mem x (IntMap.find y m))
+
+    let add_road u v c = 
+        let new_u = 
+        try
+            NodeSet.add v (IntMap.find u c.roads) 
+        with Not_found -> NodeSet.add v NodeSet.empty
+        in
+        let new_v =
+        try
+            NodeSet.add u (IntMap.find v c.roads) 
+        with Not_found -> NodeSet.add u NodeSet.empty    
+        in 
+        let new_m = IntMap.add u new_u (IntMap.add v new_v c.roads) in
+        {
+            cities = c.cities;
+            roads = new_m;
+        }
 
     exception InSet
     let accessible_from_city city from { roads = r } =             
@@ -115,7 +134,7 @@ module Carte = struct
                 (* Si la ville est accessible depuis ex *)
                 if accessible_from_cityset av_city ex c 
                 (* Alors on l'ajoute *)
-                then let _ = Printf.printf "test ON AJOUTE\n" in NodeSet.add av_city s 
+                then NodeSet.add av_city s 
                 (* Sinon on ne l'ajoute pas *)
                 else s
         )
@@ -143,6 +162,8 @@ module Carte = struct
         let available = NodeSet.diff all_cities_indices exclude in
         let accessible = 
             if NodeSet.cardinal exclude = 0 
+            then available
+            else if is_complete c 
             then available
             else filter_accessible available exclude c 
         in

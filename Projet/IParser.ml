@@ -36,16 +36,18 @@ module Parser = struct
   let rec parse_roads cin n = 
     if n = 0 then Carte.WordMap.empty
     else
-      let l = input_line cin in 
-      let idx = String.index l ':' in 
-      let nom = String.sub l 0 (idx - 1) in 
-      let seq_length = String.length l - idx - 2 in 
-      let reste = String.sub l (idx + 2) seq_length in
-      (* let reste = String.trim reste in  *)
-      let liste = (split_space reste) in 
-      (* let _ = print_list liste in  *)
-      let m = parse_roads cin (n - 1) in 
-      Carte.WordMap.add nom liste m 
+      try
+        let l = input_line cin in 
+        let idx = String.index l ':' in 
+        let nom = String.sub l 0 (idx - 1) in 
+        let seq_length = String.length l - idx - 2 in 
+        let reste = String.sub l (idx + 2) seq_length in
+        (* let reste = String.trim reste in  *)
+        let liste = (split_space reste) in 
+        (* let _ = print_list liste in  *)
+        let m = parse_roads cin (n - 1) in 
+        Carte.WordMap.add nom liste m 
+      with End_of_file -> Carte.WordMap.empty
 
   let parse_input cin =
     let l = input_line cin in 
