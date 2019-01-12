@@ -1,13 +1,3 @@
-(* 
-Quelle stratégie utilise t-on pour stocker les routes inexistantes ?
-Première possibilité : quand on ajoute (x, y), on ajoute à l'ensemble (x, y) et (y, x)
-Deuxième possibilité : on ajoute (x, y) et sur le mem, on cherche (x, y) et (y, x)
-La première possibilité réduit la complexité globalement, mais est plus demandeuse sur l'insertion et la suppression.
-La deuxième possibilité est plus gourmande en recherche :
-    2log(n) >= log(2n) vrai dès n = 1.
-*)
-let strategy_insert_both_couples = true
-
 module Carte = struct
     module Node = struct
         type t = int
@@ -27,17 +17,6 @@ module Carte = struct
     type word_set = WordSet.t
     type road_map = word_set WordMap.t
     
-    module BrokenRoad = struct 
-        type t = node * node
-        let compare (x, y) (z, t) =
-            if x = z 
-            then Node.compare y t 
-            else Node.compare x z
-    end
-    type broken_road = BrokenRoad.t
-    module BrokenRoadSet = Set.Make(BrokenRoad)
-    type broken_road_set = BrokenRoadSet.t
-
     type pair = string * (float * float)
 
     module IntMap = Map.Make(Node)

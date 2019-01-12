@@ -7,7 +7,12 @@ module Execution = IExecution
 
 type config = Parser.config
 
-let fichier = "villes.big.txt"
+let fichier = 
+  if Array.length Sys.argv < 2
+  then Config.default_file
+  else Sys.argv.(1)
+
+let _ = Printf.printf "Fichier de villes: '%s'\n" fichier
 
 let b = Sys.time ()
 (* On charge les villes *)

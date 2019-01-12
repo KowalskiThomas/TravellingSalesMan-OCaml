@@ -31,18 +31,6 @@ module Carte : sig
 
     module IntMap : Map.S with type key = int
     
-    (* Le module des "Arcs rompus" *)
-    (* Ils sont implémentés avec des couples d'indices *)
-    module BrokenRoad : sig 
-        type t = node * node
-        (* Comparaison lexicographique *)
-        val compare : t -> t -> int
-    end
-    type broken_road = BrokenRoad.t
-    (* Ensemble d'arcs rompus, pour stocker tous les arcs inexistants *)
-    module BrokenRoadSet : Set.S with type elt = broken_road
-    type broken_road_set = BrokenRoadSet.t
-
     (* Le type des données des villes (nom, coordonnées) *)
     type pair = string * (float * float)
 
@@ -53,7 +41,7 @@ module Carte : sig
     exception NotInCarte
 
     (* Vérifie si un arc est rompu dans le graphe *)
-    val mem_broken_road : broken_road -> carte -> bool
+    val mem_broken_road : (int * int) -> carte -> bool
 
     (* Ajoute une route *)
     val add_road : node -> node -> carte -> carte

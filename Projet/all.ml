@@ -7,7 +7,12 @@ module Execution = IExecution
 
 type config = Parser.config
 
-let fichier = "villes.big.txt"
+let fichier = 
+  if Array.length Sys.argv < 2
+  then Config.default_file
+  else Sys.argv.(1)
+
+let _ = Printf.printf "Fichier de villes: '%s'\n" fichier
 
 let b = Sys.time ()
 (* On charge les villes *)
@@ -19,7 +24,7 @@ let _ =
     Printf.printf "Chargement villes (%s) : %f\n" fichier (e -. b)
   else
     ()
-let config = Parser.parse_config_file "config.txt"
+
 (* On créé la carte à partir de la liste d'infos *)
 let carte = Carte.make_carte_from_cities_and_roads villes routes
 
@@ -34,7 +39,19 @@ let _ =
     (
       fun builder -> List.iter  
       (
-        fun init -> Execution.executer init builder optimization carte
+        fun init -> 
+          let _ = Printf.printf "----------\n" in 
+          let _ = Printf.printf "%s / %s / %s\n" init builder optimization in 
+          let b = Sys.time () in 
+          let _ = try
+            let _ = Execution.executer init builder optimization carte in ()
+          with _ -> 
+            let _ = Printf.printf "Erreur lors de l'exécution avec cette configuration.\n" in 
+            ()
+          in
+          let e = Sys.time () in
+          let _ = Printf.printf "Temps: %f\n" (e -. b) in
+          ()
       ) initial
     ) builders
   ) optimizations

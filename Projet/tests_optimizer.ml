@@ -86,7 +86,7 @@ let test_monde_simple =
         let e = Sys.time() in
         Printf.printf "Optimization nearest: %f\n" (e -. s)
     in ()
-
+(* 
 let test_repos_avec_br =
     let p0 = ("P0", 0., 0.) in
     let p1 = ("P1", 0., 1.) in
@@ -120,7 +120,7 @@ let test_repos_avec_br =
     if list = list' then
         Printf.printf "OK Test repositionnement avec broken road\n"
     else
-        Printf.printf "XX Test repositionnement avec broken road\n"
+        Printf.printf "XX Test repositionnement avec broken road\n" *)
 
 let test_repos_sans_br =
     let p0 = ("P0", 0., 0.) in

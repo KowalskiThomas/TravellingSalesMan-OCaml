@@ -42,4 +42,5 @@ let executer mode insertion optimization carte =
 
   (* On affiche la solution *)
   let _ = MLLPath.print_distance_names solution carte in
-  ()
+  
+  solution

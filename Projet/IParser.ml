@@ -42,11 +42,9 @@ module Parser = struct
         let nom = String.sub l 0 (idx - 1) in 
         let seq_length = String.length l - idx - 2 in 
         let reste = String.sub l (idx + 2) seq_length in
-        (* let reste = String.trim reste in  *)
-        let liste = (split_space reste) in 
-        (* let _ = print_list liste in  *)
+        let accessibles = (split_space reste) in 
         let m = parse_roads cin (n - 1) in 
-        Carte.WordMap.add nom liste m 
+        Carte.WordMap.add nom accessibles m 
       with End_of_file -> Carte.WordMap.empty
 
   let parse_input cin =
