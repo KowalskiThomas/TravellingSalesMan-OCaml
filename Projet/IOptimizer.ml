@@ -6,11 +6,11 @@ module Optimizer = struct
     type builder = Carte.carte -> MLLPath.path -> MLLPath.path
     type initial_path_builder = Carte.carte -> MLLPath.path
     type optimizer = MLLPath.path -> 
-    int -> (* Le nombre de fois à appliquer *)
     Carte.carte -> 
     MLLPath.path
 
-    let n_opt = 5000
+    let n_inv = 10000
+    let n_rep = 2000
 
     (*
       Cas card <= 3:
@@ -40,13 +40,16 @@ module Optimizer = struct
                 in
                 chemin
 
-    let rec repositionnement_n_fois solution n carte =
-        if n = 0
-        then solution
-        else
-            let entry = MLLPath.get_random solution in
-            let new_solution = repositionnement_noeud entry solution carte in
-            repositionnement_n_fois new_solution (n - 1) carte
+    let repositionnement_n_fois solution carte =
+        let rec aux solution n = 
+            if n = 0
+            then solution
+            else
+                let entry = MLLPath.get_random solution in
+                let new_solution = repositionnement_noeud entry solution carte in
+                aux new_solution (n - 1) 
+        in
+        aux solution n_rep
             
     let inversion_locale a c path carte =
         (* From ... -> A -> B -> ... -> C -> D -> ... *)
@@ -69,14 +72,17 @@ module Optimizer = struct
         else
             path
 
-    let rec inversion_n_fois solution n carte =
-        if n = 0
-        then solution
-        else
-            let a = MLLPath.get_random solution in
-            let c = MLLPath.get_random solution in 
-            let swapped = inversion_locale a c solution carte in
-            inversion_n_fois swapped (n - 1) carte
+    let inversion_n_fois solution carte =
+        let rec aux solution n = 
+            if n = 0
+            then solution
+            else
+                let a = MLLPath.get_random solution in
+                let c = MLLPath.get_random solution in 
+                let swapped = inversion_locale a c solution carte in
+                aux swapped (n - 1) 
+        in
+        aux solution n_inv
 
     let rebuild_mins_list l new_element carte = 
         let new_city, new_index = new_element in 
@@ -282,14 +288,15 @@ module Optimizer = struct
             if Config.debug then
                 let _ = Printf.printf "Construction sol initiale\n" in 
                 let _ = Printf.printf "Temps construction sol initiale: %f\n" (e -. s) in
-                let _ = MLLPath.print solution in 
                 let _ = Printf.printf "Distance initiale: %f\n" distance in 
                 ()
             else () 
         in
             
         let s = Sys.time() in
-        let solution_optimisee = optimizer solution n_opt carte in
+        let solution_optimisee = 
+            optimizer solution carte 
+        in
         let e = Sys.time() in 
         let distance_opt = Carte.distance_path (MLLPath.cities_list solution_optimisee) carte in 
         let _ = 

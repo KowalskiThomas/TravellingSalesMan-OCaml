@@ -23,13 +23,18 @@ let config = Parser.parse_config_file "config.txt"
 (* On créé la carte à partir de la liste d'infos *)
 let carte = Carte.make_carte_from_cities_and_roads villes routes
 
-(* On unpack la configuration *)
-let mode, insertion, optimization = 
-  match config with
-  {
-    mode = m;
-    insertion = i;
-    optimization = o;
-  } -> m, i, o
+let optimizations = ["INVERSION"; "REPOSITIONNEMENT"] 
+let builders = ["NEAREST"; "FARTHEST"; "RANDOM"]
+let initial = ["ONE"; "HULL"]
 
-let _ = Execution.executer mode insertion optimization carte
+let _ = 
+  List.iter 
+  (
+    fun optimization -> List.iter 
+    (
+      fun builder -> List.iter  
+      (
+        fun init -> Execution.executer init builder optimization carte
+      ) initial
+    ) builders
+  ) optimizations

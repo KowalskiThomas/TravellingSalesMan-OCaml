@@ -18,7 +18,6 @@ module Optimizer : sig
 
     (* Le type des fonctions optimisatrices de chemins *)
     type optimizer = MLLPath.path -> 
-    int -> (* Le nombre de fois à appliquer *)
     Carte.carte -> 
     MLLPath.path
 
@@ -31,16 +30,14 @@ module Optimizer : sig
     (* Applique le repositionnement un certain nombre de fois au chemin *)
     val repositionnement_n_fois : 
         MLLPath.path -> (* La solution initiale *) 
-        int -> (* Le nombre de fois à appliquer *)
-        Carte.carte -> (* La carte *)
-        MLLPath.path (* La solution de sortie *)
+        Carte.carte ->  (* La carte *)
+        MLLPath.path    (* La solution de sortie *)
 
     (* Application l'inversion locale un certain nombre de fois au chemin *)
     val inversion_n_fois : 
         MLLPath.path -> (* La solution initiale *)
-        int -> (* Le nombre de fois à appliquer *)
-        Carte.carte -> 
-        MLLPath.path (* La solution de sortie *)
+        Carte.carte ->  (* La carte *)
+        MLLPath.path    (* La solution de sortie *)
 
     (* Met à jour la liste des noeuds internes les plus proches aux noeuds externes 
        @requires la liste est valide, ie pour chaque élément (x, plus_proche, dist_x) de la liste, x est plus proche de plus_proche que de n'importe quelle autre entrée du chemin, excepté éventuellement le nouvel élément
