@@ -452,6 +452,7 @@ module MLLPath = struct
             (* let _ = Printf.printf "\n" in  *)
             ()
 
+    exception NonConnexe
     let find_closest_elt x p (c : Carte.carte) =
         let _ = print p in 
         let (first_city, i_fst) as first = get_first p in 
@@ -471,7 +472,7 @@ module MLLPath = struct
                 then best_rem, dst_rem
                 else current, distance
         in let closest, dst = aux first 
-        in if dst = infinity then failwith "Graphe non connexe." else closest
+        in if dst = infinity then raise NonConnexe else closest
 
     (*
     Insère une ville au bon endroit pour minimiser la longueur totale

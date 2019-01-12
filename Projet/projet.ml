@@ -24,6 +24,7 @@ let _ =
     Printf.printf "Chargement villes (%s) : %f\n" fichier (e -. b)
   else
     ()
+    
 let config = Parser.parse_config_file "config.txt"
 (* On créé la carte à partir de la liste d'infos *)
 let carte = Carte.make_carte_from_cities_and_roads villes routes
@@ -37,4 +38,7 @@ let mode, insertion, optimization =
     optimization = o;
   } -> m, i, o
 
+let b = Sys.time () 
 let _ = Execution.executer mode insertion optimization carte
+let e = Sys.time () 
+let _ = Printf.printf "Temps: %f\n" (e -. b) 

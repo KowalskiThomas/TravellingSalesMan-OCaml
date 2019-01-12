@@ -43,12 +43,7 @@ let _ =
           let _ = Printf.printf "----------\n" in 
           let _ = Printf.printf "%s / %s / %s\n" init builder optimization in 
           let b = Sys.time () in 
-          let _ = try
-            let _ = Execution.executer init builder optimization carte in ()
-          with _ -> 
-            let _ = Printf.printf "Erreur lors de l'exécution avec cette configuration.\n" in 
-            ()
-          in
+          let _ = Execution.executer init builder optimization carte in
           let e = Sys.time () in
           let _ = Printf.printf "Temps: %f\n" (e -. b) in
           ()

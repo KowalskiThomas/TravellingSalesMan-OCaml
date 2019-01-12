@@ -10,7 +10,7 @@ module Optimizer = struct
     MLLPath.path
 
     let n_inv = 10000
-    let n_rep = 2000
+    let n_rep = 1
 
     (*
       Cas card <= 3:
@@ -49,7 +49,7 @@ module Optimizer = struct
                 let new_solution = repositionnement_noeud entry solution carte in
                 aux new_solution (n - 1) 
         in
-        aux solution n_rep
+        aux solution (Carte.card carte * n_rep)
             
     let inversion_locale a c path carte =
         (* From ... -> A -> B -> ... -> C -> D -> ... *)

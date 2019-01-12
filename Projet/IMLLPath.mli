@@ -33,6 +33,8 @@ module MLLPath : sig
     exception NotInPath
     (* Exception levée lors de l'appel d'une fonction demandant un chemin non vide sur un chemin vide *)
     exception EmptyPath
+    (* Exception levée lorsque l'enveloppe convexe n'est pas connexe *)
+    exception NonConnexe
 
     (* Renvoie un chemin vide *)
     val empty : path

@@ -38,7 +38,10 @@ let executer mode insertion optimization carte =
     else failwith "Invalid optimizer option" in
 
   (* On construit la solution *)
-  let solution = Optimizer.find_solution initial_path_function insertion_function optimizer carte in
+  let solution = 
+    try
+      Optimizer.find_solution initial_path_function insertion_function optimizer carte 
+    with MLLPath.NonConnexe -> failwith "Enveloppe convexe non connexe." in
 
   (* On affiche la solution *)
   let _ = MLLPath.print_distance_names solution carte in
