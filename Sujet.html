@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html><head>
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+     <link rel="stylesheet" type="text/css" href="Projet%20programmation%20fonctionnelle_fichiers/urbain_style.css">
+   <title>Projet programmation fonctionnelle</title>
+</head>
+<body><div id="wholepage">
+<p></p>
+<name>
+<h1>Programmation fonctionnelle: projet 2018</h1>
+</name>
+<br>
+
+<h3>Dates et principe</h3> Cette page peut être mise à jour, avec
+informations complémentaires, précisions, etc.  Pensez à y revenir
+souvent.<br>
+
+<hr>
+Projet à rendre pour le vendredi <b>11/01/2019</b> à <b>23h59</b>,
+aucun retard ne sera toléré.<br>  Des soutenances pourront être
+organisées ensuite.<br><br>
+
+Lire tout le sujet (tout ? tout).<br><br>
+
+Un rendu de projet comprend&nbsp;:
+<ul>
+  <li> Un rapport précisant et justifiant vos choix (de structures,
+  etc.), les problèmes techniques qui se posent et les solutions
+  trouvées ; il donne en conclusion les limites de votre programme. Le
+  rapport sera de préférence composé avec LaTeX. Le soin apporté à la
+  grammaire et à l'orthographe est largement pris en compte.</li>
+<li> Un manuel d'utilisation, même minimal.</li>
+<li> Un code <em>abondamment</em> commenté&nbsp;; la première partie
+  des commentaires comportera systématiquement les
+  lignes&nbsp;:<br></li>
+<ol>
+<li><tt>@requires </tt> décrivant les pré-conditions&nbsp;:
+c'est-à-dire conditions sur les paramètres pour une bonne utilisation
+(<b>pas de typage ici</b>),</li>
+<li><tt>@ensures </tt> décrivant la propriété vraie à la sortie de la
+fonction lorsque les pré-conditions sont respectées, le cas échéant
+avec mention des comportements en cas de succès et en cas
+d'échec,</li>
+<li><tt>@raises </tt> énumérant les exceptions éventuellement levées
+  (et précisant dans quel(s) cas elles le sont).</li>
+</ol>
+On pourra préciser des informations additionnelles si des techniques
+particulières méritent d'être mentionnées.<br><br>  Le code doit
+enfin <b>compiler</b> sans erreur (évidemment) et sans warning sur les machines des salles de TP.
+</ul>
+Avez-vous lu tout le sujet ?
+
+<hr>
+
+<h4>Protocole de dépôt</h4>
+<p>
+  Vous devez rendre&nbsp;:
+  </p><ul>
+    <li>votre rapport au format <tt>pdf</tt></li>
+    <li>vos fichiers de code.</li>
+    <li>vos tests.</li>
+  </ul>
+  rassemblés dans une archive tar gzippée identifiée
+  comme <em>votre_prénom_votre_nom</em><tt>.tgz</tt>.<br>  La
+  commande devrait ressembler à&nbsp;:<br>
+  <tt>tar cvfz randolph_carter.tgz rapport.pdf fichiers.ml
+  autres_truc_éventuels</tt>…
+<p></p>
+<p>
+  <b>Lisez le man</b> et testez le contenu de votre archive.  Une
+  commande comme par exemple&nbsp;:<br>
+  <tt>tar tvf randolph_carter.tgz</tt><br> doit lister les fichiers
+  et donner leur taille.<br>  Une archive qui ne contient pas les
+  fichiers demandés ne sera pas excusable. Une archive qui n'est pas
+  au bon format ne sera pas considérée.
+</p>
+<p>
+<b>Procédure de dépôt</b><br> Vous devez enregistrer votre archive
+tar dans le dépôt dédié au cours IPF (ipf-s3-projet-2018) en vous
+connectant à <tt>http://exam.ensiie.fr</tt>.  Ce dépôt sera ouvert
+jusqu'au 11 janvier inclus.
+</p>
+
+<hr>
+
+<h3>Contexte</h3>
+<p> Le but de ce projet est de créer un planificateur de tournées
+efficace.</p>
+
+<p>
+  Dans le monde moderne, il est important de pouvoir planifier
+  rapidement des tournées efficaces. Vous avez été choisis pour
+  proposer et développer un tel planificateur permettant de relier un
+  grand nombre de villes (de l'ordre du millier) entre elles.
+</p>
+
+<p>
+  Notre projet se développera en deux étapes&nbsp;:
+  </p><ol>
+    <li>dans un premier temps, afin de faciliter votre tâche, toutes
+    les villes seront <b>directement</b> accessibles depuis toutes les
+    autres villes, </li>
+    <li>dans un second temps, certaines routes directes seront coupées.</li>
+    </ol>
+<p></p>
+
+<!-- <p><b>Ne remplir que la première phase de ce travail n'est pas
+--> <!-- envisageable, répondre correctement aux deux premières phases
+est --> <!-- acceptable.  Une solution, même imparfaite, à la
+troisième --> <!-- phase sera considérée comme un bon travail.</b></p>
+-->
+
+<!-- Lire les interfaces des modules Ocaml <em>String</em>
+et <em>Map</em> --> <!-- est conseillé. -->
+
+
+
+<p>Votre programme devra trouver une tournée aussi
+optimale que possible répondant aux contraintes suivantes&nbsp;:
+  </p><ul>
+    <li>la ville de départ et la ville d'arrivée de la tournée doivent
+    être les mêmes; </li>
+    <li>toutes les villes doivent être visitées au moins une fois (il
+    est possible de visiter plusisieurs fois la même ville);</li>
+    <li>la distance totale parcourue doit être aussi réduite que
+      possible;</li>
+    <li>si une ville A est reliée directement à une ville B, alors la
+    ville B est reliée directement à la ville A par un trajet de même
+    longueur (les routes sont toutes à double sens). </li>
+  </ul>
+<p></p>
+
+La distance de parcours entre deux villes sera toujours la distance
+euclidienne entre leurs coordonnées.
+
+<p>
+  Étonnamment, ce problème est particulièrement complexe à résoudre de
+  manière optimale. On ne connaît pas (et il est peu probable que l'on
+  connaisse un jour) d'algorithme exact (qui trouve une tournée
+  optimale) fondamentalement plus efficace que d'énumérer toutes les
+  tournées possibles pour sélectionner la meilleure.
+
+  Votre planificateur devant répondre avant la mort thermique de
+  l'univers, il ne vous est pas demandé de donner une solution
+  optimale mais une approximation raisonnable de cette solution.
+</p>
+
+<p>
+  Une assez bonne approximation (de l'ordre de quelques fois la distance
+  minimale) peut être trouvée en un temps raisonnable de la manière suivante&nbsp;:
+  </p><ol>
+    <li>on commence par choisir une première tournée sur un petit
+    nombre de villes;</li>
+    <li>on incorpore petit à petit les villes manquantes de manière à
+    ne pas trop augmenter la longueur totale de la tournée;</li>
+    <li>on applique enfin un certain nombre d'heuristiques locales
+    permettant de diminuer encore la longueur de la tournée.
+  </li></ol>
+<p></p>
+
+<p>
+  Pour chacune des trois phases, on peut trouver plusieurs
+  alternatives crédibles.
+  </p><ol>
+    <li><a name="phase-1">la recherche d'une tournée sur un petit nombre de ville peut
+    être ainsi&nbsp;:</a>
+      <ol type="a">
+	<li>on se restreint à une tournée de départ sur une seule
+	ville,</li>
+	<li>ou bien on part d'une tournée sur
+	l'<a href="https://en.wikipedia.org/wiki/Convex_hull">enveloppe
+	convexe</a> de l'ensemble des villes;
+      </li></ol>
+    </li><br>
+    <li><a name="phase-2">l'incorporation peut se faire systématiquement d'une des manières suivantes&nbsp;:</a>
+      <ol type="a">
+	<li><span style="font-style:italic">insertion d'une ville aléatoire</span>&nbsp;: on choisit une
+	ville non encore présente sur la tournée de manière
+	quelconque, on incorpore cette ville à la tournée partielle de
+	manière à réduire le plus possible la distance totale
+	  parcourue pour la nouvelle tournée;</li>
+	<li><span style="font-style:italic">insertion de la ville la plus proche</span>&nbsp;: on choisit une
+	(souvent la) ville dont la distance minimale aux villes de la
+	tournée partielle est minimale et on incorpore cette ville à
+	la tournée partielle de manière à réduire le plus possible la
+	distance totale parcourue pour la nouvelle tournée;</li>
+	<li><span style="font-style:italic">insertion de la ville la plus lointaine</span>&nbsp;: on choisit une
+	(souvent la) ville dont la distance minimale aux villes de la
+	tournée partielle est maximale et on incorpore cette ville à
+	la tournée partielle de manière à réduire le plus possible la
+	distance totale parcourue pour la nouvelle tournée;</li>
+      </ol>		    
+    </li>
+    <br>
+    <li><a name="phase-3">plusieurs algorithme d'optimisation sont mis à votre
+    disposition&nbsp;:</a>
+      <ol type="a">
+	<li>la méthode de <span style="font-style:italic">repositionnement de noeud</span>&nbsp;:
+	  <ol>
+	    <li>on sélectionne un trajet A-B-C (les liaisons entre les villes A
+ et B et B et C étant directes) tel qu'il existe un trajet direct entre A
+ et C;</li>
+	    <li>retire la ville B de la tournée;</li>
+	    <li>on cherche à insérer la ville B dans la tournée de manière à minimiser la longueur totale de la tournée.</li>
+	  </ol>
+	  On conserve la nouvelle tournée si sa longueur totale est plus courte que l'ancienne tournée.
+	</li>
+	<br>
+	<li>la méthode de <span style="font-style:italic">l'inversion
+	locale</span> consiste&nbsp;:
+	  <p>
+	    Supposons que notre tournée se décompose comme suit&nbsp;:
+	    </p><ol>
+	      <li>une liaison directe entre les ville A et B;</li>
+	      <li>une liaison indirecte entre les villes B et C;</li>
+	      <li>une liaison directe entre les ville C et D.</li>
+	    </ol>
+	    <p></p>
+	  <p>la méthode de <span style="font-style:italic">l'inversion
+	    locale</span> sur ce trajet consiste à prendre en
+	    considération le chemin suivant (dans la mesure où il
+	    existe des liaisons directes entre A et C et B et D)
+	    </p><ol>
+	      <li>une liaison directe entre les ville A et C;</li>
+	      <li>une liaison indirecte entre les villes C et B (dont
+	      l'existence est garanti par le fait que les chemins sont
+	      inversibles);</li>
+	      <li>une liaison directe entre les ville B et D.</li>
+	    </ol>
+	  <p></p>
+	  <p>
+	    On remplace l'ancien trajet par le nouveau si la distance
+	    totale parcourue est plus courte. Cette inversion
+	    est <b>locale</b> dans le sens où elle n'intervient que
+	    sur la partie de la tournée située entre A et D
+	  </p>
+	  On ne
+	conserve le nouveau chemin que si il est localement meilleur
+	que l'ancien.
+	</li>
+      </ol>
+    </li>
+  </ol>
+<p>
+</p><hr>
+
+  <h3>Travail à effectuer</h3>
+
+  Vous devrez produire une bibliothèque implantant les différents algorithmes definis ci-dessus.
+  Vous serez évalués, en particulier, sur les critères suivants&nbsp;:
+  <ul>
+    <li> la <b>qualité</b> de vos interfaces et de votre documentation;
+    </li><li> la <b>pertinance</b> des structures de données employées;
+    </li><li> la <b>modularité</b> de votre code: éviter autant que possible les répétitions de code (y compris entre les différentes phases du projet);</li>
+    <li> la <b>présence</b> de tests et une analyse critique des résultats obtenus. </li>
+  </ul>									
+
+  Vous devrez également produire, pour chaque phase, un programme 
+principal fournissant une recherche de tournée efficace avec les 
+contraintes fixées. 
+  
+<!--   Pour chaque phase, vous devez impérativement&nbsp;: -->
+<!-- <ol> -->
+<!--   <li value="1"> Proposer une structure de données <b>pertinente</b> -->
+<!--   pour les information sur le problème (le format fourni en entrée n'est pas forcément adapté à votre problème).</li> -->
+<!--   <li> Fournir un algorithme et un code de recherche de tournée efficace.</li> -->
+<!-- </ol> -->
+
+<hr>
+  
+<h3>Phase 1: graphe complet</h3>
+Lors de cette phase, toutes les villes seront deux à deux reliées directement. 
+
+Votre programme devra prendre deux noms de fichiers en argument&nbsp;:
+<ol>
+  <li> le premier fichier contiendra des informations relative au paramétrage de votre programme (cf <a href="#params">paramétrage</a>);</li>
+  <li> le second fichier contiendra les informations utiles sur les villes (cf <a href="#format-entree">format d'entrée</a>).
+</li></ol>
+
+il devra (dans le temps autorisé qui sera de l'ordre de quelques 
+secondes), trouver une tournée et l'afficher sur la sortie standard (cf <a href="#format-sortie">format de sortie</a>)
+
+<h4><a name="params">paramétrage&nbsp;:</a></h4>
+
+    le format du fichier de paramétres sera le suivant&nbsp;:
+    <ul>
+      <!-- <li>une ligne contenant un entier exprimant le temps en seconde alloué à votre programme pour s'executer</li> -->
+      <li>une ligne contenant un mot (soit "ONE" soit "HULL")
+      décrivant le type de recherche souhaitée pour la première
+      phase. "ONE" désignera la recherche initiale d'une ville unique
+      et "HULL" désignera la recherche initiale à l'aide de
+	l'enveloppe convexe. (<a href="#phase-1">infos</a>)</li>
+      <li>une ligne contenant un mot (soit "RANDOM", soit "NEAREST" soit
+ "FARTHEST") décrivant le type de recherche souhaitée pour la complétion
+ de la tournée. "RANDOM" désignera la méthode de d'incorporation 
+aléatoire, "NEAREST" l'insertion de la ville la plus proche, et 
+"FARTHEST" l'insertion de la ville la plus lointaine (<a href="#phase-2">infos</a>)</li>
+      <li>une ligne contenant un mots (soit "REPOSITIONNEMENT" soit 
+"INVERSION") décrivant le type d'optimisation souhaitée. 
+"REPOSITIONNEMENT" désignera la méthode de repositionnement et 
+"INVERSION" la méthode d'inversion locales (<a href="#phase-3">infos</a>)</li>
+    </ul>
+
+<h4><a name="format-entree">format d'entrée</a>&nbsp;:</h4>
+  <ul>
+    <li>Une première ligne contenant un unique entier <tt>n</tt>.</li>
+    <li> <tt>n</tt> lignes comprenant chacune la description d'une ville au format&nbsp;:
+      <div style="margin-left: 80px;"> &lt;nom de la ville&gt; &lt;longitude &gt; &lt; lattitude&gt;</div>
+      les noms sont des chaînes de caractères, les coordonnées sont des flottant.</li>
+  </ul>
+
+
+
+<h4><a name="format-sortie">format de sortie&nbsp;:</a></h4>
+Votre code devra écrire sur la sortie standard de votre programme le
+parcours trouvé au format suivant:
+<div style="margin-left: 80px;">
+  &lt;distance&gt;&nbsp;: &lt;ville_1&gt;  ... &lt;ville_k&gt; &lt;ville_1&gt;</div>
+où &lt;distance&gt; est la distance totale parcourue sur la tournée et le reste est la description de la tournée.
+
+
+<hr>
+
+<h3>Phase 2 : graphes non orientés connexes</h3>
+Pour cette phase votre progamme devra travailler sur un graphe où 
+certaines routes seront fermées (inaccessible). On garantira que le 
+graphe des villes reste connexe et symétrique.
+
+Votre travail devra reprendre le travail de la partie 1 en prenant ces 
+contraintes. 
+
+<h4><a name="format-entree-2">format d'entrée</a>&nbsp;:</h4>
+  <ul>
+    <li>Une première ligne contenant un unique entier <tt>n</tt>.</li>
+    <li> <tt>n</tt> lignes comprenant chacune la description d'une ville au format&nbsp;:
+      <div style="margin-left: 80px;"> &lt;nom de la ville&gt; &lt;longitude &gt; &lt; lattitude&gt;</div>
+      les noms sont des chaîes de caractères, les coordonnées sont des flottant.</li>
+    <li><tt>n</tt> lignes décrivant les routes. Chaque ligne sera au format&nbsp;:
+      <div>&lt;départ&gt; : &lt;arrivée_1&gt; ... &lt;arrivée_k&gt;</div>
+      Chaque ville apparaîtra exactement une fois comme ville de départ. 
+  </li></ul>
+
+
+
+<!-- Lors de cette phase, votre système devra gérer les -->
+<!-- déplacements de plusieurs personnes au sein de la base. Compte tenu de -->
+<!-- la faible capacité de calcul présente à ce stade sur la base, nous -->
+<!-- vous fournirons, en plus du plan, les chemins de chacun. Votre système -->
+<!-- devra retourner la <i>séquence des déplacements</i> de chacun en -->
+<!-- tenant compte des chemins à parcourir et de la contrainte -->
+<!-- d'utilisation unique de chaque tunnel en minimisant le temps de -->
+<!-- parcours global (donc le temps du dernier arrivé à destination). -->
+
+<!-- <p> -->
+<!--   Le format d'entrée des plans est le suivant&nbsp;: -->
+<!--   <ul> -->
+<!--     <li>Une première ligne contenant un unique entier <tt>n</tt></li> -->
+<!--     <li> <tt>n</tt> lignes comprenant chacune la description d'une -->
+<!--     liaison au format <div style="margin-left: 80px;"> &lt;nom du -->
+<!--     module de départ&gt; &lt;nom du module d'arrivée&gt; &lt; durée du -->
+<!--     transit&gt;. </div>La durée est exprimée sous forme d'un entier, -->
+<!--     les noms sont des chaînes de caractères.</li> -->
+<!--     <li> Une ligne comprenant un unique entier <tt>m</tt>.</li> -->
+<!--     <li> <tt>m</tt> lignes comprenant chacune une liste de noms de -->
+<!--     modules séparés par des <tt>-&gt;</tt> et correspondant au chemin -->
+<!--     d'un individu. -->
+<!--   </ul> -->
+<!-- </p> -->
+<!-- <p> -->
+<!--   Votre programme devra afficher&nbsp;: -->
+<!--   <ul> -->
+<!--     <li><tt>m</tt> lignes contenant chacune une séquence de -->
+<!--   déplacement, c'est-à-dire une liste de noeuds séparés par -->
+<!--   des <tt>-k-&gt;</tt> où <tt>k</tt> est le moment où notre -->
+<!--   explorateur débute sa traversée entre les deux modules -->
+<!--   correspondants.</li> -->
+<!--     <li>Une ligne contenant un entier unique correspondant à la durée -->
+<!--       totale des déplacements.</li> -->
+<!--     </ul> -->
+<!-- </p> -->
+
+<!-- <h3>Phase 3</h3> Lors de cette phase, votre système devra gérer de -->
+<!-- manière autonome les déplacements de plusieurs personnes au sein de la -->
+<!-- base. Nous vous fournirons, en plus du plan, les points de départ et -->
+<!-- d'arrivée de chacun. Votre système devra retourner la <i>séquence des -->
+<!-- déplacements</i> de chacun en tenant compte de la contrainte -->
+<!-- d'utilisation unique de chaque tunnel en minimisant le temps de -->
+<!-- parcours global (donc le temps du dernier arrivé à destination). -->
+
+<!-- <p> -->
+<!--   Le format d'entrée des plans est le suivant&nbsp;: -->
+<!--   <ul> -->
+<!--     <li>Une première ligne contenant un unique entier <tt>n</tt></li> -->
+<!--     <li> <tt>n</tt> lignes comprenant chacune la description d'une -->
+<!--     liaison au format <div style="margin-left: 80px;"> &lt;nom du -->
+<!--     module de départ&gt; &lt;nom du module d'arrivée&gt; &lt; durée du -->
+<!--     transit&gt;. </div>La durée est exprimée sous forme d'un entier, -->
+<!--     les noms sont des chaînes de caractères.</li> -->
+<!--     <li> Une ligne comprenant un unique entier <tt>m</tt>.</li> -->
+<!--     <li> <tt>m</tt> lignes comprenant chacune deux noms de modules -->
+<!--     séparés par des <tt>-&gt;</tt> et correspondant aux points de -->
+<!--     départ et d'arrivée d'un individu. -->
+<!--   </ul> -->
+<!-- </p> -->
+<!-- <p> -->
+<!--   Votre programme devra afficher&nbsp;: -->
+<!--   <ul> -->
+<!--     <li><tt>m</tt> lignes contenant chacune une séquence de -->
+<!--   déplacement, c'est-à-dire une liste de noeuds séparés par -->
+<!--   des <tt>-k-&gt;</tt> où <tt>k</tt> est le moment où notre -->
+<!--   explorateur débute sa traversée entre les deux modules -->
+<!--   correspondants.</li> -->
+<!--     <li>Une ligne contenant un entier unique correspondant à la durée -->
+<!--       totale des déplacements.</li> -->
+<!--     </ul> -->
+<!-- </p> -->
+
+<hr>
+
+<h3>Merci pour ce sujet...</h3>  Vous pouvez remercier (comme moi)
+M. Mouilleron à qui je n'ai servi que de rédacteur final et qui a corrigé  de la plupart des pheauthes.
+
+
+</div></body></html>
