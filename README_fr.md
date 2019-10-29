@@ -10,11 +10,11 @@ Tous les TP ne sont pas complets (notamment le TP5).
 
 ## [Projet](https://github.com/KowalskiThomas/IPF2A/tree/master/Projet)
 
-URL du sujet : https://github.com/KowalskiThomas/IPF2A/tree/master/Sujet.html
+URL du sujet : https://github.com/KowalskiThomas/IPF2A/tree/master/spec_fr.html
 
 Le projet se compile à l'aide d'un Makefile qui donne de l'aide (en utilisant simplement `make`). Il nécessite `ocamlbuild`.
 
-[Vers le projet](https://github.com/KowalskiThomas/IPF2A/tree/master/Projet)
+[Vers le projet](https://github.com/KowalskiThomas/IPF2A/tree/master/TravellingSalesman)
 
 ## Commentaires
 
