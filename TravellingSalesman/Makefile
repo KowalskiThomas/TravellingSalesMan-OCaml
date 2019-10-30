@@ -1,18 +1,18 @@
 all: default
 
 default: 
-	@echo "-- Utilisez make help pour l'utilisation détaillée des exécutables. --"
-	@echo "all_tests: Lance tous les tests"
-	@echo "compile:   Compile les exécutables finaux"
-	@echo "run:       Lance l'optimisation avec les réglages de config.txt pour le fichier par défaut."
-	@echo "run_all:   Lance l'optimisation avec tous les réglages possibles pour le fichier par défaut."
+	@echo "-- Use make help to get a detailed explanation of what binaries do --"
+	@echo "all_tests: Executes all tests"
+	@echo "compile:   Compiles all delivered (non-test) binaries"
+	@echo "run:       Starts finding and optimising a solution using settings from config.txt and the default city file."
+	@echo "run_all:   Starts finding and optimising solutions with all possible settings using the default city file."
 
 help:
-	@echo "Options de compilation avec make: lancez make pour avoir la liste."
-	@echo "Utilisation des livrables compilés:"
-	@echo "    ./all.native <fichier de villes>:    Teste toutes les optimisations pour le fichier."
-	@echo "    ./projet.native <fichier de villes>: Utilise config.txt pour appliquer une optimisation pour le fichier."
-	@echo "REMARQUE: Si vous ne donnez pas de nom de fichier, le fichier villes.complete.txt sera utilisé."
+	@echo "-- Use make without an argument (or make default) to get a list of targets --"
+	@echo "Use of binaries:"
+	@echo "    ./all.native <city file>:    Finds and optimises solutions using all possible settings for the given file."
+	@echo "    ./projet.native <city file>: Finds and optimises a solution for the given city file using the settings from config.txt"
+	@echo "NOTE: Without a city file provided, the file villes.complete.txt will be used."
 
 merlin:
 	ocamlbuild merlin.native
