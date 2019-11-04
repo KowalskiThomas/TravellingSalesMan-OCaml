@@ -29,58 +29,27 @@ Each of these three steps can be done using different techniques:
   1. By choosing a random city and adding it where the overall distance is minised;
   2. By choosing the city closest to the current tour and adding it where the overall distance is minised;
   3. By choosing the city furthest to the current tour and adding it where the overall distance is minised.
+3. Several algorithms are proposed:
+  1. Node repositioning
+     * Three connex (in the path) cities A-B-C are chosen. Assuming that a direct path exists between A and C;
+     * City B is removd from the path
+     * City B is reinserted in the path, minimising the overall distance. The new path is only kept if the overall distance has decreased.
+  2. Local inversion
+     * If the path is `A -> B -> ... -> C -> D`
+     * If A and C are connex, B and D are connexion
+     * We consider the path `A -> C -> ... -> B -> D`. The new path is only kept if the local distance has decreased (between A and D).
 
-Pour chacune des trois phases, on peut trouver plusieurs alternatives crédibles.
+### Your task
 
-1.  la recherche d'une tournée sur un petit nombre de ville peut être ainsi :
-    1.  on se restreint à une tournée de départ sur une seule ville,
-    2.  ou bien on part d'une tournée sur l'[enveloppe convexe](https://en.wikipedia.org/wiki/Convex_hull) de l'ensemble des villes;
-  
-3.  l'incorporation peut se faire systématiquement d'une des manières suivantes :
-    1.  insertion d'une ville aléatoire : on choisit une ville non encore présente sur la tournée de manière quelconque, on incorpore cette ville à la tournée partielle de manière à réduire le plus possible la distance totale parcourue pour la nouvelle tournée;
-    2.  insertion de la ville la plus proche : on choisit une (souvent la) ville dont la distance minimale aux villes de la tournée partielle est minimale et on incorpore cette ville à la tournée partielle de manière à réduire le plus possible la distance totale parcourue pour la nouvelle tournée;
-    3.  insertion de la ville la plus lointaine : on choisit une (souvent la) ville dont la distance minimale aux villes de la tournée partielle est maximale et on incorpore cette ville à la tournée partielle de manière à réduire le plus possible la distance totale parcourue pour la nouvelle tournée;
-  
-5.  plusieurs algorithme d'optimisation sont mis à votre disposition :
-    1.  la méthode de repositionnement de noeud :
-        1.  on sélectionne un trajet A-B-C (les liaisons entre les villes A et B et B et C étant directes) tel qu'il existe un trajet direct entre A et C;
-        2.  retire la ville B de la tournée;
-        3.  on cherche à insérer la ville B dans la tournée de manière à minimiser la longueur totale de la tournée.On conserve la nouvelle tournée si sa longueur totale est plus courte que l'ancienne tournée.
-      
-    3.  la méthode de l'inversion locale consiste :
-        
-        Supposons que notre tournée se décompose comme suit :
-        
-        1.  une liaison directe entre les ville A et B;
-        2.  une liaison indirecte entre les villes B et C;
-        3.  une liaison directe entre les ville C et D.
-        
-        la méthode de l'inversion locale sur ce trajet consiste à prendre en considération le chemin suivant (dans la mesure où il existe des liaisons directes entre A et C et B et D)
-        
-        1.  une liaison directe entre les ville A et C;
-        2.  une liaison indirecte entre les villes C et B (dont l'existence est garanti par le fait que les chemins sont inversibles);
-        3.  une liaison directe entre les ville B et D.
-        
-        On remplace l'ancien trajet par le nouveau si la distance totale parcourue est plus courte. Cette inversion est **locale** dans le sens où elle n'intervient que sur la partie de la tournée située entre A et D
-        
-        On ne conserve le nouveau chemin que si il est localement meilleur que l'ancien.
+Produce a library implementing the proposed algorithms. Will be assessed:
+* **Quality** of interfaces and their documentation;
+* **Pertinence** of chosen data structures;
+* **Modularity** of your code (avoid at all costs code duplication; as much as possible, use the same code for different stages);
+* The **tests** you provide and an critical analysis of your results.
 
-* * *
+You will also need to provide, for each stage, a main binary searching an efficient path with all defined constraints.
 
-### Travail à effectuer
-
-Vous devrez produire une bibliothèque implantant les différents algorithmes definis ci-dessus. Vous serez évalués, en particulier, sur les critères suivants :
-
-*   la **qualité** de vos interfaces et de votre documentation;
-*   la **pertinance** des structures de données employées;
-*   la **modularité** de votre code: éviter autant que possible les répétitions de code (y compris entre les différentes phases du projet);
-*   la **présence** de tests et une analyse critique des résultats obtenus.
-
-Vous devrez également produire, pour chaque phase, un programme principal fournissant une recherche de tournée efficace avec les contraintes fixées.
-
-* * *
-
-### Phase 1: graphe complet
+### Stage 1: Complete Graph 
 
 Lors de cette phase, toutes les villes seront deux à deux reliées directement. Votre programme devra prendre deux noms de fichiers en argument :
 
