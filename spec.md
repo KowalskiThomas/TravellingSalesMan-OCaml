@@ -51,60 +51,43 @@ You will also need to provide, for each stage, a main binary searching an effici
 
 ### Stage 1: Complete Graph 
 
-Lors de cette phase, toutes les villes seront deux à deux reliées directement. Votre programme devra prendre deux noms de fichiers en argument :
+During this first stage, all cities will be connected. The programme will take two arguments:
 
-1.  le premier fichier contiendra des informations relative au paramétrage de votre programme (cf [paramétrage](#params));
-2.  le second fichier contiendra les informations utiles sur les villes (cf [format d'entrée](#format-entree)).
+1. The first file will contain the configuration of the optimiser;
+2. The second file wlil contain the cities data.
 
-il devra (dans le temps autorisé qui sera de l'ordre de quelques secondes), trouver une tournée et l'afficher sur la sortie standard (cf [format de sortie](#format-sortie))
+The output will be issued to the standard output.
 
-#### paramétrage :
+### Optimiser configuration
 
-le format du fichier de paramétres sera le suivant :
+The file format for configuration will be as follows.
 
-*   une ligne contenant un mot (soit "ONE" soit "HULL") décrivant le type de recherche souhaitée pour la première phase. "ONE" désignera la recherche initiale d'une ville unique et "HULL" désignera la recherche initiale à l'aide de l'enveloppe convexe. ([infos](#phase-1))
-*   une ligne contenant un mot (soit "RANDOM", soit "NEAREST" soit "FARTHEST") décrivant le type de recherche souhaitée pour la complétion de la tournée. "RANDOM" désignera la méthode de d'incorporation aléatoire, "NEAREST" l'insertion de la ville la plus proche, et "FARTHEST" l'insertion de la ville la plus lointaine ([infos](#phase-2))
-*   une ligne contenant un mots (soit "REPOSITIONNEMENT" soit "INVERSION") décrivant le type d'optimisation souhaitée. "REPOSITIONNEMENT" désignera la méthode de repositionnement et "INVERSION" la méthode d'inversion locales ([infos](#phase-3))
+* One word, `ONE` or `HULL`, describing the kind of search to use for the first stage. `ONE` will designate a unique city in the initial path, `HULL` will designate that the convex hull of the cities set should be used as the initial path;
+* A line with a word among `RANDOM`, `NEAREST` and `FARTHEST`, describing what kind of insertion should be done to add new cities into the path. 
+* A line with a word among `REPOSITIONING` or `INVERSION`, describing what kind of optimisation should be done once the path is full.
 
-#### format d'entrée :
+### Input format for Stage 1
 
-*   Une première ligne contenant un unique entier n.
-*   n lignes comprenant chacune la description d'une ville au format :
-    
-    <nom de la ville> <longitude > < lattitude>
-    
-    les noms sont des chaînes de caractères, les coordonnées sont des flottant.
+* The first line will consist of a unique integer *n*;
+* The *n* other lines will describe a city in the format `<city name> <longitude> <latitude>` (one string and two floats).
 
-#### format de sortie :
+### Output format
 
-Votre code devra écrire sur la sortie standard de votre programme le parcours trouvé au format suivant:
+Your programme should output the final path in the following format 
 
-<distance> : <ville\_1> ... <ville\_k> <ville\_1>
+```
+<distance> : <city 1> ... <city n> <city 1>
+```
 
-où <distance> est la distance totale parcourue sur la tournée et le reste est la description de la tournée.
+With `<distance>` the total distance for the path.
 
-* * *
 
-### Phase 2 : graphes non orientés connexes
+### Stage 2: Incomplete Non-Oriented Graph
 
-Pour cette phase votre progamme devra travailler sur un graphe où certaines routes seront fermées (inaccessible). On garantira que le graphe des villes reste connexe et symétrique. Votre travail devra reprendre le travail de la partie 1 en prenant ces contraintes.
+For this second stage, your code will need to work on a graph where some roads have been removed. The graph will stay connex and symmetric. 
 
-#### format d'entrée :
+### Input format for stage 2
 
-*   Une première ligne contenant un unique entier n.
-*   n lignes comprenant chacune la description d'une ville au format :
-    
-    <nom de la ville> <longitude > < lattitude>
-    
-    les noms sont des chaîes de caractères, les coordonnées sont des flottant.
-*   n lignes décrivant les routes. Chaque ligne sera au format :
-    
-    <départ> : <arrivée\_1> ... <arrivée\_k>
-    
-    Chaque ville apparaîtra exactement une fois comme ville de départ.
-
-* * *
-
-### Merci pour ce sujet...
-
-Vous pouvez remercier (comme moi) M. Mouilleron à qui je n'ai servi que de rédacteur final et qui a corrigé de la plupart des pheauthes.
+* The first line will consist of a unique integer *n*;
+* The *n* following lines will each contain a city in the format `<city name> <longitude> <latitude>` (one string and two floats); 
+* The *n* following lines will describe the existing roads. Each line will be in the format `<from>: <to 1> <to 2> ... <to k>`. Each city will have a line.
